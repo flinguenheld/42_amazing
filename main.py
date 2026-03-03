@@ -1,4 +1,4 @@
-from config.config_file import ConfigFile
+from config.config_parser import ConfigParser
 
 
 def main():
@@ -6,7 +6,7 @@ def main():
 
 
 if __name__ == "__main__":
-    cfg = ConfigFile("config/config.txt")
+    cfg = ConfigParser("config.txt")
     my_dict = cfg.parse_file()
     print("hello")
     print(my_dict)

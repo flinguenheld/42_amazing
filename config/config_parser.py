@@ -1,29 +1,43 @@
-from typing import Annotated, Tuple
-from pydantic import BaseModel, Field
-
-SIZE_MIN = 5
-SIZE_MAX = 100
+from .config_model import ConfigModel
+from typing import Tuple
 
 
-class blahblah:
-    def aaaaa(self):
-        print("ssss")
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀░░░█▀█░█▀█░█▀▄░█▀▀░█▀▀░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░░█░█░█░█░█▀▀░░█░░█░█░░░█▀▀░█▀█░█▀▄░▀▀█░█▀▀░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▀▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀▀▀░░░▀░░░▀░▀░▀░▀░▀▀▀░▀▀▀░▀░▀
+class ConfigParser:
+    def __init__(self, file_name: str):
+        self.__file_name = file_name
 
+    @staticmethod
+    def parse_line(line: str, dictionary: dict[str, str | Tuple[str, str]]):
+        """
+        Split the line in two with =
+        Split again with , if necessary
+        Save the pair in the given dictionary
+        """
+        if not line.startswith("#"):
+            key, value = line.split("=")
 
-class ConfigParser(BaseModel):
-    width: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH")]
-    height: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT")]
-    entry: Annotated[Tuple[int, int], Field(alias="ENTRY")]
-    exit: Annotated[Tuple[int, int], Field(alias="EXIT")]
-    output_file: Annotated[
-        str, Field(min_length=3, max_length=30, alias="OUTPUT_FILE")
-    ]
-    perfect: Annotated[bool, Field(alias="PERFECT")]
+            if "," in value:
+                left, right = value.strip().split(",")
+                dictionary[key] = (left, right)
+            else:
+                dictionary[key] = value.strip()
 
-    # @classmethod
-    def my_ass(cls):
-        print("my arse")
+    def parse_file(self) -> dict[str, int | bool | str | Tuple[int, int]]:
+        """
+        Open the config file
+        Parse each line to feed a model
+        Return a dictionary with all config options
 
-    # @classmethod
-    # def model_validate():
-    #     pass
+        Raise Value error if forbidden, missing or invalid data
+        """
+        parsed_values = {}
+        with open(self.__file_name, "r") as f:
+            for line in f.readlines():
+                ConfigParser.parse_line(line, parsed_values)
+
+        parser = ConfigModel.model_validate(parsed_values)
+        return ConfigModel.model_dump(parser)
