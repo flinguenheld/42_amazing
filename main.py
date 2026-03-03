@@ -6,7 +6,8 @@ def main():
 
 
 if __name__ == "__main__":
-    cfg = ConfigParser("config.txt")
-    my_dict = cfg.parse_file()
-    print("hello")
-    print(my_dict)
+    pass
+    # with pytest.raises(ValueError):
+    #     cfg = ConfigParser("tests/test_config/config_empty.txt")
+    #     my_dict = cfg.parse_file()
+    #     print(my_dict)

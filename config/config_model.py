@@ -13,8 +13,8 @@ SIZE_MAX = 500
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░░█░█░█░█░█▀▀░░█░░█░█░░░█░█░█░█░█░█░█▀▀░█░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▀▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀▀▀░░░▀░▀░▀▀▀░▀▀░░▀▀▀░▀▀▀
 class ConfigModel(BaseModel):
-    width: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH")]
-    height: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT")]
+    nb_col: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH")]
+    nb_row: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT")]
     entry: Annotated[Tuple[int, int], Field(alias="ENTRY")]
     exit: Annotated[Tuple[int, int], Field(alias="EXIT")]
     output_file: Annotated[
@@ -44,14 +44,14 @@ class ConfigModel(BaseModel):
         entry_row, entry_col = self.entry
         exit_row, exit_col = self.exit
 
-        if entry_row > self.height:
-            raise ValueError(f"Entry Y can't be higher than {self.height}")
-        if exit_row > self.height:
-            raise ValueError(f"Exit Y can't be higher than {self.height}")
+        if entry_row >= self.nb_row:
+            raise ValueError(f"Entry Y can't be higher than {self.nb_row}")
+        if exit_row >= self.nb_row:
+            raise ValueError(f"Exit Y can't be higher than {self.nb_row}")
 
-        if entry_col > self.width:
-            raise ValueError(f"Entry X can't be higher than {self.width}")
-        if exit_col > self.width:
-            raise ValueError(f"Exit X can't be higher than {self.width}")
+        if entry_col >= self.nb_col:
+            raise ValueError(f"Entry X can't be higher than {self.nb_col}")
+        if exit_col >= self.nb_col:
+            raise ValueError(f"Exit X can't be higher than {self.nb_col}")
 
         return self
