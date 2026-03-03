@@ -1,70 +1,59 @@
 from typing import List
+import numpy
 import random
 import time
 
-def print_tab(tab: List):
+MAX = 9
+
+def print_tab(path: List):
+    tab = [[0 for _ in range(0, 10)] for _ in range(0, 10)]
+    for row, col in path:
+        tab[row][col] = 1
     for line in tab:
         print(line)
-    print("\n\n")
-
-def check_coor(row: int, col: int, tab) -> bool:
-    if row < 0 or col < 0 or row > 9 or col > 9:
-        return False
-    elif tab[row][col] == 1:
-        return False
-    return True
-
-def rect_coor(row: int, col: int, tab) -> List[int, int]:
-    if row < 0:
-        return row + 1, col
-    if col < 0:
-        return row, col + 1
-    if row > 9:
-        return row - 1, col
-    if col > 9:
-        return row, col - 1
-    return first_empty(row, col, tab)
-
-def first_empty(row: int, col: int, tab) -> List[int, int]:
-    if tab[row - 1][col] == 0:
-        return row - 1, col
-    if tab[row + 1][col] == 0:
-        return row + 1, col
-    if tab[row][col - 1] == 0:
-        return row, col - 1
-    if tab[row][col + 1] == 0:
-        return row, col + 1
-
-def go_up(coor: List[int, int], tab: List[List[int]]) -> List[int, int]:
-    row, col = coor
-    return coor 
-
-#def walk(coor: List[int, int], goal: List[int, int], tab: List[List[str]]) -> None:
+    print("\n")
 
 
-def random_walk_demo():
-    tab = [[0 for _ in range(0, 10)] for _ in range(0, 10)]
-    tab[9][9] = 7
-    print_tab(tab)
-    row, col = 0, 0
-    coor = [row, col]
-    goal = 9, 9
-    #walk(coor, goal, tab)
-    #0 = up 1 = right 2 = left 3 = down
-    while coor != goal:
-        choice = random.randint(0, 3)
-        match choice:
-            case 0:
-                coor = go_up(coor, tab)
-            case 1:
-                coor = go_right(coor, tab)
-            case 2:
-                coor = go_left(coor, tab)
-            case 3:
-                coor = go_down(coor, tab)
+def go_back(path: List[Tuple[int, int]], new_r: int, new_c: int):
+    moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    index = len(path) - 1
+    for r, c in moves:
+        if (new_r + r, new_c + c) in path:
+            new_index = [k for k, v in enumerate(path)
+                         if v == (new_r + r, new_c + c)][0]
+            if new_index < index:
+                index = new_index
+    path = path[:index]
+    return path
 
-    
+def random_walk_demo():        
+    cur_r, cur_c = 0, 0
+    moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    path = [(0, 0)]
 
+    while (cur_r, cur_c) != (MAX, MAX):
+        valid_moves = []
+        new_r, new_c = 0, 0
+        for (dir_r, dir_c) in moves:
+            new_r = cur_r + dir_r
+            new_c = cur_c + dir_c
+            if new_r >= 0 and new_r <= MAX and new_c >= 0 and new_c <= MAX:
+                target = (new_r, new_c)
+                if target not in path:
+                    valid_moves.append((dir_r, dir_c))
+
+        if len(valid_moves) == 0:
+            path = go_back(path, new_r, new_c)
+            print_tab(path)
+            cur_r, cur_c = (0, 0) if len(path) == 0 else path[-1]
+            time.sleep(0.1)
+        else:
+            new_r, new_c = valid_moves[random.randint(0, len(valid_moves) - 1)]
+            cur_r += new_r
+            cur_c += new_c
+            path.append((cur_r, cur_c))
+            print_tab(path)
+            time.sleep(0.1)
 
 if __name__ == "__main__":
     random_walk_demo()
