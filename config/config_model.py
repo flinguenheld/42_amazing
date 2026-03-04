@@ -1,11 +1,9 @@
 from typing import Annotated, Any
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+# TODO: MANAGE MIN MAX HERE ??
 SIZE_MIN = 2
 SIZE_MAX = 500
-
-
-# TODO: manage 42 in the middle
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
