@@ -1,4 +1,4 @@
-from typing import Annotated, Tuple, Any
+from typing import Annotated, Any
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 SIZE_MIN = 2
@@ -15,8 +15,8 @@ SIZE_MAX = 500
 class ConfigModel(BaseModel):
     nb_col: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH")]
     nb_row: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT")]
-    entry: Annotated[Tuple[int, int], Field(alias="ENTRY")]
-    exit: Annotated[Tuple[int, int], Field(alias="EXIT")]
+    entry: Annotated[tuple[int, int], Field(alias="ENTRY")]
+    exit: Annotated[tuple[int, int], Field(alias="EXIT")]
     output_file: Annotated[
         str, Field(min_length=3, max_length=30, alias="OUTPUT_FILE")
     ]
@@ -30,7 +30,7 @@ class ConfigModel(BaseModel):
     # ###################### ENTRY & EXIT VALUES HAVE TO BE HIGHER THAN 0 #####
     @field_validator("entry", "exit")
     @classmethod
-    def does_id_start_with_m(cls, value: Tuple[int, int]) -> Tuple[int, int]:
+    def does_id_start_with_m(cls, value: tuple[int, int]) -> tuple[int, int]:
         row, col = value
         if row < 0 or col < 0:
             raise ValueError("Coordinates have to be higher than 0")
