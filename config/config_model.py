@@ -55,3 +55,13 @@ class ConfigModel(BaseModel):
             raise ValueError(f"Exit X can't be higher than {self.nb_col}")
 
         return self
+
+    # #########################################################################
+    # ################################# ENTRY & EXIT HAVE TO BE DIFFERENT #####
+    @model_validator(mode="after")
+    def entry_exit_cant_be_equal(self) -> Any:
+
+        if self.entry == self.exit:
+            raise ValueError("Entry and Exit can't be equal")
+
+        return self

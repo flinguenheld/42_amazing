@@ -81,6 +81,17 @@ def test_config_parser_exit_col_cannot_be_equal_to_max_col():
 
 
 # #############################################################################
+# ############################################ ENTRY & EXIT CAN'T BE EQUAL ####
+def test_config_parser_entry_and_exit_cant_be_equal():
+    with pytest.raises(ValueError):
+        cfg = ConfigParser(
+            "tests/test_config/files/config_entry_exit_equal.txtest"
+        )
+        my_dict = cfg.parse_file()
+        print(my_dict)
+
+
+# #############################################################################
 # ######################################################### INVALID HEIGHT ####
 def test_config_parser_height_0():
     with pytest.raises(ValueError):
