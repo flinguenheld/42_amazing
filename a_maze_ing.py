@@ -1,5 +1,6 @@
 import sys
 from Controller import Controller
+from maze_generator import MazeGenerator
 
 
 def usage() -> str:
@@ -9,6 +10,9 @@ def usage() -> str:
 def main():
     controller = Controller(sys.argv[1])
     controller.init_maze()
+    generator = MazeGenerator(controller.maze)
+    generator.first_trail()
+
 
 
 if __name__ == "__main__":

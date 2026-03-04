@@ -1,87 +1,98 @@
 from typing import List, Tuple
+from Maze import Maze
 import random
+#import time
 
 
-def get_valid_moves(path: List[Tuple[int, int]]) -> List[Tuple[int ,int]]:
+class MazeGenerator():
+    def __init__(self, maze: Maze) -> None:
+        """
+        - Stores maze related values (width, height, start, end)
+        - Initializes self.path for self.first_trail
+        """
+        self.maze = maze
+        self.max = (maze.nb_row - 1, maze.nb_col - 1)
+        self.begin = (maze.start)
+        self.goal = (maze.end)
+        self.path: List[Tuple[int, int]] = [self.begin]
 
+    def __go_back(self) -> None:
+        """
+        - Find first neighbouring in-path cell
+        - Erase path from index of found cell
+        """
+        moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        cur_r, cur_c = self.path[-1]
+        index = len(self.path) - 1
 
-def flood_fill(tab: List[List[int]], path: List[Tuple[int, int]],
-               coor: Tuple[int, int]) -> Tuple[int, int]: 
-    moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    cur_r, cur_c = coor
-    valid_moves = []
-    new_r, new_c = 0, 0
-    for (dir_r, dir_c) in moves:
-        new_r = cur_r + dir_r
-        new_c = cur_c + dir_c
-        if new_r >= 0 and new_r <= MAX and new_c >= 0 and new_c <= MAX:
-            target = (new_r, new_c)
-            if target not in path:
+        if 0 < cur_r < self.max[0] and 0 < cur_c < self.max[1]:
+            for r, c in moves:
+                if (cur_r + r, cur_c + c) in self.path:
+                    new_index = [k for k, v in enumerate(self.path)
+                                 if v == (cur_r + r, cur_c + c)][0]
+                    if new_index < index:
+                        index = new_index 
+        else:
+            index = 2
+        if index < 2:
+            index = 2
+
+        self.path = self.path[:index]
+
+    def __get_valid_moves(self) -> List[Tuple[int, int]]:
+        """
+        - Try every move possible from cell
+        - Only keep those who are within bound
+        - Return those as list
+        """
+        cur_r, cur_c = self.path[-1]
+        moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        valid_moves = []
+        new_r, new_c = 0, 0
+
+        for (dir_r, dir_c) in moves:
+            new_r = cur_r + dir_r
+            new_c = cur_c + dir_c
+            if 0 <= new_r <= self.max[0] and 0 <= new_c <= self.max[1]:
                 valid_moves.append((dir_r, dir_c))
 
-    if len(valid_moves) > 0:
-        return coor
-    else:
-        valid_moves = []
-        new_r, new_c = 0, 0
-        for (dir_r, dir_c) in moves:
-            new_r = cur_r + dir_r
-            new_c = cur_c + dir_c
-            if new_r >= 0 and new_r <= MAX and new_c >= 0 and new_c <= MAX:
-                valid_moves.append((dir_r, dir_c))    
-        op = random.choice(valid_moves)
-        cur_r += op[0]
-        cur_c += op[1]
-        return flood_fill(tab, path, (cur_r, cur_c))
+        return valid_moves
 
+    def __not_in_path(self, valid_moves: List[Tuple[int, int]]) \
+            -> List[Tuple[int, int]]:
+        """
+        - Takes list from self.get_valid_moves
+        - Returns those who don't give to an in-path cell
+                                                    -as a list
+        """
+        return [i for i in valid_moves
+                if (self.path[-1][0] + i[0], self.path[-1][1] + i[1])
+                not in self.path]
 
-def find_first_possible_move(path: List[Tuple[int, int]], 
-                             begin: Tuple[int, int]) -> Tuple[int, int]:
-    tab = make_tab(path)
+    def first_trail(self) -> None:
+        """
+        - First walk of the maze
+        - Goes from start to end / entry to exit
+        - Writes path to maze.values on return
+        """
+        while self.path[-1] != self.goal:
+            valid_moves = self.__not_in_path(self.__get_valid_moves())
 
-    return flood_fill(tab, path, begin)
+            if len(valid_moves) == 0:
+                self.__go_back()
+            else:
+                choice = random.choice(valid_moves)
+                self.path.append((self.path[-1][0] + choice[0],
+                                  self.path[-1][1] + choice[1]))
 
+        self.__update_maze()
 
-def go_back(path: List[Tuple[int, int]], new_r: int, new_c: int):
-    moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    index = len(path) - 1
-    if 0 < new_r < MAX and 0 < new_c < MAX:
-        for r, c in moves:
-            if (new_r + r, new_c + c) in path:
-                new_index = [k for k, v in enumerate(path)
-                             if v == (new_r + r, new_c + c)][0]
-                if new_index < index:
-                    index = new_index
-    else:
-        r, c = find_first_possible_move(path, path[-1])
-        index = [k for k, v in enumerate(path) if v == (r, c)][0]
-    path = path[:index]
-    return path
-
-
-def random_walk_demo():        
-    cur_r, cur_c = BEGIN
-    moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    path = [(0, 0)]
-
-    while (cur_r, cur_c) != GOAL:
-        valid_moves = []
-        new_r, new_c = 0, 0
-        for (dir_r, dir_c) in moves:
-            new_r = cur_r + dir_r
-            new_c = cur_c + dir_c
-            if new_r >= 0 and new_r <= MAX and new_c >= 0 and new_c <= MAX:
-                target = (new_r, new_c)
-                if target not in path:
-                    valid_moves.append((dir_r, dir_c))
-
-        if len(valid_moves) == 0:
-            path = go_back(path, new_r, new_c)
-            cur_r, cur_c = (0, 0) if len(path) == 0 else path[-1]
-        else:
-            new_r, new_c = valid_moves[random.randint(0, len(valid_moves) - 1)]
-            cur_r += new_r
-            cur_c += new_c
-            path.append((cur_r, cur_c))
-#        time.sleep(0.01)
-    print_tab(path)
+    def __update_maze(self) -> None:
+        """
+        - Writes data from self.path to self.maze.values
+        """
+        for r, c in self.path[:-1]:
+            self.maze.values[r][c] = 0x0
+        print(self.maze)
+        for r, c in self.path:
+            self.maze.values[r][c] = 0xF

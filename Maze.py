@@ -20,3 +20,5 @@ class Maze:
                 res = f"{res}{char:X}"
             res = f"{res}\n"
         return res
+
+    
