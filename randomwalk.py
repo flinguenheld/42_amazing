@@ -99,8 +99,8 @@ def random_walk_demo():
             cur_r += new_r
             cur_c += new_c
             path.append((cur_r, cur_c))
-        time.sleep(0.01)
-        print_tab(path)
+#        time.sleep(0.01)
+    print_tab(path)
 
 
 if __name__ == "__main__":
