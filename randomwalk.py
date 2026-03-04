@@ -1,13 +1,11 @@
-from typing import List
-import sys
-import numpy
+from typing import List, Tuple
 import random
 import time
 
 MAX = 27
-
 BEGIN: Tuple[int, int] = (0, 0)
-GOAL: Tuple[int, int] = (26, 26)
+GOAL: Tuple[int, int] = (27, 27)
+
 
 def make_tab(path: List[Tuple[int, int]]) -> List[List[int]]:
     tab = [[0 for _ in range(0, MAX + 1)] for _ in range(0, MAX + 1)]
@@ -19,8 +17,9 @@ def make_tab(path: List[Tuple[int, int]]) -> List[List[int]]:
 def print_tab(path: List):
     tab = make_tab(path)
     for line in tab:
-        print(line)
+        print(line) 
     print("\n")
+
 
 def flood_fill(tab: List[List[int]], path: List[Tuple[int, int]],
                coor: Tuple[int, int]) -> Tuple[int, int]: 
@@ -51,6 +50,7 @@ def flood_fill(tab: List[List[int]], path: List[Tuple[int, int]],
         cur_c += op[1]
         return flood_fill(tab, path, (cur_r, cur_c))
 
+
 def find_first_possible_move(path: List[Tuple[int, int]], 
                              begin: Tuple[int, int]) -> Tuple[int, int]:
     tab = make_tab(path)
@@ -61,7 +61,7 @@ def find_first_possible_move(path: List[Tuple[int, int]],
 def go_back(path: List[Tuple[int, int]], new_r: int, new_c: int):
     moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     index = len(path) - 1
-    if 1 <= new_r <= MAX - 1 and 1 <= new_c <= MAX - 1:
+    if 0 < new_r < MAX and 0 < new_c < MAX:
         for r, c in moves:
             if (new_r + r, new_c + c) in path:
                 new_index = [k for k, v in enumerate(path)
@@ -73,6 +73,7 @@ def go_back(path: List[Tuple[int, int]], new_r: int, new_c: int):
         index = [k for k, v in enumerate(path) if v == (r, c)][0]
     path = path[:index]
     return path
+
 
 def random_walk_demo():        
     cur_r, cur_c = BEGIN
@@ -93,14 +94,14 @@ def random_walk_demo():
         if len(valid_moves) == 0:
             path = go_back(path, new_r, new_c)
             cur_r, cur_c = (0, 0) if len(path) == 0 else path[-1]
-        #    time.sleep(0.01)
         else:
             new_r, new_c = valid_moves[random.randint(0, len(valid_moves) - 1)]
             cur_r += new_r
             cur_c += new_c
             path.append((cur_r, cur_c))
-        #    time.sleep(0.01)
-    print_tab(path)
+        time.sleep(0.01)
+        print_tab(path)
+
 
 if __name__ == "__main__":
     random_walk_demo()
