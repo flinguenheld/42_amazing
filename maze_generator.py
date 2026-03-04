@@ -1,24 +1,8 @@
 from typing import List, Tuple
 import random
-import time
-
-MAX = 27
-BEGIN: Tuple[int, int] = (0, 0)
-GOAL: Tuple[int, int] = (27, 27)
 
 
-def make_tab(path: List[Tuple[int, int]]) -> List[List[int]]:
-    tab = [[0 for _ in range(0, MAX + 1)] for _ in range(0, MAX + 1)]
-    for row, col in path:
-        tab[row][col] = 1
-    return tab
-
-
-def print_tab(path: List):
-    tab = make_tab(path)
-    for line in tab:
-        print(line) 
-    print("\n")
+def get_valid_moves(path: List[Tuple[int, int]]) -> List[Tuple[int ,int]]:
 
 
 def flood_fill(tab: List[List[int]], path: List[Tuple[int, int]],
@@ -99,9 +83,5 @@ def random_walk_demo():
             cur_r += new_r
             cur_c += new_c
             path.append((cur_r, cur_c))
-        time.sleep(0.01)
-        print_tab(path)
-
-
-if __name__ == "__main__":
-    random_walk_demo()
+#        time.sleep(0.01)
+    print_tab(path)
