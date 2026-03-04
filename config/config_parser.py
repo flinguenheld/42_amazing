@@ -1,5 +1,4 @@
 from .config_model import ConfigModel
-from typing import Tuple
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -11,7 +10,7 @@ class ConfigParser:
         self.__file_name = file_name
 
     @staticmethod
-    def __parse_line(line: str, dictionary: dict[str, str | Tuple[str, str]]):
+    def __parse_line(line: str, dictionary: dict[str, str | tuple[str, str]]):
         """
         - Split the line in two with =
         - Split again with , if necessary
@@ -26,7 +25,7 @@ class ConfigParser:
             else:
                 dictionary[key] = value.strip()
 
-    def parse_file(self) -> dict[str, int | bool | str | Tuple[int, int]]:
+    def parse_file(self) -> dict[str, int | bool | str | tuple[int, int]]:
         """
         - Open the config file
         - Parse each line to feed a model
