@@ -54,7 +54,7 @@ class MazeGenerator():
             new_r = cur_r + dir_r
             new_c = cur_c + dir_c
             if 0 <= new_r <= self.max[0] and 0 <= new_c <= self.max[1]:
-                valid_moves.append((dir_r, dir_c))
+                valid_moves.append((new_r, new_c))
 
         return valid_moves
 
@@ -65,9 +65,36 @@ class MazeGenerator():
         - Returns those who don't give to an in-path cell
                                                     -as a list
         """
-        return [i for i in valid_moves
-                if (self.path[-1][0] + i[0], self.path[-1][1] + i[1])
-                not in self.path]
+        return [i for i in valid_moves if (i[0], i[1]) not in self.path]
+
+    def other_trails(self) -> None:
+        """
+        - All trails after the first one
+        - Choose a random cell that is done already in the maze
+        - Walk from cell to maze
+        - Write path to maze.values
+        """
+        tab = [(r, c) for c in range(self.maze.nb_col)
+               for r in range(self.maze.nb_row)]
+        labyrinth = [(r, c) for (r, c) in tab
+                     if self.maze.values[r][c] != 0xF]
+        cur_r, cur_c = random.choice(
+                self.__not_in_path(
+                    [t for t in tab if t not in labyrinth]
+                    )
+                )
+        self.path = [(cur_r, cur_c)]
+        while self.path[-1] not in labyrinth:
+            valid_moves = self.__not_in_path(self.__get_valid_moves())
+
+            if len(valid_moves) == 0:
+                self.__go_back()
+            else:
+                choice = random.choice(valid_moves)
+                self.path.append((choice[0], choice[1]))
+        
+        self.__update_maze()
+
 
     def first_trail(self) -> None:
         """
@@ -82,13 +109,17 @@ class MazeGenerator():
                 self.__go_back()
             else:
                 choice = random.choice(valid_moves)
-                self.path.append((self.path[-1][0] + choice[0],
-                                  self.path[-1][1] + choice[1]))
+                self.path.append((choice[0], choice[1]))
 
         self.__update_maze()
 
     def __get_cell_value(self, i: int, r: int, c: int) -> int:
-
+        """
+        - Look at preceding cell
+        - Remove appropriate wall
+        - Look at next cell
+        - Remove appropriate wall
+        """
         value = 0xF
         
         if i > 0 + 1:
@@ -121,5 +152,3 @@ class MazeGenerator():
             self.maze.values[r][c] = self.__get_cell_value(i, r, c)
             
         print(self.maze)
-        for r, c in self.path:
-            self.maze.values[r][c] = 0xF
