@@ -8,4 +8,5 @@ dependencies = [
     "pydantic>=2.12.5",
     "pytest>=9.0.2",
     "termcolor>=3.3.0",
+    "textual>=8.0.2",
 ]
