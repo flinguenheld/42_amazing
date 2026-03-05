@@ -2,6 +2,7 @@ import sys
 from termcolor import cprint
 from controller import Controller
 from pydantic import ValidationError
+from maze_generator import MazeGenerator
 
 
 def usage() -> str:
@@ -16,6 +17,8 @@ def main():
 
         controller = Controller(sys.argv[1])
         controller.load_config()
+        generator = MazeGenerator(controller.maze)
+        generator.generate()
 
     except ValidationError as e:
         cprint("Config file error", file=sys.stderr, color="red")
