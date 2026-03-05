@@ -11,8 +11,7 @@ def main():
     controller = Controller(sys.argv[1])
     controller.init_maze()
     generator = MazeGenerator(controller.maze)
-    generator.first_trail()
-    generator.other_trails()
+    generator.generate()
 
 
 

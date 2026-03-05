@@ -152,3 +152,15 @@ class MazeGenerator():
             self.maze.values[r][c] = self.__get_cell_value(i, r, c)
             
         print(self.maze)
+
+    def generate(self) -> None:
+
+        self.first_trail()
+        while len([
+            (r, c) for c in range(self.maze.nb_col)
+            for r in range(self.maze.nb_row)
+            if self.maze.values[r][c] == 0xF
+            ]) > (self.maze.nb_row * self.maze.nb_col) / 10:
+
+            self.other_trails()
+
