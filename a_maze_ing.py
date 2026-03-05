@@ -1,6 +1,6 @@
 import sys
 from Controller import Controller
-from maze_generator import MazeGenerator
+from MazeGenerator import MazeGenerator
 
 
 def usage() -> str:

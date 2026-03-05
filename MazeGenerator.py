@@ -87,12 +87,39 @@ class MazeGenerator():
 
         self.__update_maze()
 
+    def __get_cell_value(self, i: int, r: int, c: int) -> int:
+
+        value = 0xF
+        
+        if i > 0 + 1:
+            if self.path[i - 1] == (r - 1, c):
+                value -= 1
+            elif self.path[i - 1] == (r + 1, c):
+                value -= 4
+            elif self.path[i - 1] == (r, c - 1):
+                value -= 8
+            elif self.path[i - 1] == (r, c + 1):
+                value -= 2
+
+        if i < len(self.path) - 1:
+            if self.path[i + 1] == (r - 1, c):
+                value -= 1
+            elif self.path[i + 1] == (r + 1, c):
+                value -= 4
+            elif self.path[i + 1] == (r, c - 1):
+                value -= 8
+            elif self.path[i + 1] == (r, c + 1):
+                value -= 2
+
+        return value
+
     def __update_maze(self) -> None:
         """
         - Writes data from self.path to self.maze.values
         """
-        for r, c in self.path[:-1]:
-            self.maze.values[r][c] = 0x0
+        for i, (r, c) in enumerate(self.path):
+            self.maze.values[r][c] = self.__get_cell_value(i, r, c)
+            
         print(self.maze)
         for r, c in self.path:
             self.maze.values[r][c] = 0xF
