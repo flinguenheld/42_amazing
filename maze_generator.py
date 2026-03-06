@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from Maze import Maze
+from maze import Maze
 import random
 import time
 
@@ -158,7 +158,6 @@ class MazeGenerator:
         time.sleep(0.05)
 
     def generate(self) -> None:
-
         self.first_trail()
         while (
             len(
