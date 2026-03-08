@@ -15,17 +15,30 @@ class TCell(Static):
         else:
             return "-"
 
-    # TODO: ADD COLOR LOGIC ##################################################
 
-    # TODO: REMOVE THAT ######################################################
-    def set_wall(self, value: int) -> None:
-        for css_class in self.classes:
-            self.remove_class(css_class)
+class TCellAngle(TCell):
+    def render(self) -> RenderResult:
+        if self.value == 0:
+            return " "
+        return "+"
 
-        self.add_class("wall")
 
-        match value:
-            case 0:
-                self.add_class("wall_top")
-            case 1:
-                self.add_class("wall_bottom")
+class TCellHorizontal(TCell):
+    def render(self) -> RenderResult:
+        if self.value == 0:
+            return " "
+        return "-"
+
+
+class TCellVertical(TCell):
+    def render(self) -> RenderResult:
+        if self.value == 0:
+            return " "
+        return "|"
+
+
+class TCellMiddle(TCell):
+    def render(self) -> RenderResult:
+        if self.value == 0:
+            return " "
+        return "o"
