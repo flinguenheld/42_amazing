@@ -15,10 +15,13 @@ def main():
         if len(sys.argv) != 2:
             raise FileNotFoundError
 
+        print(f"config: {sys.argv[1]}")
         controller = Controller(sys.argv[1])
         controller.load_config()
         generator = MazeGenerator(controller.maze)
         generator.generate()
+
+        controller.run_visualiser()
 
     except ValidationError as e:
         cprint("Config file error", file=sys.stderr, color="red")

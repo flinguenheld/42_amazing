@@ -1,0 +1,19 @@
+TCell {
+    width: 1;
+    height: 1;
+	margin: 0;
+    padding: 0;
+    # background: $panel;
+    # color: $text;
+	# box-sizing: content-box;
+}
+
+VerticalGroup {
+	# padding: 0;
+	# margin: 0;
+}
+
+HorizontalGroup {
+	# padding: 0;
+	# margin: 0;
+}

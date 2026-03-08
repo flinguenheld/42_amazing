@@ -154,8 +154,8 @@ class MazeGenerator:
         for i, (r, c) in enumerate(self.path):
             self.maze.values[r][c] = self.__get_cell_value(i, r, c)
 
-        print(self.maze)
-        time.sleep(0.05)
+        # print(self.maze)
+        # time.sleep(0.05)
 
     def generate(self) -> None:
         self.first_trail()
