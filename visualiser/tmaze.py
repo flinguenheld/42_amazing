@@ -1,8 +1,14 @@
-from typing import Tuple
+from typing import Tuple, List
 from textual.containers import VerticalGroup, HorizontalGroup
 from textual.widgets import Static
 from textual.app import App, ComposeResult, RenderResult
-from visualiser.tcell import TCell
+from visualiser.tcell import (
+    TCell,
+    TCellAngle,
+    TCellHorizontal,
+    TCellVertical,
+    TCellMiddle,
+)
 from maze import Maze
 
 
@@ -17,26 +23,42 @@ class TMaze(Static):
         self.__hexa_maze = maze
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1
-        self.cells = [
-            [TCell() for _ in range(0, self.__nb_col)]
-            for _ in range(0, self.__nb_row)
-        ]
+        self.__cells = self.__init_maze()
 
+        # self.update_cells()
+
+    # ########################################################## INIT MAZE ####
+    def __init_maze(self) -> List[List[TCell]]:
+
+        new_maze = []
+        for row in range(0, self.__nb_row):
+            new_maze.append([])
+            for col in range(0, self.__nb_col):
+                match (row % 2 == 0, col % 2 == 0):
+                    case (True, True):
+                        new_maze[row].append(TCellAngle())
+                    case (True, False):
+                        new_maze[row].append(TCellHorizontal())
+                    case (False, True):
+                        new_maze[row].append(TCellVertical())
+                    case (False, False):
+                        new_maze[row].append(TCellMiddle())
+        return new_maze
+
+    # ############################################################ COMPOSE ####
     def compose(self) -> ComposeResult:
         with VerticalGroup(id="maze_layout"):
-            for row in self.cells:
+            for row in self.__cells:
                 with HorizontalGroup():
                     for col in row:
                         yield col
 
-    # def __get_neighbours(self, row: int, col: int):
-
-    #     pass
-    def __up_neighbour(self, row: int, col: int, mask: int):
-        if row <= self.__nb_row and col <= self.__nb_col:
-            self.cells[row][col].value |= mask
-
+    # ########################################################### UP CELLS ####
     def update_cells(self) -> None:
+
+        print("Update cells with:")
+        print(self.__hexa_maze)
+
         # Loop in all hexa cells
         for rh, row_hexa in enumerate(self.__hexa_maze.values):
             for ch, cell_hexa in enumerate(row_hexa):
@@ -46,21 +68,33 @@ class TMaze(Static):
                 row = rh * 2
                 col = ch * 2
 
+                print(
+                    f"deal with this value: {cell_hexa:x} -> {cell_hexa:04b}"
+                )
+
                 #                                                    North West
-                self.__up_neighbour(row, col, cell_hexa & 0b1001)
+                self.__cells[row][col].up_value(cell_hexa & 0b1001)
                 #                                                         North
-                self.__up_neighbour(row, col + 1, cell_hexa & 0b0001)
+                self.__cells[row][col + 1].up_value(
+                    cell_hexa & 0b0001 == 0b0001
+                )
                 #                                                    North East
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b0011)
+                self.__cells[row][col + 2].up_value(cell_hexa & 0b0011)
                 #                                                          East
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b0010)
+                self.__cells[row + 1][col + 2].up_value(
+                    cell_hexa & 0b0010 == 0b0010
+                )
                 #                                                    South East
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b0110)
+                self.__cells[row + 2][col + 2].up_value(cell_hexa & 0b0110)
                 #                                                         South
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b0100)
+                self.__cells[row + 2][col + 1].up_value(
+                    cell_hexa & 0b0100 == 0b0100
+                )
                 #                                                    South West
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b1100)
+                self.__cells[row + 2][col].up_value(cell_hexa & 0b1100)
                 #                                                          West
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b1000)
+                self.__cells[row + 1][col].up_value(
+                    cell_hexa & 0b1000 == 0b1000
+                )
                 #                                                        Middle
-                self.__up_neighbour(row, col + 2, cell_hexa & 0b1111)
+                self.__cells[row + 1][col + 1].up_value(cell_hexa)

@@ -8,6 +8,23 @@ TCell {
 	# box-sizing: content-box;
 }
 
+TCellAngle {
+    width: 1;
+    height: 1;
+}
+TCellHorizontal {
+    width: 3;
+    height: 1;
+}
+TCellMiddle {
+    width: 3;
+    height: 1;
+}
+TCellVertical {
+    width: 1;
+    height: 1;
+}
+
 VerticalGroup {
 	# padding: 0;
 	# margin: 0;

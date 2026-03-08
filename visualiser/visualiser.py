@@ -21,8 +21,11 @@ class Visualiser(App):
         yield Footer()
         yield self.maze
 
-    def on_click(self) -> None:
+    def to_test(self):
         self.maze.update_cells()
+
+    # def on_click(self) -> None:
+    #     self.maze.update_cells()
 
     # #########################################################################
     # ############################################################ THEMES #####

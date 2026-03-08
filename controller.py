@@ -26,8 +26,10 @@ class Controller:
             exit=conf["exit"],
             perfect=conf["perfect"],
         )
-        # print(self.__maze)
+        print(self.maze)
+
         self.__visualiser = Visualiser(self.maze)
 
     def run_visualiser(self) -> None:
+        self.__visualiser.to_test()
         self.__visualiser.run()

@@ -18,9 +18,10 @@ def main():
         print(f"config: {sys.argv[1]}")
         controller = Controller(sys.argv[1])
         controller.load_config()
-        generator = MazeGenerator(controller.maze)
-        generator.generate()
+        # generator = MazeGenerator(controller.maze)
+        # generator.generate()
 
+        print(controller.maze)
         controller.run_visualiser()
 
     except ValidationError as e:
