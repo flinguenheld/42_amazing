@@ -1,7 +1,7 @@
-from typing import Tuple, List
+from typing import List
 from textual.containers import VerticalGroup, HorizontalGroup
 from textual.widgets import Static
-from textual.app import App, ComposeResult, RenderResult
+from textual.app import ComposeResult
 from visualiser.tcell import (
     TCell,
     TCellAngle,
@@ -10,6 +10,51 @@ from visualiser.tcell import (
     TCellMiddle,
 )
 from maze import Maze
+
+# General explanations :
+#
+# The maze is a List[List[int]]
+# Each maze's cell contains an int which represents the walls around itself.
+#
+# The first four bits are used as well:
+#
+#   LEFT   BOTTOM   RIGHT   TOP
+#    0       1       1       0
+#
+# This cell with the value 0x6 looks like that:
+#
+#             ┏━━━
+#             ┃
+#
+# --
+# Since we are in a terminal, we have to draw each cell with
+# a (or several) characters.
+# To do so, we create a new list named "cells" which contains all borders and
+# maze's cells.
+# Here for one maze's cell:
+# ┏━━━━┳━━━━━━━━┳━━━━┓
+# ┃ TL ┃  TOP   ┃ TR ┃
+# ┣━━━━╋━━━━━━━━╋━━━━┫
+# ┃ L  ┃  Cell  ┃ R  ┃
+# ┣━━━━╋━━━━━━━━╋━━━━┫
+# ┃ BL ┃  BOT   ┃ BR ┃
+# ┗━━━━┻━━━━━━━━┻━━━━┛
+#
+# Here for three:
+# ┏━━━━┳━━━━━━━━┳━━━━┳━━━━━━━━┳━━━━┳━━━━━━━━┳━━━━┓
+# ┃    ┃        ┃    ┃        ┃    ┃        ┃    ┃
+# ┣━━━━╋━━━━━━━━╋━━━━╋━━━━━━━━╋━━━━╋━━━━━━━━╋━━━━┫
+# ┃    ┃  HEXA  ┃    ┃  HEXA  ┃    ┃  HEXA  ┃    ┃
+# ┣━━━━╋━━━━━━━━╋━━━━╋━━━━━━━━╋━━━━╋━━━━━━━━╋━━━━┫
+# ┃    ┃        ┃    ┃        ┃    ┃        ┃    ┃
+# ┗━━━━┻━━━━━━━━┻━━━━┻━━━━━━━━┻━━━━┻━━━━━━━━┻━━━━┛
+#
+# Each cell of this list is a widget based on TCell
+# The purpose of TMaze is to update the values of these cell to tell
+# them if they have to display a wall and for the angles, to connect with
+# their neighbours or not.
+#
+# Once done, Textual will automaticaly render them.
 
 
 class TMaze(Static):
@@ -29,7 +74,6 @@ class TMaze(Static):
 
     # ########################################################## INIT MAZE ####
     def __init_maze(self) -> List[List[TCell]]:
-
         new_maze = []
         for row in range(0, self.__nb_row):
             new_maze.append([])
@@ -55,46 +99,54 @@ class TMaze(Static):
 
     # ########################################################### UP CELLS ####
     def update_cells(self) -> None:
-
-        print("Update cells with:")
-        print(self.__hexa_maze)
-
-        # Loop in all hexa cells
+        """
+        Loop in all hexa cells
+        And update all neighbours according to its value
+        """
         for rh, row_hexa in enumerate(self.__hexa_maze.values):
             for ch, cell_hexa in enumerate(row_hexa):
-                # And update neighbours according to its value
-
                 # Get the top left coordinate in self.cells
                 row = rh * 2
                 col = ch * 2
 
-                print(
-                    f"deal with this value: {cell_hexa:x} -> {cell_hexa:04b}"
+                #                                                     Top Left
+                self.__cells[row][col].up_value(
+                    bottom=cell_hexa & 0b1000 == 0b1000,
+                    right=cell_hexa & 0b0001 == 0b0001,
                 )
-
-                #                                                    North West
-                self.__cells[row][col].up_value(cell_hexa & 0b1001)
-                #                                                         North
+                #                                                          Top
                 self.__cells[row][col + 1].up_value(
-                    cell_hexa & 0b0001 == 0b0001
+                    active=cell_hexa & 0b0001 == 0b0001
                 )
-                #                                                    North East
-                self.__cells[row][col + 2].up_value(cell_hexa & 0b0011)
-                #                                                          East
+                #                                                    Top Right
+                self.__cells[row][col + 2].up_value(
+                    left=cell_hexa & 0b0001 == 0b0001,
+                    bottom=cell_hexa & 0b0010 == 0b0010,
+                )
+                #                                                        Right
                 self.__cells[row + 1][col + 2].up_value(
-                    cell_hexa & 0b0010 == 0b0010
+                    active=cell_hexa & 0b0010 == 0b0010
                 )
-                #                                                    South East
-                self.__cells[row + 2][col + 2].up_value(cell_hexa & 0b0110)
-                #                                                         South
+                #                                                 Bottom Right
+                self.__cells[row + 2][col + 2].up_value(
+                    left=cell_hexa & 0b0100 == 0b0100,
+                    top=cell_hexa & 0b0010 == 0b0010,
+                )
+                #                                                       Bottom
                 self.__cells[row + 2][col + 1].up_value(
-                    cell_hexa & 0b0100 == 0b0100
+                    active=cell_hexa & 0b0100 == 0b0100
                 )
-                #                                                    South West
-                self.__cells[row + 2][col].up_value(cell_hexa & 0b1100)
-                #                                                          West
+                #                                                  Bottom Left
+                self.__cells[row + 2][col].up_value(
+                    top=cell_hexa & 0b1000 == 0b1000,
+                    right=cell_hexa & 0b0100 == 0b0100,
+                )
+                #                                                         Left
                 self.__cells[row + 1][col].up_value(
-                    cell_hexa & 0b1000 == 0b1000
+                    active=cell_hexa & 0b1000 == 0b1000
                 )
-                #                                                        Middle
-                self.__cells[row + 1][col + 1].up_value(cell_hexa)
+                #                                                       Middle
+                self.__cells[row + 1][col + 1].up_value(
+                    # TODO: WHAT ?????????????????????????????????????????
+                    active=cell_hexa & 0b0001
+                )

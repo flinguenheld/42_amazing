@@ -10,7 +10,6 @@ def usage() -> str:
 
 
 def main():
-
     try:
         if len(sys.argv) != 2:
             raise FileNotFoundError
@@ -18,8 +17,8 @@ def main():
         print(f"config: {sys.argv[1]}")
         controller = Controller(sys.argv[1])
         controller.load_config()
-        # generator = MazeGenerator(controller.maze)
-        # generator.generate()
+        generator = MazeGenerator(controller.maze)
+        generator.generate()
 
         print(controller.maze)
         controller.run_visualiser()
