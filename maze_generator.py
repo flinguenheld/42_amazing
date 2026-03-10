@@ -1,173 +1,207 @@
-from typing import List, Tuple
 from maze import Maze
+from typing import List, Tuple, Set, Dict
 import random
-import time
+
+# TODO: Add '42' to the middle of the maze when possible
+# TODO: Write docstrings for all functions
+# TODO: Instantiate maze inside MazeGenerator and return it on generate()
 
 
 class MazeGenerator:
     def __init__(self, maze: Maze) -> None:
-        """
-        - Stores maze related values (width, height, start, end)
-        - Initializes self.path for self.first_trail
-        """
         self.maze = maze
-        self.max = (maze.nb_row - 1, maze.nb_col - 1)
-        self.begin = maze.start
-        self.goal = maze.end
-        self.path: List[Tuple[int, int]] = [self.begin]
-
-    def __go_back(self) -> None:
-        """
-        - Find first neighbouring in-path cell
-        - Erase path from index of found cell
-        """
-        moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        cur_r, cur_c = self.path[-1]
-        index = len(self.path) - 1
-
-        if 0 < cur_r < self.max[0] and 0 < cur_c < self.max[1]:
-            for r, c in moves:
-                if (cur_r + r, cur_c + c) in self.path:
-                    new_index = [
-                        k
-                        for k, v in enumerate(self.path)
-                        if v == (cur_r + r, cur_c + c)
-                    ][0]
-                    if new_index < index:
-                        index = new_index
-        else:
-            index = 2
-        if index < 2:
-            index = 2
-
-        self.path = self.path[:index]
-
-    def __get_valid_moves(self) -> List[Tuple[int, int]]:
-        """
-        - Try every move possible from cell
-        - Only keep those who are within bound
-        - Return those as list
-        """
-        cur_r, cur_c = self.path[-1]
-        moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        valid_moves = []
-        new_r, new_c = 0, 0
-
-        for dir_r, dir_c in moves:
-            new_r = cur_r + dir_r
-            new_c = cur_c + dir_c
-            if 0 <= new_r <= self.max[0] and 0 <= new_c <= self.max[1]:
-                valid_moves.append((new_r, new_c))
-
-        return valid_moves
-
-    def __not_in_path(
-        self, valid_moves: List[Tuple[int, int]]
-    ) -> List[Tuple[int, int]]:
-        """
-        - Takes list from self.get_valid_moves
-        - Returns those who don't give to an in-path cell
-                                                    -as a list
-        """
-        return [i for i in valid_moves if (i[0], i[1]) not in self.path]
-
-    def other_trails(self) -> None:
-        """
-        - All trails after the first one
-        - Choose a random cell that is done already in the maze
-        - Walk from cell to maze
-        - Write path to maze.values
-        """
-        tab = [
+        self.fp = self.FullPath()
+        self.not_visited = {
             (r, c)
-            for c in range(self.maze.nb_col)
             for r in range(self.maze.nb_row)
-        ]
-        labyrinth = [(r, c) for (r, c) in tab if self.maze.values[r][c] != 0xF]
-        cur_r, cur_c = random.choice(
-            self.__not_in_path([t for t in tab if t not in labyrinth])
-        )
-        self.path = [(cur_r, cur_c)]
-        while self.path[-1] not in labyrinth:
-            valid_moves = self.__not_in_path(self.__get_valid_moves())
+            for c in range(self.maze.nb_col)
+        }
+        # random.seed(4)
 
-            if len(valid_moves) == 0:
-                self.__go_back()
+    class Path:
+        """
+        - Simple class that stores path related info
+        - Allows to access actual path (list of coordinates) via index
+        """
+
+        def __init__(
+            self,
+            path_start: List[Tuple[int, int]],
+        ) -> None:
+            self.values: Dict[Tuple[int, int],  int] = dict()
+            self.path: List[Tuple[int, int]] = path_start
+            self.dirs: Dict[str, Tuple[int, int]] = {
+                "N": (-1, 0),
+                "E": (0, 1),
+                "S": (1, 0),
+                "W": (0, -1),
+            }
+            self.wall_map: Dict[Tuple[int, int], int] = {
+                self.dirs["N"]: 0b0001,
+                self.dirs["E"]: 0b0010,
+                self.dirs["S"]: 0b0100,
+                self.dirs["W"]: 0b1000,
+            }
+
+        def __getitem__(self, index) -> Tuple[int, int]:
+            return self.path[index]
+
+        def __len__(self) -> int:
+            return len(self.path)
+
+        def append(self, coor: Tuple[int, int]) -> None:
+            self.path.append(coor)
+
+        def go_back(self, target: Tuple[int, int]) -> None:
+            index = [k for k, v in enumerate(self.path) if v == target][0]
+            self.path = self.path[: index + 1]
+
+        def __get_cell_value(self, i: int) -> int:
+            value = 0xF
+            r, c = self.path[i]
+            neighbours = set()
+            # breakpoint()
+            if i > 0:
+                neighbours.add(self.path[i - 1])
+            if i < len(self.path) - 1:
+                neighbours.add(self.path[i + 1])
+
+            for ngbr_r, ngbr_c in neighbours:
+                offset = (ngbr_r - r, ngbr_c - c)
+                value = value & ~(self.wall_map.get(offset, 0))
+            return value
+
+        def __get_last_value(self, maze: Maze) -> None:
+            r, c = self.path[-1]
+            prev_r, prev_c = self.path[-2]
+            offset = (r - prev_r, c - prev_c)
+            maze.values[prev_r][prev_c] = maze.values[prev_r][prev_c] & ~(
+                self.wall_map.get(offset, 0)
+            )
+            offset = (prev_r - r, prev_c - c)
+            maze.values[r][c] = maze.values[r][c] & ~(
+                self.wall_map.get(offset, 0)
+            )
+
+        def write(self, maze: Maze, first_path: bool) -> None:
+            for i, (r, c) in enumerate(self.path[:-1]):
+                maze.values[r][c] = self.__get_cell_value(i)
+            if first_path is False:
+                self.__get_last_value(maze)
             else:
-                choice = random.choice(valid_moves)
-                self.path.append((choice[0], choice[1]))
+                r, c = self.path[-1]
+                maze.values[r][c] = self.__get_cell_value(len(self.path) - 1)
 
-        self.__update_maze()
-
-    def first_trail(self) -> None:
+    class FullPath:
         """
-        - First walk of the maze
-        - Goes from start to end / entry to exit
-        - Writes path to maze.values on return
+        - Class that stores both a list of Paths
+                    And a flattened set of said list
         """
-        while self.path[-1] != self.goal:
-            valid_moves = self.__not_in_path(self.__get_valid_moves())
 
-            if len(valid_moves) == 0:
-                self.__go_back()
-            else:
-                choice = random.choice(valid_moves)
-                self.path.append((choice[0], choice[1]))
+        def __init__(self) -> None:
+            self.full_path: List["MazeGenerator.Path"] = list()
+            self.full_path_flat: Set[Tuple[int, int]] = set()
 
-        self.__update_maze()
+        def __getitem__(self, index) -> "MazeGenerator.Path":
+            return self.full_path[index]
 
-    def __get_cell_value(self, i: int, r: int, c: int) -> int:
+        def __len__(self) -> int:
+            return len(self.full_path)
+
+        def append(self, path: "MazeGenerator.Path") -> List[Tuple[int, int]]:
+            self.full_path.append(path)
+            for coor in path:
+                self.full_path_flat.add(coor)
+            return path
+
+        def get_list(self) -> List["MazeGenerator.Path"]:
+            return self.full_path
+
+        def get_set(self) -> Set[Tuple[int, int]]:
+            return self.full_path_flat
+
+    class Walker:
         """
-        - Look at preceding cell
-        - Remove appropriate wall
-        - Look at next cell
-        - Remove appropriate wall
+        - Class that walks (LERW) from point a to point b in maze
+                                                    creating a path
         """
-        value = 0xF
 
-        if i > 0 + 1:
-            if self.path[i - 1] == (r - 1, c):
-                value -= 1
-            elif self.path[i - 1] == (r + 1, c):
-                value -= 4
-            elif self.path[i - 1] == (r, c - 1):
-                value -= 8
-            elif self.path[i - 1] == (r, c + 1):
-                value -= 2
+        def __init__(
+            self,
+            maze: Maze,
+            first_path: bool,
+            start: Tuple[int, int],
+            end: Set[Tuple[int, int]] | int,
+        ) -> None:
 
-        if i < len(self.path) - 1:
-            if self.path[i + 1] == (r - 1, c):
-                value -= 1
-            elif self.path[i + 1] == (r + 1, c):
-                value -= 4
-            elif self.path[i + 1] == (r, c - 1):
-                value -= 8
-            elif self.path[i + 1] == (r, c + 1):
-                value -= 2
+            self.maze = maze
+            self.path = MazeGenerator.Path([start])
+            self.first_path = first_path
+            self.end = {end} if isinstance(end, tuple) else end
+            self.max_r, self.max_c = maze.nb_row, maze.nb_col
+            self.cur_r, self.cur_c = self.path[-1]
 
-        return value
+        def walk(self) -> List[Tuple[int, int]]:
+            """
+            - Randomly choose a possible move from last path entry
+            - Check for loop/blocked
+            - Erase loop if so
+            - Else append move to path
+            - Write corresponding values into maze
+            - Return Path object
+            """
+            while (self.cur_r, self.cur_c) not in self.end:
+                r, c = random.choice(self.__get_valid_moves())
+                target = (self.cur_r + r, self.cur_c + c)
+                if target in self.path:
+                    self.path.go_back(target)
+                else:
+                    self.path.append(target)
+                self.cur_r, self.cur_c = self.path[-1]
+            self.path.write(self.maze, self.first_path)
+            return self.path
 
-    def __update_maze(self) -> None:
-        """
-        - Writes data from self.path to self.maze.values
-        """
-        for i, (r, c) in enumerate(self.path):
-            self.maze.values[r][c] = self.__get_cell_value(i, r, c)
-
-        # print(self.maze)
-        # time.sleep(0.05)
+        def __get_valid_moves(
+            self,
+        ) -> List[Tuple[int, int]]:
+            """
+            - Try every move and check result is within bounds
+            - Return validated moves
+            """
+            moves = ((0, 1), (0, -1), (1, 0), (-1, 0))
+            valid_moves: List[Tuple[int, int]] = []
+            for r, c in moves:
+                new_r, new_c = (self.cur_r + r, self.cur_c + c)
+                if (
+                    0 <= new_r < self.max_r
+                    and 0 <= new_c < self.max_c
+                    and (
+                        len(self.path) == 1 or (new_r, new_c) != self.path[-2]
+                    )
+                ):
+                    valid_moves.append((r, c))
+            return valid_moves
 
     def generate(self) -> None:
-        self.first_trail()
-        while (
-            len(
-                [
-                    (r, c)
-                    for c in range(self.maze.nb_col)
-                    for r in range(self.maze.nb_row)
-                    if self.maze.values[r][c] == 0xF
-                ]
-            )
-            > (self.maze.nb_row * self.maze.nb_col) / 10
-        ):
-            self.other_trails()
+        walker = self.Walker(self.maze, True, self.maze.start, self.maze.end)
+        for coor in self.fp.append(walker.walk()):
+            self.not_visited.discard(coor)
+        self.print_maze()
+
+        while len(self.not_visited) != 0:
+            choice = random.choice(list(self.not_visited))
+            walker = self.Walker(self.maze, False, choice, self.fp.get_set())
+            for coor in self.fp.append(walker.walk()):
+                self.not_visited.discard(coor)
+
+# TESTING RELATED CODE
+# CALL TO self.print_maze() AND DEF
+
+        self.print_maze()
+
+    def print_maze(self) -> None:
+        for line in self.maze.values:
+            for char in line:
+                print(f"{char:x}" if char != 0xF else "_", end="")
+            print()
+        print("\n\n")
