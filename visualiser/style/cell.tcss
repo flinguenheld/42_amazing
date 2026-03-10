@@ -16,6 +16,7 @@ TCellHorizontal {
 TCellMiddle {
     width: 3;
     height: 1;
+    background: purple;
 }
 TCellVertical {
     width: 1;

@@ -18,6 +18,9 @@ def main():
         controller = Controller(sys.argv[1])
         controller.load_config()
 
+        generator = MazeGenerator(controller.maze)
+        generator.generate()
+
         print(controller.maze)
         controller.run_visualiser()
 
@@ -34,9 +37,6 @@ def main():
     except Exception as e:
         cprint(e, file=sys.stderr, color="red")
         cprint(usage(), file=sys.stderr, color="yellow")
-
-    generator = MazeGenerator(controller.maze)
-    generator.generate()
 
 
 if __name__ == "__main__":

@@ -6,29 +6,46 @@ from textual.app import App, ComposeResult
 from visualiser.tcell import TCell
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
+from visualiser.borders import Borders
 
 
 class Visualiser(App):
     CSS_PATH = ["style/main.tcss", "style/cell.tcss"]
-    BINDINGS = [("t", "next_theme", "Next theme")]
+    BINDINGS = [
+        ("t", "next_theme", "Next theme"),
+        ("b", "border", "Next border"),
+    ]
 
     def __init__(self, maze: Maze) -> None:
         super().__init__()
-        self.maze = TMaze(maze)
+        self.__borders = Borders()
+        self.__maze = TMaze(maze, self.__borders)
         self.__title = TTitle()
 
     def compose(self) -> ComposeResult:
         yield Header()
         with VerticalGroup(id="main_layout"):
             yield self.__title
-            yield self.maze
+            yield self.__maze
         yield Footer()
 
     def to_test(self):
-        self.maze.update_cells()
+        self.__maze.update_cells()
 
-    # #########################################################################
-    # ############################################################ THEMES #####
+    def reload(self):
+        self.__maze.update_cells()
+        self.__maze.refresh()
+
+    # ########################################################################
+    # ########################################################## BORDERS #####
+    def action_border(self) -> None:
+        if self.__borders.get_current() == "simple":
+            self.__borders.set_current("double")
+        else:
+            self.__borders.set_current("simple")
+
+    # ########################################################################
+    # ########################################################### THEMES #####
     def on_mount(self) -> None:
         self.action_next_theme()
 

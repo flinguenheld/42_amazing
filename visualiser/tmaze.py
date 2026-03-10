@@ -10,6 +10,7 @@ from visualiser.tcell import (
     TCellMiddle,
 )
 from maze import Maze
+from visualiser.borders import Borders
 
 # General explanations :
 #
@@ -62,14 +63,14 @@ from maze import Maze
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀█░▄▀░░█▀▀
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀░▀░▀▀▀░▀▀▀
 class TMaze(Static):
-    # CSS_PATH = "style/cell.tcss"
-    def __init__(self, maze: Maze) -> None:
+    def __init__(self, maze: Maze, borders: Borders) -> None:
         """
         Create a grid of cells
         """
 
         super().__init__()
         self.__hexa_maze = maze
+        self.__borders = borders
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1
         self.__cells = self.__init_cells()
@@ -82,13 +83,13 @@ class TMaze(Static):
             for col in range(0, self.__nb_col):
                 match (row % 2 == 0, col % 2 == 0):
                     case (True, True):
-                        new_maze[row].append(TCellAngle())
+                        new_maze[row].append(TCellAngle(self.__borders))
                     case (True, False):
-                        new_maze[row].append(TCellHorizontal())
+                        new_maze[row].append(TCellHorizontal(self.__borders))
                     case (False, True):
-                        new_maze[row].append(TCellVertical())
+                        new_maze[row].append(TCellVertical(self.__borders))
                     case (False, False):
-                        new_maze[row].append(TCellMiddle())
+                        new_maze[row].append(TCellMiddle(self.__borders))
         return new_maze
 
     # ########################################################### COMPOSE ####
