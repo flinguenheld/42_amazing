@@ -2,7 +2,7 @@ import sys
 from termcolor import cprint
 from controller import Controller
 from pydantic import ValidationError
-from maze_generator import MazeGenerator
+from maze_generator.maze_generator import MazeGenerator
 
 
 def usage() -> str:
@@ -17,11 +17,11 @@ def main():
         print(f"config: {sys.argv[1]}")
         controller = Controller(sys.argv[1])
         controller.load_config()
+        print(controller.maze)
 
         generator = MazeGenerator(controller.maze)
         generator.generate()
 
-        print(controller.maze)
         controller.run_visualiser()
 
     except ValidationError as e:
