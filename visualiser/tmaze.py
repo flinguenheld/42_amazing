@@ -91,7 +91,7 @@ class TMaze(Static):
                         new_maze[row].append(TCellMiddle())
         return new_maze
 
-    # ############################################################ COMPOSE ####
+    # ########################################################### COMPOSE ####
     def compose(self) -> ComposeResult:
         with VerticalGroup():
             for row in self.__cells:
@@ -99,7 +99,7 @@ class TMaze(Static):
                     for col in row:
                         yield col
 
-    # ########################################################### UP CELLS ####
+    # ########################################################## UP CELLS ####
     def update_cells(self) -> None:
         """
         Loop in all hexa cells
