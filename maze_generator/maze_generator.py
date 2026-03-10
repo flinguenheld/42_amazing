@@ -1,0 +1,90 @@
+from maze import Maze
+from maze_generator.walker import Walker
+from maze_generator.path import Path, FullPath
+
+import random
+
+# TODO: Add '42' to the middle of the maze when possible
+# TODO: Write docstrings for all functions
+# TODO: Instantiate maze inside MazeGenerator and return it on generate()
+
+
+class MazeGenerator:
+    def __init__(self, maze: Maze) -> None:
+        self.maze = maze
+        self.fp = FullPath()
+        self.not_visited = {
+            (r, c)
+            for r in range(self.maze.nb_row)
+            for c in range(self.maze.nb_col)
+        }
+        # random.seed(4)
+
+    def destroy_walls(self) -> None:
+        for cur_r, cur_c in self.fp.get_set():
+            if not (
+                0 > cur_r > self.maze.nb_row - 2
+                and 0 > cur_c > self.maze.nb_col - 2
+                and self.maze.values[cur_r][cur_c] != 0
+            ):
+                pass
+            try:
+                if random.randint(0, 1) != 1:
+                    raise ValueError
+                for y in range(-1, 1):
+                    for x in range(-1, 1):
+                        if (
+                            0 >= cur_r - y >= self.maze.nb_row - 1
+                            and 0 >= cur_c - x >= self.maze.nb_col - 1
+                            and (
+                                self.maze.values[cur_r - y][cur_c - x]
+                                == 0b0000
+                            )
+                        ):
+                            raise ValueError
+                p = Path((0, 0))
+                neighbours = [
+                    (cur_r - r, cur_c - c) for r, c in p.WALL_MAP.keys()
+                ]
+                value = self.maze.values[cur_r][cur_c]
+                ngbr_r, ngbr_c = random.choice(
+                    [i for i in neighbours if i in self.fp.get_set()]
+                )
+                offset = (ngbr_r - cur_r, ngbr_c - cur_c)
+                if value & ~(p.WALL_MAP.get(offset, 0)) > 0:
+                    self.maze.values[cur_r][cur_c] = value & ~(
+                        p.WALL_MAP.get(offset, 0)
+                    )
+                value = self.maze.values[ngbr_r][ngbr_c]
+                offset = (cur_r - ngbr_r, cur_c - ngbr_c)
+                if value & ~(p.WALL_MAP.get(offset, 0)) > 0:
+                    self.maze.values[ngbr_r][ngbr_c] = value & ~(
+                        p.WALL_MAP.get(offset, 0)
+                    )
+            except ValueError:
+                pass
+
+    def generate(self) -> None:
+        walker = Walker(self.maze, True, self.maze.start, self.maze.end)
+        for coor in self.fp.append(walker.walk()):
+            self.not_visited.discard(coor)
+        self.print_maze()
+
+        while len(self.not_visited) != 0:
+            choice = random.choice(list(self.not_visited))
+            walker = Walker(self.maze, False, choice, self.fp.get_set())
+            for coor in self.fp.append(walker.walk()):
+                self.not_visited.discard(coor)
+            self.print_maze()
+        if self.maze.perfect is False:
+            self.destroy_walls()
+
+        # TESTING RELATED CODE
+        # CALL TO self.print_maze() AND DEF
+
+    def print_maze(self) -> None:
+        for line in self.maze.values:
+            for char in line:
+                print(f"{char:x}" if char != 0xF else "_", end="")
+            print()
+        print("\n\n")
