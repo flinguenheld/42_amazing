@@ -1,5 +1,5 @@
 from typing import List
-from textual.containers import VerticalGroup, HorizontalGroup
+from textual.containers import VerticalGroup, HorizontalGroup, Center
 from textual.widgets import Static
 from textual.app import ComposeResult
 from visualiser.tcell import (
@@ -57,6 +57,10 @@ from maze import Maze
 # Once done, Textual will automaticaly render them.
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▄█░█▀█░▀▀█░█▀▀
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀█░▄▀░░█▀▀
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀░▀░▀▀▀░▀▀▀
 class TMaze(Static):
     # CSS_PATH = "style/cell.tcss"
     def __init__(self, maze: Maze) -> None:
@@ -68,12 +72,10 @@ class TMaze(Static):
         self.__hexa_maze = maze
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1
-        self.__cells = self.__init_maze()
+        self.__cells = self.__init_cells()
 
-        # self.update_cells()
-
-    # ########################################################## INIT MAZE ####
-    def __init_maze(self) -> List[List[TCell]]:
+    # ######################################################## INIT CELLS ####
+    def __init_cells(self) -> List[List[TCell]]:
         new_maze = []
         for row in range(0, self.__nb_row):
             new_maze.append([])
@@ -91,9 +93,9 @@ class TMaze(Static):
 
     # ############################################################ COMPOSE ####
     def compose(self) -> ComposeResult:
-        with VerticalGroup(id="maze_layout"):
+        with VerticalGroup():
             for row in self.__cells:
-                with HorizontalGroup():
+                with HorizontalGroup(classes="col_layout"):
                     for col in row:
                         yield col
 

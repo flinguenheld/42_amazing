@@ -1,0 +1,21 @@
+Screen {
+    align: center middle;
+	border: heavy red;
+}
+
+#main_layout {
+    # align: center middle;
+    content-align: center middle;
+}
+
+#title {
+    width: 100%;
+    content-align: center middle;
+    margin-bottom: 2;
+}
+
+.centered {
+    width: 100%;
+    content-align: center middle;
+}
+

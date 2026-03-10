@@ -3,9 +3,6 @@ TCell {
     height: 1;
 	margin: 0;
     padding: 0;
-    # background: $panel;
-    # color: $text;
-	# box-sizing: content-box;
 }
 
 TCellAngle {
@@ -25,12 +22,11 @@ TCellVertical {
     height: 1;
 }
 
-VerticalGroup {
-	# padding: 0;
-	# margin: 0;
+#maze_layout {
+    padding: 0;
+    margin: 0;
 }
 
-HorizontalGroup {
-	# padding: 0;
-	# margin: 0;
+.col_layout {
+    align: center middle;
 }

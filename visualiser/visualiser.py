@@ -1,31 +1,31 @@
+from textual.containers import VerticalGroup, Center, Right
 from maze import Maze
-from textual.widgets import Footer, Header, Digits
+from textual.widgets import Footer, Header, Digits, Label
 from textual.app import App, ComposeResult
 
 from visualiser.tcell import TCell
 from visualiser.tmaze import TMaze
+from visualiser.ttitle import TTitle
 
 
 class Visualiser(App):
-    # CSS_PATH = "style_tuto.tcss"
-    CSS_PATH = "style/cell.tcss"
-
+    CSS_PATH = ["style/main.tcss", "style/cell.tcss"]
     BINDINGS = [("t", "next_theme", "Next theme")]
 
     def __init__(self, maze: Maze) -> None:
         super().__init__()
         self.maze = TMaze(maze)
+        self.__title = TTitle()
 
     def compose(self) -> ComposeResult:
         yield Header()
+        with VerticalGroup(id="main_layout"):
+            yield self.__title
+            yield self.maze
         yield Footer()
-        yield self.maze
 
     def to_test(self):
         self.maze.update_cells()
-
-    # def on_click(self) -> None:
-    #     self.maze.update_cells()
 
     # #########################################################################
     # ############################################################ THEMES #####
