@@ -1,6 +1,6 @@
 from maze import Maze
 from maze_generator.walker import Walker
-from maze_generator.path import Path, FullPath
+from maze_generator.path import FullPath
 
 import random
 
@@ -17,6 +17,7 @@ class MazeGenerator:
             (r, c)
             for r in range(self.maze.nb_row)
             for c in range(self.maze.nb_col)
+            if (r, c) not in self.maze.cells_42
         }
         # random.seed(4)
 
@@ -36,10 +37,10 @@ class MazeGenerator:
                         if (
                             0 >= cur_r - y >= self.maze.nb_row - 1
                             and 0 >= cur_c - x >= self.maze.nb_col - 1
-                            and (
-                                self.maze.values[cur_r - y][cur_c - x]
-                                == 0b0000
-                            )
+                            and (cur_r - y, cur_c - x)
+                            not in self.maze.cells_42
+                            and self.maze.values[cur_r - y][cur_c - x]
+                            == 0b0000
                         ):
                             raise ValueError
                 neighbours = [
@@ -67,7 +68,11 @@ class MazeGenerator:
             self.print_maze()
         if self.maze.perfect is False:
             self.destroy_walls()
-        print(self.maze.perfect)
+        for cell in self.fp.get_set():
+            if cell in self.maze.cells_42:
+                self.maze.values[cell[0]][cell[1]] = 0xF
+        self.print_maze()
+        print(self.maze.cells_42)
 
         # TESTING RELATED CODE
         # CALL TO self.print_maze() AND DEF

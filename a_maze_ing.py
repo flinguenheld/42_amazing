@@ -19,7 +19,6 @@ def main():
         controller.load_config()
 
         print(controller.maze)
-        controller.maze.perfect = False
         generator = MazeGenerator(controller.maze)
         generator.generate()
         controller.run_visualiser()
