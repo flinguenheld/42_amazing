@@ -69,6 +69,7 @@ class Walker:
                 0 <= new_r < self.max_r
                 and 0 <= new_c < self.max_c
                 and (len(self.path) == 1 or (new_r, new_c) != self.path[-2])
+                and (new_r, new_c) not in self.maze.cells_42
             ):
                 valid_moves.append((r, c))
         return valid_moves

@@ -29,6 +29,34 @@ class Maze:
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)
         ]
+        mid_r, mid_c = (int((self.nb_row - 1) / 2), int((self.nb_col - 1) / 2))
+        if nb_col >= 10 and nb_row >= 10:
+            self.cells_42 = {
+                # 4
+                (mid_r - 2, mid_c - 3),
+                (mid_r - 1, mid_c - 3),
+                (mid_r, mid_c - 3),
+                (mid_r, mid_c - 2),
+                (mid_r, mid_c - 1),
+                (mid_r + 1, mid_c - 1),
+                (mid_r + 2, mid_c - 1),
+                # 2
+                (mid_r - 2, mid_c + 1),
+                (mid_r - 2, mid_c + 2),
+                (mid_r - 2, mid_c + 3),
+                (mid_r - 1, mid_c + 3),
+                (mid_r, mid_c + 3),
+                (mid_r, mid_c + 2),
+                (mid_r, mid_c + 1),
+                (mid_r + 1, mid_c + 1),
+                (mid_r + 2, mid_c + 1),
+                (mid_r + 2, mid_c + 2),
+                (mid_r + 2, mid_c + 3),
+            }
+            self.start = (mid_r - 1, mid_c + 2)
+            self.end = (mid_r + 1, mid_c + 2)
+        else:
+            self.cells_42 = set()
         # self.TEST_MAZE()
 
     def break_wall(
