@@ -1,9 +1,10 @@
-from textual.containers import VerticalGroup, Center, Right
+from textual.containers import (
+    VerticalGroup,
+)
 from maze_generator.maze import Maze
-from textual.widgets import Footer, Header, Digits, Label
+from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
 
-from visualiser.tcell import TCell
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.borders import Borders
@@ -14,7 +15,7 @@ from visualiser.borders import Borders
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
 class Visualiser(App):
-    CSS_PATH = ["style/main.tcss", "style/cell.tcss"]
+    CSS_PATH = ["style/main.tcss"]
     BINDINGS = [
         ("t", "next_theme", "Next theme"),
         ("b", "border", "Next border"),

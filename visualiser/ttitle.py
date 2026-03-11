@@ -1,5 +1,5 @@
-from textual.app import ComposeResult
-from textual.widgets import Label, Static
+from textual.app import RenderResult
+from textual.widgets import Static
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -9,14 +9,11 @@ from textual.widgets import Label, Static
 class TTitle(Static):
     def __init__(self) -> None:
         super().__init__()
-        self.__title = Label(
-            """
+        self.__to_print = """
 ▄████▄       ██▄  ▄██ ▄████▄ ██████ ██████       ██ ███  ██  ▄████  
 ██▄▄██       ██ ▀▀ ██ ██▄▄██  ▄▄▀▀  ██▄▄         ██ ██ ▀▄██ ██  ▄▄▄ 
 ██  ██ ▄▄▄▄▄ ██    ██ ██  ██ ██████ ██▄▄▄▄ ▄▄▄▄▄ ██ ██   ██  ▀███▀  
-            """,
-            id="title",
-        )
+            """
 
-    def compose(self) -> ComposeResult:
-        yield self.__title
+    def render(self) -> RenderResult:
+        return self.__to_print

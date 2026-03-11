@@ -1,7 +1,7 @@
+from textual.reactive import reactive
 from typing import List
-from textual.containers import VerticalGroup, HorizontalGroup, Center
 from textual.widgets import Static
-from textual.app import ComposeResult
+from textual.app import RenderResult
 from visualiser.tcell import (
     TCell,
     TCellAngle,
@@ -63,6 +63,8 @@ from visualiser.borders import Borders
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀█░▄▀░░█▀▀
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀░▀░▀▀▀░▀▀▀
 class TMaze(Static):
+    __to_print = reactive("")
+
     def __init__(self, maze: Maze, borders: Borders) -> None:
         """
         Create the grid of cells
@@ -74,6 +76,7 @@ class TMaze(Static):
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1
         self.__cells = self.__init_cells()
+        self.refresh_maze()
 
     # ######################################################## INIT CELLS ####
     def __init_cells(self) -> List[List[TCell]]:
@@ -102,19 +105,22 @@ class TMaze(Static):
                         new_maze[row].append(TCellMiddle(self.__borders))
         return new_maze
 
-    # ########################################################### COMPOSE ####
-    def compose(self) -> ComposeResult:
-        with VerticalGroup():
-            for row in self.__cells:
-                with HorizontalGroup(classes="col_layout"):
-                    for col in row:
-                        yield col
+    # ############################################################ RENDER ####
+    def render(self) -> RenderResult:
+        return self.__to_print
+
+    # ###################################################### REFRESH MAZE ####
+    def refresh_maze(self) -> None:
+        self.__to_print = ""
+        for row in self.__cells:
+            self.__to_print += "".join(str(cell) for cell in row) + "\n"
 
     # ##################################################### REFRESH CELLS ####
     def refresh_cells(self) -> None:
         for row in self.__cells:
             for cell in row:
                 cell.refresh_cell()
+        self.refresh_maze()
 
     # #################################################### UP CELLS STATE ####
     def update_cells_state(self) -> None:
@@ -124,45 +130,48 @@ class TMaze(Static):
         """
         for rh, row_hexa in enumerate(self.__hexa_maze.values):
             for ch, cell_hexa in enumerate(row_hexa):
+                # Who is active ?
+                top = cell_hexa & 0b0001 == 0b0001
+                left = cell_hexa & 0b1000 == 0b1000
+                right = cell_hexa & 0b0010 == 0b0010
+                bottom = cell_hexa & 0b0100 == 0b0100
+
                 # Get the top left coordinate in self.cells
                 row = rh * 2
                 col = ch * 2
 
-                #                                                     Top Left
+                # ################################################### Top Left
                 self.__cells[row][col].up_state(
-                    bottom=cell_hexa & 0b1000 == 0b1000,
-                    right=cell_hexa & 0b0001 == 0b0001,
+                    bottom=left,
+                    right=top,
                 )
-                #                                                          Top
-                self.__cells[row][col + 1].up_state(
-                    active=cell_hexa & 0b0001 == 0b0001
-                )
-                #                                                    Top Right
+
+                # ######################################################## Top
+                self.__cells[row][col + 1].up_state(active=top)
+
+                # ################################################## Top Right
                 self.__cells[row][col + 2].up_state(
-                    left=cell_hexa & 0b0001 == 0b0001,
-                    bottom=cell_hexa & 0b0010 == 0b0010,
+                    left=top,
+                    bottom=right,
                 )
-                #                                                        Right
-                self.__cells[row + 1][col + 2].up_state(
-                    active=cell_hexa & 0b0010 == 0b0010
-                )
-                #                                                 Bottom Right
+
+                # ###################################################### Right
+                self.__cells[row + 1][col + 2].up_state(active=right)
+
+                # ############################################### Bottom Right
                 self.__cells[row + 2][col + 2].up_state(
-                    left=cell_hexa & 0b0100 == 0b0100,
-                    top=cell_hexa & 0b0010 == 0b0010,
+                    left=bottom,
+                    top=right,
                 )
-                #                                                       Bottom
-                self.__cells[row + 2][col + 1].up_state(
-                    active=cell_hexa & 0b0100 == 0b0100
-                )
-                #                                                  Bottom Left
+
+                # ##################################################### Bottom
+                self.__cells[row + 2][col + 1].up_state(active=bottom)
+
+                # ################################################ Bottom Left
                 self.__cells[row + 2][col].up_state(
-                    top=cell_hexa & 0b1000 == 0b1000,
-                    right=cell_hexa & 0b0100 == 0b0100,
+                    right=bottom,
+                    top=left,
                 )
-                #                                                         Left
-                self.__cells[row + 1][col].up_state(
-                    active=cell_hexa & 0b1000 == 0b1000
-                )
-                #                                                       Middle
-                self.__cells[row + 1][col + 1].up_state(value=cell_hexa)
+
+                # ####################################################### Left
+                self.__cells[row + 1][col].up_state(active=left)
