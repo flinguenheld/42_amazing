@@ -1,7 +1,9 @@
-from maze import Maze
+from maze_generator.maze import Maze
+from maze_generator.config_model import ConfigModel
 from maze_generator.walker import Walker
 from maze_generator.path import FullPath
 
+from typing import Dict
 import random
 
 # TODO: Add '42' to the middle of the maze when possible
@@ -10,8 +12,17 @@ import random
 
 
 class MazeGenerator:
-    def __init__(self, maze: Maze) -> None:
-        self.maze = maze
+    def __init__(self, cfg: Dict) -> None:
+        parser = ConfigModel.model_validate(cfg)
+        self.config = ConfigModel.model_dump(parser)
+        self.maze = Maze(
+            self.config["nb_row"],
+            self.config["nb_col"],
+            self.config["entry"],
+            self.config["exit"],
+            self.config["perfect"],
+        )
+
         self.fp = FullPath()
         self.not_visited = {
             (r, c)
@@ -72,7 +83,7 @@ class MazeGenerator:
             if cell in self.maze.cells_42:
                 self.maze.values[cell[0]][cell[1]] = 0xF
         self.print_maze()
-        print(self.maze.cells_42)
+        return self.maze
 
         # TESTING RELATED CODE
         # CALL TO self.print_maze() AND DEF

@@ -9,7 +9,7 @@ from visualiser.tcell import (
     TCellVertical,
     TCellMiddle,
 )
-from maze import Maze
+from maze_generator.maze import Maze
 from visualiser.borders import Borders
 
 # General explanations :

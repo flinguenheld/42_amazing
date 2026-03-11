@@ -1,5 +1,5 @@
 from textual.containers import VerticalGroup, Center, Right
-from maze import Maze
+from maze_generator.maze import Maze
 from textual.widgets import Footer, Header, Digits, Label
 from textual.app import App, ComposeResult
 

@@ -1,6 +1,3 @@
-from .config_model import ConfigModel
-
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀░░░█▀█░█▀█░█▀▄░█▀▀░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░░█░█░█░█░█▀▀░░█░░█░█░░░█▀▀░█▀█░█▀▄░▀▀█░█▀▀░█▀▄
@@ -38,5 +35,4 @@ class ConfigParser:
             for line in f.readlines():
                 ConfigParser.__parse_line(line, parsed_values)
 
-        parser = ConfigModel.model_validate(parsed_values)
-        return ConfigModel.model_dump(parser)
+        return parsed_values
