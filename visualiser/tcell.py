@@ -69,16 +69,17 @@ class TCellAngle(TCell):
                 self._to_print = self._borders.get_char(10)
 
             # Extend horizontal walls in the angle
+            # TODO: Keep the 12 / 13 / 14 / 15 ???
             case (False, True, False, False):
-                self._to_print = self._borders.get_char(0)
+                self._to_print = self._borders.get_char(12)
             case (False, False, False, True):
-                self._to_print = self._borders.get_char(0)
+                self._to_print = self._borders.get_char(13)
 
             # Extend vertical walls in the angle
             case (True, False, False, False):
-                self._to_print = self._borders.get_char(1)
+                self._to_print = self._borders.get_char(14)
             case (False, False, True, False):
-                self._to_print = self._borders.get_char(1)
+                self._to_print = self._borders.get_char(15)
 
             case _:
                 self._to_print = self._borders.get_char(11)

@@ -40,13 +40,7 @@ class Visualiser(App):
     # ########################################################################
     # ########################################################## BORDERS #####
     def action_border(self) -> None:
-        if self.__borders.get_current() == "simple":
-            self.__borders.set_current("double")
-        elif self.__borders.get_current() == "double":
-            self.__borders.set_current("block")
-        else:
-            self.__borders.set_current("simple")
-
+        self.__borders.next()
         self.refresh_maze()
 
     # ########################################################################
