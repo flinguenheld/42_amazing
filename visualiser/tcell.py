@@ -1,9 +1,4 @@
-from textual.reactive import reactive
-from typing import List
 from abc import abstractmethod
-from textual.widgets import Static
-from textual.app import RenderResult
-
 from visualiser.borders import Borders
 
 
@@ -11,12 +6,10 @@ from visualiser.borders import Borders
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▀▀░█▀▀░█░░░█░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░░░█▀▀░█░░░█░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀▀▀
-class TCell(Static):
-    _to_print = reactive("")
-
+class TCell:
     def __init__(self, borders: Borders) -> None:
-        super().__init__()
         self._borders = borders
+        self._to_print = ""
 
     @abstractmethod
     def refresh_cell(self) -> None:
@@ -25,6 +18,9 @@ class TCell(Static):
     @abstractmethod
     def up_state(self, **values: bool) -> None:
         pass
+
+    def __str__(self) -> str:
+        return self._to_print
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -38,9 +34,6 @@ class TCellAngle(TCell):
         self.right = False
         self.bottom = False
         self.left = False
-
-    def render(self) -> RenderResult:
-        return self._to_print
 
     # ###################################################### REFRESH CELL ####
     def refresh_cell(self) -> None:
@@ -105,11 +98,6 @@ class TCellHorizontal(TCell):
         super().__init__(borders)
         self.active = False
 
-    def render(self) -> RenderResult:
-        if self.active:
-            return self._borders.get_char(0) * 3
-        return self._borders.get_char(11) * 3
-
     # ###################################################### REFRESH CELL ####
     def refresh_cell(self) -> None:
         if self.active:
@@ -131,9 +119,6 @@ class TCellVertical(TCell):
     def __init__(self, borders: Borders) -> None:
         super().__init__(borders)
         self.active = False
-
-    def render(self) -> RenderResult:
-        return self._to_print
 
     # ###################################################### REFRESH CELL ####
     def refresh_cell(self) -> None:
@@ -157,16 +142,9 @@ class TCellMiddle(TCell):
         super().__init__(borders)
         self.value = 0
 
-    def render(self) -> RenderResult:
-        return self._to_print
-
     # ###################################################### REFRESH CELL ####
     def refresh_cell(self) -> None:
-        self._to_print = "   "
-        if self.value >= 0xF:
-            self.add_class("cell_closed")
-        else:
-            self.remove_class("cell_closed")
+        self._to_print = self._borders.get_char(11) * 3
 
     # ########################################################## UP STATE ####
     def up_state(self, **values: bool) -> None:

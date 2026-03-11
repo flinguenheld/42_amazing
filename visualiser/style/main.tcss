@@ -5,17 +5,29 @@ Screen {
 
 #main_layout {
     # align: center middle;
+    # content-align: center middle;
+    border: heavy grey;
+    # width: auto;
+    # height: auto;
+}
+
+#maze-container {
+    align: center middle;
+}
+
+TMaze {
+    # width: 100%;
     content-align: center middle;
 }
 
-#title {
-    width: 100%;
+TTitle {
+    # width: 100%;
     content-align: center middle;
     margin-bottom: 2;
 }
 
 .centered {
-    width: 100%;
+    # width: 100%;
     content-align: center middle;
 }
 
