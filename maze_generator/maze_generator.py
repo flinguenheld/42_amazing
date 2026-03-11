@@ -2,6 +2,8 @@ from maze_generator.maze import Maze
 from maze_generator.config_model import ConfigModel
 from maze_generator.walker import Walker
 from maze_generator.path import FullPath
+from maze_generator.path_finder import PathFinder
+
 
 from typing import Dict
 import random
@@ -40,7 +42,7 @@ class MazeGenerator:
             for c in range(self.maze.nb_col)
             if (r, c) not in self.maze.cells_42
         }
-        # random.seed(4)
+        random.seed(4)
 
     def destroy_walls(self) -> None:
         """
@@ -81,7 +83,7 @@ class MazeGenerator:
 
     def generate(self) -> None:
         """
-        - Instantiate and use Walkers to fill maze branch by branch 
+        - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is unvisited
         - Destroy walls if maze must not be perfect
         - Return maze
@@ -100,5 +102,6 @@ class MazeGenerator:
         for cell in self.fp.get_set():
             if cell in self.maze.cells_42:
                 self.maze.values[cell[0]][cell[1]] = 0xF
-        print(self.maze)
+        sol = PathFinder(self.maze).search()
+        tri = [print(c) for c in sol]
         return self.maze
