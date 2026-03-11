@@ -53,8 +53,6 @@ class Walker:
         for i, cell in enumerate(self.path):
             if i < len(self.path) - 1:
                 self.maze.break_wall(self.path[i], self.path[i + 1], False)
-            else:
-                self.maze.break_wall(self.path[i], (0, 0), False)
 
     def __get_valid_moves(
         self,

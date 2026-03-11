@@ -42,9 +42,9 @@ class MazeGenerator:
                             )
                         ):
                             raise ValueError
-                p = Path((0, 0))
                 neighbours = [
-                    (cur_r - r, cur_c - c) for r, c in p.WALL_MAP.keys()
+                    (cur_r - r, cur_c - c)
+                    for r, c in self.maze.WALL_MAP.keys()
                 ]
                 ngbr = random.choice(
                     [i for i in neighbours if i in self.fp.get_set()]
