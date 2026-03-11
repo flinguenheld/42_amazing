@@ -46,21 +46,10 @@ class MazeGenerator:
                 neighbours = [
                     (cur_r - r, cur_c - c) for r, c in p.WALL_MAP.keys()
                 ]
-                value = self.maze.values[cur_r][cur_c]
-                ngbr_r, ngbr_c = random.choice(
+                ngbr = random.choice(
                     [i for i in neighbours if i in self.fp.get_set()]
                 )
-                offset = (ngbr_r - cur_r, ngbr_c - cur_c)
-                if value & ~(p.WALL_MAP.get(offset, 0)) > 0:
-                    self.maze.values[cur_r][cur_c] = value & ~(
-                        p.WALL_MAP.get(offset, 0)
-                    )
-                value = self.maze.values[ngbr_r][ngbr_c]
-                offset = (cur_r - ngbr_r, cur_c - ngbr_c)
-                if value & ~(p.WALL_MAP.get(offset, 0)) > 0:
-                    self.maze.values[ngbr_r][ngbr_c] = value & ~(
-                        p.WALL_MAP.get(offset, 0)
-                    )
+                self.maze.break_wall((cur_r, cur_c), ngbr, True)
             except ValueError:
                 pass
 
@@ -78,6 +67,7 @@ class MazeGenerator:
             self.print_maze()
         if self.maze.perfect is False:
             self.destroy_walls()
+        print(self.maze.perfect)
 
         # TESTING RELATED CODE
         # CALL TO self.print_maze() AND DEF
