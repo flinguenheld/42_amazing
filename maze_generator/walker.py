@@ -46,8 +46,13 @@ class Walker:
                 else:
                     self.path.append(target)
                 self.cur_r, self.cur_c = self.path[-1]
-        self.path.write(self.maze, self.first_path)
+        self.write_path()
         return self.path
+
+    def write_path(self) -> None:
+        for i, cell in enumerate(self.path):
+            if i < len(self.path) - 1:
+                self.maze.break_wall(self.path[i], self.path[i + 1], False)
 
     def __get_valid_moves(
         self,
@@ -64,6 +69,7 @@ class Walker:
                 0 <= new_r < self.max_r
                 and 0 <= new_c < self.max_c
                 and (len(self.path) == 1 or (new_r, new_c) != self.path[-2])
+                and (new_r, new_c) not in self.maze.cells_42
             ):
                 valid_moves.append((r, c))
         return valid_moves

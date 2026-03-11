@@ -6,6 +6,13 @@ from typing import Tuple
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░█░█▀█░▄▀░░█▀▀░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░▀░▀░▀░▀▀▀░▀▀▀░
 class Maze:
+    WALL_MAP = {
+        (-1, 0): 0b0001,
+        (0, 1): 0b0010,
+        (1, 0): 0b0100,
+        (0, -1): 0b1000,
+    }
+
     def __init__(
         self,
         nb_row: int,
@@ -22,7 +29,54 @@ class Maze:
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)
         ]
+        mid_r, mid_c = (int((self.nb_row - 1) / 2), int((self.nb_col - 1) / 2))
+        if nb_col >= 10 and nb_row >= 10:
+            self.cells_42 = {
+                # 4
+                (mid_r - 2, mid_c - 3),
+                (mid_r - 1, mid_c - 3),
+                (mid_r, mid_c - 3),
+                (mid_r, mid_c - 2),
+                (mid_r, mid_c - 1),
+                (mid_r + 1, mid_c - 1),
+                (mid_r + 2, mid_c - 1),
+                # 2
+                (mid_r - 2, mid_c + 1),
+                (mid_r - 2, mid_c + 2),
+                (mid_r - 2, mid_c + 3),
+                (mid_r - 1, mid_c + 3),
+                (mid_r, mid_c + 3),
+                (mid_r, mid_c + 2),
+                (mid_r, mid_c + 1),
+                (mid_r + 1, mid_c + 1),
+                (mid_r + 2, mid_c + 1),
+                (mid_r + 2, mid_c + 2),
+                (mid_r + 2, mid_c + 3),
+            }
+            self.start = (mid_r - 1, mid_c + 2)
+            self.end = (mid_r + 1, mid_c + 2)
+        else:
+            self.cells_42 = set()
         # self.TEST_MAZE()
+
+    def break_wall(
+        self, cell1: Tuple[int, int], cell2: Tuple[int, int], safe: bool
+    ) -> None:
+        cells = [cell1, cell2]
+        for cell in cells:
+            ocell = [ocell for ocell in cells if ocell != cell][0]
+            offset = (ocell[0] - cell[0], ocell[1] - cell[1])
+            value = self.values[cell[0]][cell[1]]
+            match safe:
+                case True:
+                    if value & ~(self.WALL_MAP.get(offset, 0)) > 0:
+                        self.values[cell[0]][cell[1]] = value & ~(
+                            self.WALL_MAP.get(offset, 0)
+                        )
+                case False:
+                    self.values[cell[0]][cell[1]] = value & ~(
+                        self.WALL_MAP.get(offset, 0)
+                    )
 
     def TEST_MAZE(self):
         #     # self.values[0][0] = 0x9
