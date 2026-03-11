@@ -165,7 +165,4 @@ class TMaze(Static):
                     active=cell_hexa & 0b1000 == 0b1000
                 )
                 #                                                       Middle
-                self.__cells[row + 1][col + 1].up_state(
-                    # TODO: WHAT ?????????????????????????????????????????
-                    active=cell_hexa & 0b0001
-                )
+                self.__cells[row + 1][col + 1].up_state(value=cell_hexa)
