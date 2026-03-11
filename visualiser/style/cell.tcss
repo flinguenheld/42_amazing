@@ -1,7 +1,7 @@
 TCell {
     width: 1;
     height: 1;
-	margin: 0;
+    margin: 0;
     padding: 0;
 }
 
@@ -16,7 +16,7 @@ TCellHorizontal {
 TCellMiddle {
     width: 3;
     height: 1;
-    background: purple;
+    # background: purple;
 }
 TCellVertical {
     width: 1;
@@ -30,4 +30,8 @@ TCellVertical {
 
 .col_layout {
     align: center middle;
+}
+
+.cell_closed {
+    background: red;
 }

@@ -162,7 +162,8 @@ class TCellMiddle(TCell):
 
     # ###################################################### REFRESH CELL ####
     def refresh_cell(self) -> None:
-        if self.value == 0:
-            self._to_print = "   "
+        self._to_print = "   "
+        if self.value == 0xF:
+            self.add_class("cell_closed")
         else:
-            self._to_print = "   "
+            self.remove_class("cell_closed")
