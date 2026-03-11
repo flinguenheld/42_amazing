@@ -65,7 +65,7 @@ from visualiser.borders import Borders
 class TMaze(Static):
     def __init__(self, maze: Maze, borders: Borders) -> None:
         """
-        Create a grid of cells
+        Create the grid of cells
         """
 
         super().__init__()
@@ -77,6 +77,16 @@ class TMaze(Static):
 
     # ######################################################## INIT CELLS ####
     def __init_cells(self) -> List[List[TCell]]:
+        """
+        ┏━━━━━━━┳━━━━━━━━┳━━━━━━━┓
+        ┃ ANGLE ┃ HORIZO ┃ ANGLE ┃
+        ┣━━━━━━━╋━━━━━━━━╋━━━━━━━┫
+        ┃ VERTI ┃ MIDDLE ┃ VERTI ┃
+        ┣━━━━━━━╋━━━━━━━━╋━━━━━━━┫
+        ┃ ANGLE ┃ HORIZO ┃ ANGLE ┃
+        ┗━━━━━━━┻━━━━━━━━┻━━━━━━━┛
+        """
+
         new_maze = []
         for row in range(0, self.__nb_row):
             new_maze.append([])
@@ -100,8 +110,14 @@ class TMaze(Static):
                     for col in row:
                         yield col
 
-    # ########################################################## UP CELLS ####
-    def update_cells(self) -> None:
+    # ##################################################### REFRESH CELLS ####
+    def refresh_cells(self) -> None:
+        for row in self.__cells:
+            for cell in row:
+                cell.refresh_cell()
+
+    # #################################################### UP CELLS STATE ####
+    def update_cells_state(self) -> None:
         """
         Loop in all hexa cells
         And update all neighbours according to its value
@@ -113,43 +129,43 @@ class TMaze(Static):
                 col = ch * 2
 
                 #                                                     Top Left
-                self.__cells[row][col].up_value(
+                self.__cells[row][col].up_state(
                     bottom=cell_hexa & 0b1000 == 0b1000,
                     right=cell_hexa & 0b0001 == 0b0001,
                 )
                 #                                                          Top
-                self.__cells[row][col + 1].up_value(
+                self.__cells[row][col + 1].up_state(
                     active=cell_hexa & 0b0001 == 0b0001
                 )
                 #                                                    Top Right
-                self.__cells[row][col + 2].up_value(
+                self.__cells[row][col + 2].up_state(
                     left=cell_hexa & 0b0001 == 0b0001,
                     bottom=cell_hexa & 0b0010 == 0b0010,
                 )
                 #                                                        Right
-                self.__cells[row + 1][col + 2].up_value(
+                self.__cells[row + 1][col + 2].up_state(
                     active=cell_hexa & 0b0010 == 0b0010
                 )
                 #                                                 Bottom Right
-                self.__cells[row + 2][col + 2].up_value(
+                self.__cells[row + 2][col + 2].up_state(
                     left=cell_hexa & 0b0100 == 0b0100,
                     top=cell_hexa & 0b0010 == 0b0010,
                 )
                 #                                                       Bottom
-                self.__cells[row + 2][col + 1].up_value(
+                self.__cells[row + 2][col + 1].up_state(
                     active=cell_hexa & 0b0100 == 0b0100
                 )
                 #                                                  Bottom Left
-                self.__cells[row + 2][col].up_value(
+                self.__cells[row + 2][col].up_state(
                     top=cell_hexa & 0b1000 == 0b1000,
                     right=cell_hexa & 0b0100 == 0b0100,
                 )
                 #                                                         Left
-                self.__cells[row + 1][col].up_value(
+                self.__cells[row + 1][col].up_state(
                     active=cell_hexa & 0b1000 == 0b1000
                 )
                 #                                                       Middle
-                self.__cells[row + 1][col + 1].up_value(
+                self.__cells[row + 1][col + 1].up_state(
                     # TODO: WHAT ?????????????????????????????????????????
                     active=cell_hexa & 0b0001
                 )

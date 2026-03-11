@@ -31,5 +31,5 @@ class Controller:
         self.__visualiser = Visualiser(self.maze)
 
     def run_visualiser(self) -> None:
-        self.__visualiser.to_test()
+        self.__visualiser.refresh_maze()
         self.__visualiser.run()

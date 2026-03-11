@@ -9,6 +9,10 @@ from visualiser.ttitle import TTitle
 from visualiser.borders import Borders
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░█░▀█▀░█▀▀░█░█░█▀█░█░░░▀█▀░█▀▀░█▀▀░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
 class Visualiser(App):
     CSS_PATH = ["style/main.tcss", "style/cell.tcss"]
     BINDINGS = [
@@ -29,20 +33,21 @@ class Visualiser(App):
             yield self.__maze
         yield Footer()
 
-    def to_test(self):
-        self.__maze.update_cells()
-
-    def reload(self):
-        self.__maze.update_cells()
-        self.__maze.refresh()
+    def refresh_maze(self) -> None:
+        self.__maze.update_cells_state()
+        self.__maze.refresh_cells()
 
     # ########################################################################
     # ########################################################## BORDERS #####
     def action_border(self) -> None:
         if self.__borders.get_current() == "simple":
             self.__borders.set_current("double")
+        elif self.__borders.get_current() == "double":
+            self.__borders.set_current("block")
         else:
             self.__borders.set_current("simple")
+
+        self.refresh_maze()
 
     # ########################################################################
     # ########################################################### THEMES #####
