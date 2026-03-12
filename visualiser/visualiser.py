@@ -46,7 +46,7 @@ class Visualiser(App):
     async def action_animate(self):
         while self.__tmaze.next_step_animation():
             self.__tmaze.refresh()
-            await asyncio.sleep(0.001)
+            await asyncio.sleep(0.0005)
 
     def action_new_maze(self):
         # self.__tmaze.new_maze(self.__config_TO_REMOVE)

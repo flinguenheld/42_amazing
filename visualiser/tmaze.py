@@ -93,7 +93,6 @@ class TMaze(Static):
             return False
 
     def new_maze(self) -> None:
-
         # generator = MazeGenerator(self.__config)
         # self.__hexa_maze = generator.generate()
 
@@ -172,8 +171,10 @@ class TMaze(Static):
                     case (False, True):
                         buffer.write(self.__verticals.to_str(row, col))
                     case (False, False):
-                        # TODO: TO CHANGE #########################################
-                        buffer.write("   ")
+                        if self.__hexa_maze.values[row // 2][col // 2] >= 0xF:
+                            buffer.write("░░░")
+                        else:
+                            buffer.write("   ")
 
         self.__to_print = buffer.getvalue()
 
