@@ -1,7 +1,6 @@
 from textual.containers import (
     VerticalGroup,
 )
-from maze_generator.maze import Maze
 from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
 
@@ -19,44 +18,39 @@ class Visualiser(App):
     BINDINGS = [
         ("t", "next_theme", "Next theme"),
         ("b", "border", "Next border"),
+        ("m", "new_maze", "New maze"),
     ]
 
-    def __init__(self, maze: Maze) -> None:
+    def __init__(self, config) -> None:
         super().__init__()
         self.__borders = Borders()
-        self.__maze = TMaze(maze, self.__borders)
+        self.__tmaze = TMaze(config, self.__borders)
         self.__title = TTitle()
+        self.__config_TO_REMOVE = config
+        self.action_new_maze()
 
     def compose(self) -> ComposeResult:
         yield Header()
         with VerticalGroup(id="main_layout"):
             yield self.__title
-            yield self.__maze
+            yield self.__tmaze
         yield Footer()
 
-    # def new_maze(self, maze: Maze) -> None:
-    #     self.__maze = TMaze(maze, self.__borders)
-
-    def refresh_maze(self) -> None:
-        # self.__maze.__new_maze()
-        self.__maze.refresh_maze()
-        # self.__maze.update_cells_state()
-        # self.__maze.refresh_cells()
+    # ########################################################################
+    # ########################################################### THEMES #####
+    def action_new_maze(self):
+        self.__tmaze.new_maze(self.__config_TO_REMOVE)
 
     # ########################################################################
     # ########################################################## BORDERS #####
     def action_border(self) -> None:
         self.__borders.next()
-        self.refresh_maze()
+        self.__tmaze.refresh_maze()
 
     # ########################################################################
     # ########################################################### THEMES #####
     def on_mount(self) -> None:
         self.action_next_theme()
-
-    # def on_key(self, event: events.Key) -> None:
-    #     if event.key.isdecimal():
-    #         self.action_next_theme()
 
     def action_next_theme(self) -> None:
         """Change theme"""
