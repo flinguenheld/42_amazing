@@ -12,7 +12,6 @@ import random
 # TODO: Write docstrings for all functions
 # TODO: Instantiate maze inside MazeGenerator and return it on generate()
 
-
 class MazeGenerator:
     """
     - Standalone class that fully handles the creation/generation
@@ -102,6 +101,6 @@ class MazeGenerator:
         for cell in self.fp.get_set():
             if cell in self.maze.cells_42:
                 self.maze.values[cell[0]][cell[1]] = 0xF
-        sol = PathFinder(self.maze).search()
-        tri = [print(c) for c in sol]
+        self.maze.set_solution(PathFinder(self.maze, self.config).search())
+        print(self.maze.solution.path)
         return self.maze

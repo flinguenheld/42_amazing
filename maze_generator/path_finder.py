@@ -12,8 +12,10 @@ class PathFinder:
             possible solution for the maze, sorted by length
     """
 
-    def __init__(self, maze: Maze) -> None:
+    def __init__(self, maze: Maze, config: Dict) -> None:
         self.maze: Maze = maze
+        self.maze.start = config["entry"]
+        self.maze.end = config["exit"]
         self.tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
         self.queue = deque([self.maze.start])
 
@@ -47,8 +49,9 @@ class PathFinder:
 
     def backtrack(self) -> Path:
         cur = self.maze.end
-        path = Path([])
+        path = Path([self.maze.end])
         while cur != self.maze.start:
-            path.append(cur)
             cur = self.tab[cur]
+            path.append(cur)
+        path.path.reverse()
         return path
