@@ -1,7 +1,9 @@
-from maze import Maze
+from maze_generator.maze import Maze
+from maze_generator.config_model import ConfigModel
 from maze_generator.walker import Walker
 from maze_generator.path import FullPath
 
+from typing import Dict
 import random
 
 # TODO: Add '42' to the middle of the maze when possible
@@ -10,8 +12,27 @@ import random
 
 
 class MazeGenerator:
-    def __init__(self, maze: Maze) -> None:
-        self.maze = maze
+    """
+    - Standalone class that fully handles the creation/generation
+            of a maze based on a config dict passed on instanciation.
+    - Uses Wilson's algorithm with LERW for generation
+    """
+
+    def __init__(self, cfg: Dict) -> None:
+        """
+        - Check passed config through ConfigModel to ensure data sanity
+        - Create base maze with retrieved parameters
+        """
+        parser = ConfigModel.model_validate(cfg)
+        self.config = ConfigModel.model_dump(parser)
+        self.maze = Maze(
+            self.config["nb_row"],
+            self.config["nb_col"],
+            self.config["entry"],
+            self.config["exit"],
+            self.config["perfect"],
+        )
+
         self.fp = FullPath()
         self.not_visited = {
             (r, c)
@@ -22,6 +43,10 @@ class MazeGenerator:
         # random.seed(4)
 
     def destroy_walls(self) -> None:
+        """
+        - Iterate through all visited cells
+        - Breaks random wall if not near a 0 cell/nor creating a 0 cell
+        """
         for cur_r, cur_c in self.fp.get_set():
             if not (
                 0 > cur_r > self.maze.nb_row - 2
@@ -55,31 +80,25 @@ class MazeGenerator:
                 pass
 
     def generate(self) -> None:
+        """
+        - Instantiate and use Walkers to fill maze branch by branch 
+                with new paths until no cell is unvisited
+        - Destroy walls if maze must not be perfect
+        - Return maze
+        """
         walker = Walker(self.maze, True, self.maze.start, self.maze.end)
         for coor in self.fp.append(walker.walk()):
             self.not_visited.discard(coor)
-        self.print_maze()
 
         while len(self.not_visited) != 0:
             choice = random.choice(list(self.not_visited))
             walker = Walker(self.maze, False, choice, self.fp.get_set())
             for coor in self.fp.append(walker.walk()):
                 self.not_visited.discard(coor)
-            self.print_maze()
         if self.maze.perfect is False:
             self.destroy_walls()
         for cell in self.fp.get_set():
             if cell in self.maze.cells_42:
                 self.maze.values[cell[0]][cell[1]] = 0xF
-        self.print_maze()
-        print(self.maze.cells_42)
-
-        # TESTING RELATED CODE
-        # CALL TO self.print_maze() AND DEF
-
-    def print_maze(self) -> None:
-        for line in self.maze.values:
-            for char in line:
-                print(f"{char:x}" if char != 0xF else "_", end="")
-            print()
-        print("\n\n")
+        print(self.maze)
+        return self.maze

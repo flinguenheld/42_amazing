@@ -6,6 +6,14 @@ from typing import Tuple
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░█░█▀█░▄▀░░█▀▀░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░▀░▀░▀░▀▀▀░▀▀▀░
 class Maze:
+    """
+    - Maze class that stores all maze related info:
+        - Size
+        - Start/End
+        - List[List[]] of cell's values
+        - List[] of coordinates of cells needed for logo
+    - Has a break_wall method that clears path between cell1 and cell2
+    """
     WALL_MAP = {
         (-1, 0): 0b0001,
         (0, 1): 0b0010,
@@ -21,6 +29,11 @@ class Maze:
         exit: Tuple[int, int],
         perfect: bool,
     ) -> None:
+        """
+        - Initializes with all needed values
+        - If size allows it, define in-logo cells
+                and adjust start/end to prevent disconnected cells
+        """
         self.nb_col = nb_col
         self.nb_row = nb_row
         self.start = entry
@@ -62,6 +75,11 @@ class Maze:
     def break_wall(
         self, cell1: Tuple[int, int], cell2: Tuple[int, int], safe: bool
     ) -> None:
+        """
+        - Receives to Tuples of coordinates mapping to cells in maze.values
+        - In safe mode: Clears path if doing so doesnt imply creating a 0 cell
+        - Else: Just clears path
+        """
         cells = [cell1, cell2]
         for cell in cells:
             ocell = [ocell for ocell in cells if ocell != cell][0]
@@ -119,6 +137,9 @@ class Maze:
         self.values[4][4] = 0x6
 
     def __str__(self) -> str:
+        """
+        - Representation of self.values as a single string
+        """
         res = ""
         for line in self.values:
             for char in line:

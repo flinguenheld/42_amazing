@@ -1,4 +1,4 @@
-from maze import Maze
+from maze_generator.maze import Maze
 from maze_generator.path import Path
 from typing import List, Tuple, Set
 import random
@@ -50,6 +50,9 @@ class Walker:
         return self.path
 
     def write_path(self) -> None:
+        """
+        - Write path data to maze
+        """
         for i, cell in enumerate(self.path):
             if i < len(self.path) - 1:
                 self.maze.break_wall(self.path[i], self.path[i + 1], False)

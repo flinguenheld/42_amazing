@@ -1,15 +1,10 @@
+from textual.app import App, ComposeResult
 from textual.containers import (
     VerticalGroup,
-    Center,
-    Right,
-    Horizontal,
-    CenterMiddle,
 )
-from maze import Maze
-from textual.widgets import Footer, Header, Digits, Label
-from textual.app import App, ComposeResult
+from maze_generator.maze import Maze
+from textual.widgets import Footer, Header
 
-from visualiser.tcell import TCell
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.borders import Borders

@@ -1,4 +1,3 @@
-from maze import Maze
 from typing import List, Tuple, Set, Dict
 
 
@@ -6,14 +5,8 @@ class Path:
     """
     - Simple class that stores path related info
     - Allows to access actual path (list of coordinates) via index
+    - Has a go_back method to revert path list to given coordinates
     """
-
-    WALL_MAP: Dict[Tuple[int, int], int] = {
-        (-1, 0): 0b0001,
-        (0, 1): 0b0010,
-        (1, 0): 0b0100,
-        (0, -1): 0b1000,
-    }
 
     def __init__(
         self,
