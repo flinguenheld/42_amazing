@@ -1,3 +1,4 @@
+from maze_generator.maze_generator import MazeGenerator
 from io import StringIO
 from textual.widgets import Static
 from textual.app import RenderResult
@@ -61,17 +62,21 @@ from visualiser.mcell import MCellHorizontal, MCellVertical, MCellAngle
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀█░▄▀░░█▀▀
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀░▀░▀▀▀░▀▀▀
 class TMaze(Static):
-    __to_print = reactive("")
+    __to_print = reactive("My ass")
 
-    def __init__(self, maze: Maze, borders: Borders) -> None:
+    # TODO: CONFIG ! FIND A GOOD WAY TO DEAL WITH ############################
+    def __init__(self, config, borders: Borders) -> None:
         super().__init__()
-        self.__hexa_maze = maze
         self.__borders = borders
-        self.new_maze()
+        # REMOVE TO USE A ONE SHOT IN NEW_MAZE ???????
+        # self.__generator = MazeGenerator(config)
+        self.__config = config
 
     # ########################################################## NEW MAZE ####
-    def new_maze(self) -> None:
-        """Read the maze object and load it"""
+    def new_maze(self, config) -> None:
+        generator = MazeGenerator(self.__config)
+        self.__hexa_maze = generator.generate()
+
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1
 
@@ -80,6 +85,7 @@ class TMaze(Static):
         self.__horizontals = MCellHorizontal(self.__borders)
 
         self.__load_maze()
+        self.refresh_maze()
 
     # ######################################################### LOAD MAZE ####
     def __load_maze(self) -> None:
@@ -130,7 +136,7 @@ class TMaze(Static):
                 #                                                      -- Left
                 self.__verticals.add(row + 1, col, is_active=left)
 
-    # ############################################################ RENDER ####
+    # ########################################################### REFRESH ####
     def refresh_maze(self) -> None:
         """Update the maze str representation"""
 

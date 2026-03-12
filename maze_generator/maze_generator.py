@@ -80,7 +80,7 @@ class MazeGenerator:
             except ValueError:
                 pass
 
-    def generate(self) -> None:
+    def generate(self) -> Maze:
         """
         - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is unvisited
