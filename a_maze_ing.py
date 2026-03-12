@@ -21,7 +21,7 @@ def main() -> None:
 
         start_time = time.time()
         generator = MazeGenerator(controller.cfg)
-        controller.set_maze(generator.generate())
+        controller.set_maze(generator.animate())
         print(f"Maze generation: {time.time() - start_time}")
 
         controller.run_visualiser()
@@ -36,9 +36,9 @@ def main() -> None:
         cprint("Config file not found", file=sys.stderr, color="red")
         cprint(usage(), file=sys.stderr, color="yellow")
 
-    except Exception as e:
-        cprint(e, file=sys.stderr, color="red")
-        cprint(usage(), file=sys.stderr, color="yellow")
+#   except Exception as e:
+#       cprint(e, file=sys.stderr, color="red")
+#       cprint(usage(), file=sys.stderr, color="yellow")
 
 
 if __name__ == "__main__":

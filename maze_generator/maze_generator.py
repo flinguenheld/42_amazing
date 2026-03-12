@@ -83,21 +83,31 @@ class MazeGenerator:
                 pass
 
     def generate(self) -> Maze | None:
+        return list(self.animate())[-1]
+
+    def animate(self) -> Maze | None:
         """
         - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is unvisited
         - Destroy walls if maze must not be perfect
         - Return maze
         """
+        yield self.maze
+
         walker = Walker(self.maze, True, self.maze.start, self.maze.end)
         for coor in self.fp.append(walker.walk()):
             self.not_visited.discard(coor)
+
+        yield self.maze
 
         while len(self.not_visited) != 0:
             choice = random.choice(list(self.not_visited))
             walker = Walker(self.maze, False, choice, self.fp.get_set())
             for coor in self.fp.append(walker.walk()):
                 self.not_visited.discard(coor)
+
+            yield self.maze
+
         if self.maze.perfect is False:
             self.destroy_walls()
         for cell in self.fp.get_set():
