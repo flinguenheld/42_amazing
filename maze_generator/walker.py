@@ -15,7 +15,7 @@ class Walker:
         maze: Maze,
         first_path: bool,
         start: Tuple[int, int],
-        end: Set[Tuple[int, int]] | int,
+        end: Set[Tuple[int, int]] | Tuple[int, int],
     ) -> None:
 
         self.maze = maze

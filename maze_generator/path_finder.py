@@ -34,7 +34,7 @@ class PathFinder:
             moves.append((-1, 0))
         return moves
 
-    def search(self) -> Path:
+    def search(self) -> Path | None:
         while self.queue:
             cur = self.queue.popleft()
             if cur == self.maze.end:

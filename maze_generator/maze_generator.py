@@ -23,8 +23,8 @@ class MazeGenerator:
 
     def __init__(self, cfg: Dict) -> None:
         """
-        - Check passed config through ConfigModel to ensure data sanity
-        - Create base maze with retrieved parameters
+        - Checks passed config through ConfigModel to ensure data sanity
+        - Creates base maze with retrieved parameters
         """
         parser = ConfigModel.model_validate(cfg)
         self.config = ConfigModel.model_dump(parser)
@@ -47,7 +47,7 @@ class MazeGenerator:
 
     def destroy_walls(self) -> None:
         """
-        - Iterate through all visited cells
+        - Iterates through all visited cells
         - Breaks random wall if not near a 0 cell/nor creating a 0 cell
         """
         for cur_r, cur_c in self.fp.get_set():
@@ -82,7 +82,7 @@ class MazeGenerator:
             except ValueError:
                 pass
 
-    def generate(self) -> None:
+    def generate(self) -> Maze | None:
         """
         - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is unvisited

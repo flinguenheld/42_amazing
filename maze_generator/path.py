@@ -15,7 +15,7 @@ class Path:
         self.values: Dict[Tuple[int, int], int] = dict()
         self.path: List[Tuple[int, int]] = path_start
 
-    def __getitem__(self, index) -> Tuple[int, int]:
+    def __getitem__(self, index: int) -> Tuple[int, int]:
         return self.path[index]
 
     def __len__(self) -> int:
@@ -39,7 +39,7 @@ class FullPath:
         self.full_path: List[Path] = list()
         self.full_path_flat: Set[Tuple[int, int]] = set()
 
-    def __getitem__(self, index) -> Path:
+    def __getitem__(self, index: int) -> Path:
         return self.full_path[index]
 
     def __len__(self) -> int:
