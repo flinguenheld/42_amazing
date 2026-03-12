@@ -1,4 +1,5 @@
 from typing import Tuple
+from maze_generator.path import Path
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -39,6 +40,7 @@ class Maze:
         self.start = entry
         self.end = exit
         self.perfect = perfect
+        self.solution = None
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)
         ]
@@ -95,6 +97,9 @@ class Maze:
                     self.values[cell[0]][cell[1]] = value & ~(
                         self.WALL_MAP.get(offset, 0)
                     )
+
+    def set_solution(self, path: Path) -> None:
+        self.solution = path
 
     def TEST_MAZE(self):
         #     # self.values[0][0] = 0x9
