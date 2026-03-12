@@ -2,6 +2,7 @@ from config.config_parser import ConfigParser
 import sys
 from termcolor import cprint
 from visualiser.visualiser import Visualiser
+from maze_generator.config import Config
 
 
 def usage() -> str:
@@ -14,7 +15,8 @@ def main() -> None:
             raise FileNotFoundError
 
         parser = ConfigParser(sys.argv[1])
-        config = parser.parse_file()
+        parsed = parser.parse_file()
+        config = Config.model_validate(parsed)
 
         application = Visualiser(config=config)
         application.run()

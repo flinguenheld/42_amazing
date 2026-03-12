@@ -1,4 +1,5 @@
 from maze_generator.maze import Maze
+from maze_generator.config import Config
 from maze_generator.path import Path
 
 from typing import Dict, Tuple, List
@@ -12,10 +13,10 @@ class PathFinder:
             possible solution for the maze, sorted by length
     """
 
-    def __init__(self, maze: Maze, config: Dict) -> None:
+    def __init__(self, maze: Maze, config: Config) -> None:
         self.maze: Maze = maze
-        self.maze.start = config["entry"]
-        self.maze.end = config["exit"]
+        self.maze.start = config.entry
+        self.maze.end = config.exit
         self.tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
         self.queue = deque([self.maze.start])
 
