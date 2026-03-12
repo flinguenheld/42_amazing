@@ -34,8 +34,11 @@ class Visualiser(App):
             yield self.__maze
         yield Footer()
 
+    # def new_maze(self, maze: Maze) -> None:
+    #     self.__maze = TMaze(maze, self.__borders)
+
     def refresh_maze(self) -> None:
-        self.__maze.new_maze()
+        # self.__maze.__new_maze()
         self.__maze.refresh_maze()
         # self.__maze.update_cells_state()
         # self.__maze.refresh_cells()

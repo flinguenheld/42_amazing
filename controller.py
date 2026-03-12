@@ -1,7 +1,7 @@
 from typing import Optional, Dict
 from maze_generator.maze import Maze
-from config.config_parser import ConfigParser
 from visualiser.visualiser import Visualiser
+from config.config_parser import ConfigParser
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
