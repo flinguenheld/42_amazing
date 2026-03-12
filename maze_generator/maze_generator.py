@@ -1,3 +1,4 @@
+import time
 from maze_generator.maze import Maze
 from maze_generator.config import Config
 from maze_generator.walker import Walker
@@ -5,6 +6,7 @@ from maze_generator.path_finder import PathFinder
 
 
 from typing import Optional, Set
+
 # import time
 import random
 
@@ -82,7 +84,7 @@ class MazeGenerator:
     def generate(self) -> Maze | None:
         return list(self.animate())[-1]
 
-    def animate(self) -> Maze | None:
+    def animate(self):
         """
         - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is unvisited
@@ -90,11 +92,11 @@ class MazeGenerator:
         - Return maze
         """
         self.maze = Maze(
-                self.config.nb_row,
-                self.config.nb_col,
-                self.config.entry,
-                self.config.exit,
-                self.config.perfect
+            self.config.nb_row,
+            self.config.nb_col,
+            self.config.entry,
+            self.config.exit,
+            self.config.perfect,
         )
 
         not_visited = {
@@ -127,4 +129,5 @@ class MazeGenerator:
 
         self.maze.set_solution(PathFinder(self.maze, self.config).search())
 
+        # print(f"Path finding: {time.time() - start_time}")
         yield self.maze

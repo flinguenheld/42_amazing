@@ -1,3 +1,5 @@
+import asyncio
+import time
 from textual.containers import (
     VerticalGroup,
 )
@@ -19,6 +21,8 @@ class Visualiser(App):
         ("t", "next_theme", "Next theme"),
         ("b", "border", "Next border"),
         ("m", "new_maze", "New maze"),
+        ("n", "next_step", "Next step"),
+        ("a", "animate", "Animate"),
     ]
 
     def __init__(self, config) -> None:
@@ -27,7 +31,8 @@ class Visualiser(App):
         self.__tmaze = TMaze(config, self.__borders)
         self.__title = TTitle()
         self.__config_TO_REMOVE = config
-        self.action_new_maze()
+        # self.action_new_maze()
+        self.__tmaze.new_animation()
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -38,8 +43,18 @@ class Visualiser(App):
 
     # ########################################################################
     # ########################################################### THEMES #####
+    async def action_animate(self):
+        while self.__tmaze.next_step_animation():
+            self.__tmaze.refresh()
+            await asyncio.sleep(0.0005)
+
     def action_new_maze(self):
-        self.__tmaze.new_maze(self.__config_TO_REMOVE)
+        # self.__tmaze.new_maze(self.__config_TO_REMOVE)
+        self.__tmaze.new_animation()
+
+    def action_next_step(self):
+        # self.__tmaze.new_maze(self.__config_TO_REMOVE)
+        self.__tmaze.next_step_animation()
 
     # ########################################################################
     # ########################################################## BORDERS #####
