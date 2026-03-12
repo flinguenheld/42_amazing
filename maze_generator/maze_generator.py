@@ -6,11 +6,13 @@ from maze_generator.path_finder import PathFinder
 
 
 from typing import Dict
+import time
 import random
 
 # TODO: Add '42' to the middle of the maze when possible
 # TODO: Write docstrings for all functions
 # TODO: Instantiate maze inside MazeGenerator and return it on generate()
+
 
 class MazeGenerator:
     """
@@ -101,6 +103,7 @@ class MazeGenerator:
         for cell in self.fp.get_set():
             if cell in self.maze.cells_42:
                 self.maze.values[cell[0]][cell[1]] = 0xF
+        start_time = time.time()
         self.maze.set_solution(PathFinder(self.maze, self.config).search())
-        print(self.maze.solution.path)
+        print(f"Path finding: {time.time() - start_time}")
         return self.maze
