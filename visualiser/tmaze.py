@@ -72,10 +72,30 @@ class TMaze(Static):
         # self.__generator = MazeGenerator(config)
         self.__config = config
 
+        # self.new_maze()
+        # self.__maze_generator = MazeGenerator(self.__config)
+        self.new_animation()
+
     # ########################################################## NEW MAZE ####
-    def new_maze(self, config) -> None:
-        generator = MazeGenerator(self.__config)
-        self.__hexa_maze = generator.generate()
+    def new_animation(self):
+        # TODO: move that in the constuctor ! ################################
+        self.__maze_generator = MazeGenerator(self.__config)
+        self.__generator = self.__maze_generator.animate()
+        self.next_step_animation()
+
+    def next_step_animation(self) -> bool:
+        maze = next(self.__generator, None)
+        if maze:
+            self.__hexa_maze = maze
+            self.new_maze()
+            return True
+        else:
+            return False
+
+    def new_maze(self) -> None:
+
+        # generator = MazeGenerator(self.__config)
+        # self.__hexa_maze = generator.generate()
 
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1

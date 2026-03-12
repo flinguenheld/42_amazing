@@ -85,7 +85,7 @@ class MazeGenerator:
     def generate(self) -> Maze | None:
         return list(self.animate())[-1]
 
-    def animate(self) -> Maze | None:
+    def animate(self):
         """
         - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is unvisited
@@ -116,4 +116,4 @@ class MazeGenerator:
         start_time = time.time()
         self.maze.set_solution(PathFinder(self.maze, self.config).search())
         print(f"Path finding: {time.time() - start_time}")
-        return self.maze
+        yield self.maze
