@@ -14,43 +14,66 @@ from maze_generator.maze_generator import MazeGenerator
 
 class MyCanvas(Canvas):
     def __init__(self, nb_row: int, nb_col: int):
-        super().__init__(width=nb_col * 2 + 1, height=nb_row * 2 + 1)
+        super().__init__(
+            width=(nb_col * 2 + 1) * 10, height=(nb_row * 2 + 1) * 10
+        )
 
-    def break_walls(self, maze: Maze):
+    # ############################################################## DRAW ####
+    def __draw_line(self, row: int, col: int, vertical: bool = False):
+        if vertical:
+            self.draw_line(col, row, col, row + 2)
+        else:
+            self.draw_line(col, row, col + 2, row)
+
+    def __draw_square(self, row, col):
+        self.__draw_line(row - 1, col - 1)
+        self.__draw_line(row, col - 1)
+        self.__draw_line(row + 1, col - 1)
+
+    # ####################################################### BREAK WALLS ####
+    def dig_holes(self, maze_hexa: Maze):
         """
-        ┏━━━━┳━━━━━━━━┳━━━━┓
-        ┃ TL ┃  TOP   ┃ TR ┃
-        ┣━━━━╋━━━━━━━━╋━━━━┫
-        ┃ L  ┃  Cell  ┃ R  ┃
-        ┣━━━━╋━━━━━━━━╋━━━━┫
-        ┃ BL ┃  BOT   ┃ BR ┃
-        ┗━━━━┻━━━━━━━━┻━━━━┛
+        Loop in the given maze and draw where it's open.
+
+                     0               1               2
+
+                 0   1   2   3   4   5   6   7   8   9  10
+
+               ┏━━━┳━━━┳━━━┓   ┏━━━┳━━━┳━━━┓   ┏━━━┳━━━┳━━━┓
+            0  ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃
+               ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫
+        0   1  ┃   ┃ X ┃   ┃   ┃   ┃ X ┃   ┃   ┃   ┃ X ┃   ┃
+               ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫
+            2  ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃
+               ┗━━━┻━━━┻━━━┛   ┗━━━┻━━━┻━━━┛   ┗━━━┻━━━┻━━━┛
+            3
+               ┏━━━┳━━━┳━━━┓   ┏━━━┳━━━┳━━━┓   ┏━━━┳━━━┳━━━┓
+            4  ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃
+               ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫
+        1   5  ┃   ┃ X ┃   ┃   ┃   ┃ X ┃   ┃   ┃   ┃ X ┃   ┃
+               ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫   ┣━━━╋━━━╋━━━┫
+            6  ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃   ┃
+               ┗━━━┻━━━┻━━━┛   ┗━━━┻━━━┻━━━┛   ┗━━━┻━━━┻━━━┛
         """
 
-        # Loop in the maze and remove walls
-        for rh, row_hexa in enumerate(maze.values):
+        # Loop in the maze draw where it's open
+        for rh, row_hexa in enumerate(maze_hexa.values):
             for ch, cell_hexa in enumerate(row_hexa):
-                # Who is active ?
-                top = cell_hexa & 0b0001 == 0b0001
-                left = cell_hexa & 0b1000 == 0b1000
-                right = cell_hexa & 0b0010 == 0b0010
-                bottom = cell_hexa & 0b0100 == 0b0100
-
-                # Get the top left coordinate in self.cells
-                row = rh * 2
-                col = ch * 2
+                # Get the middle coordinate in self.cells
+                row = (rh * 4) + 2
+                col = (ch * 4) + 2
 
                 if cell_hexa & 0b1111 != 0b1111:
-                    self.set_pixel(col + 1, row + 1)
+                    self.__draw_square(row, col)
 
-                if not top:
-                    self.set_pixel(col + 1, row)
-                if not right:
-                    self.set_pixel(col + 2, row + 1)
-                if not bottom:
-                    self.set_pixel(col + 1, row + 2)
-                if not left:
-                    self.set_pixel(col, row + 1)
+                if cell_hexa & 0b0001 != 0b0001:  # Top
+                    self.__draw_line(row - 2, col - 1)
+                if cell_hexa & 0b0100 != 0b0100:  # Bottom
+                    self.__draw_line(row + 2, col - 1)
+                if cell_hexa & 0b1000 != 0b1000:  # Left
+                    self.__draw_line(row - 1, col - 2, vertical=True)
+                if cell_hexa & 0b0010 != 0b0010:  # Right
+                    self.__draw_line(row - 1, col + 2, vertical=True)
 
 
 class CMaze(Static):
@@ -107,7 +130,7 @@ class CMaze(Static):
         if maze:
             # self.__hexa_maze = maze
             # self.print_RENAME()
-            self.__canvas.break_walls(maze)
+            self.__canvas.dig_holes(maze)
             self.__canvas.refresh()
             return True
         else:
