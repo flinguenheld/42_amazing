@@ -1,5 +1,8 @@
+from textual.app import App, ComposeResult
+from textual.color import Color
+
+from textual_canvas import Canvas
 import asyncio
-import time
 from textual.containers import (
     VerticalGroup,
 )
@@ -9,13 +12,14 @@ from textual.app import App, ComposeResult
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.borders import Borders
+from visualiser.canvas_test import CMaze
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░█░▀█▀░█▀▀░█░█░█▀█░█░░░▀█▀░█▀▀░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
-class Visualiser(App):
+class Visualiser(App[None]):
     CSS_PATH = ["style/main.tcss"]
     BINDINGS = [
         ("t", "next_theme", "Next theme"),
@@ -31,7 +35,11 @@ class Visualiser(App):
         self.__tmaze = TMaze(config, self.__borders)
         self.__title = TTitle()
         self.__config_TO_REMOVE = config
+        self.__canvas_test = CMaze(config)
+        # self.__canvas_test.init_canvas()
+
         # self.action_new_maze()
+
         self.__tmaze.generate_new_maze()
 
     def compose(self) -> ComposeResult:
@@ -39,15 +47,22 @@ class Visualiser(App):
         with VerticalGroup(id="main_layout"):
             yield self.__title
             yield self.__tmaze
+
+        # yield Canvas(30, 30)
+        yield self.__canvas_test
         yield Footer()
 
     # ########################################################################
     # ######################################################### NEW MAZE #####
     def action_new_maze(self):
-        self.__tmaze.generate_new_maze()
+        self.__canvas_test.generate_new_maze()
 
     def action_next_step(self):
-        self.__tmaze.next_step_animation()
+        # self.__tmaze.next_step_animation()
+        # self.__canvas_test.up_size(20, 20)
+        # self.__canvas_test.refresh()
+        # self.__canvas_test.up_canvas()
+        self.__canvas_test.next_step_animation()
 
     # ########################################################################
     # ########################################################## ANIMATE #####

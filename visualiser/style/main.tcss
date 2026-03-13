@@ -31,3 +31,6 @@ TTitle {
     content-align: center middle;
 }
 
+VisualiserTEST {
+    border: heavy red;
+}
