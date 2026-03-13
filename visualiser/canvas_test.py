@@ -59,8 +59,9 @@ class CMaze(Static):
         self.__config = config
         self.__container = Horizontal()
         self.__maze_generator = MazeGenerator(config)
-        self.__canvas = MyCanvas(500, 500)
-        self.__generator = self.__maze_generator.animate()
+        self.__canvas = MyCanvas(config.nb_row, config.nb_col)
+        self.__maze_generator = MazeGenerator(config)
+        self.__generator = self.__maze_generator.generate(animate=True)
 
     def compose(self) -> ComposeResult:
         with self.__container:
@@ -83,6 +84,10 @@ class CMaze(Static):
     # self.__canvas.break_walls(self._maze)
     # self.__canvas.refresh()
 
+    def update_config(self):
+        # Create a new Canvas !!!!!!
+        pass
+
     # ########################################################################
     # ##################################################### GENERATE MAZE ####
     def generate_new_maze(self):
@@ -93,7 +98,7 @@ class CMaze(Static):
         #     self.init_canvas()
         # else:
         #     self.__canvas.clear()
-        self.__generator = self.__maze_generator.animate()
+        self.__generator = self.__maze_generator.generate(animate=True)
         self.__canvas.clear()
         self.next_step_animation()
 

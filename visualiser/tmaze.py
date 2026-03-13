@@ -68,11 +68,11 @@ class TMaze(Static):
         super().__init__()
         self.__borders = borders
         self.__maze_generator = MazeGenerator(config)
-        self.generate_new_maze()
 
     # ########################################################## NEW MAZE ####
-    def generate_new_maze(self):
-        self.__generator = self.__maze_generator.animate()
+    def new_animation(self):
+        # TODO: move that in the constuctor ! ################################
+        self.__generator = self.__maze_generator.generate(animate=True)
         self.next_step_animation()
 
     def next_step_animation(self) -> bool:

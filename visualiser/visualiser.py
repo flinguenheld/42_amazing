@@ -37,10 +37,9 @@ class Visualiser(App[None]):
         self.__config_TO_REMOVE = config
         self.__canvas_test = CMaze(config)
         # self.__canvas_test.init_canvas()
-
         # self.action_new_maze()
 
-        self.__tmaze.generate_new_maze()
+        self.__tmaze.new_animation()
 
     def compose(self) -> ComposeResult:
         yield Header()
