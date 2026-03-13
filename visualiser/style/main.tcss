@@ -34,3 +34,15 @@ TTitle {
 VisualiserTEST {
     border: heavy red;
 }
+
+CMaze {
+    background: red;
+    
+}
+
+MyCanvas {
+        background: cornflowerblue;
+        # border: solid cornflowerblue;
+        # width: 1fr;
+        # height: 1fr;
+}

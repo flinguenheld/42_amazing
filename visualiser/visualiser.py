@@ -1,3 +1,4 @@
+from textual.theme import Theme
 from textual.app import App, ComposeResult
 from textual.color import Color
 
@@ -35,7 +36,8 @@ class Visualiser(App[None]):
         self.__tmaze = TMaze(config, self.__borders)
         self.__title = TTitle()
         self.__config_TO_REMOVE = config
-        self.__canvas_test = CMaze(config)
+        self.theme = "gruvbox"
+        self.__canvas_test = CMaze(config, self.__get_colours())
         # self.__canvas_test.init_canvas()
         # self.action_new_maze()
 
@@ -81,6 +83,17 @@ class Visualiser(App[None]):
     def on_mount(self) -> None:
         self.action_next_theme()
 
+    def __get_colours(self):
+
+        theme = self.get_theme(self.theme)
+        if theme:
+            return {
+                "background": Color.parse(theme.background),
+                "primary": Color.parse(theme.primary),
+                "secondary": Color.parse(theme.secondary),
+            }
+        return {}
+
     def action_next_theme(self) -> None:
         """Change theme"""
 
@@ -95,3 +108,5 @@ class Visualiser(App[None]):
                 self.theme = "catppuccin-frappe"
             case _:
                 self.theme = "gruvbox"
+
+        self.__canvas_test.up_colours(self.__get_colours())
