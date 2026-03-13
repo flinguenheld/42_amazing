@@ -6,26 +6,22 @@ from maze_generator.path_finder import PathFinder
 
 
 from typing import Optional, Set
-
-# import time
+from datetime import datetime
+import time
 import random
-
-# TODO: Add '42' to the middle of the maze when possible
-# TODO: Write docstrings for all functions
-# TODO: Instantiate maze inside MazeGenerator and return it on generate()
 
 
 class MazeGenerator:
     """
-    - Standalone class that fully handles the creation/generation
-            of a maze based on a config dict passed on instanciation.
-    - Uses Wilson's algorithm with LERW for generation
+    - Standalone class that fully handles the instantiation/filling
+            of a Maze based on a Config object passed on initialization.
+    - Uses Wilson's algorithm with LERW for maze generation
     """
 
     def __init__(self, config: Optional[Config] = None) -> None:
         """
-        - Checks passed config through ConfigModel to ensure data sanity
-        - Creates base maze with retrieved parameters
+        - Chooses between passed as arg/default Config object
+        - Seeds random()
         """
         if config:
             self.config = config
@@ -40,14 +36,13 @@ class MazeGenerator:
                     "PERFECT": True,
                 }
             )
-
         self.full_path: Set[tuple[int, int]] = set()
-        # random.seed(4)
 
     def destroy_walls(self) -> None:
         """
         - Iterates through all visited cells
         - Breaks random wall if not near a 0 cell/nor creating a 0 cell
+        - Yield maze at each wall broken
         """
         for cur_r, cur_c in self.full_path:
             if not (
@@ -78,19 +73,35 @@ class MazeGenerator:
                     [i for i in neighbours if i in self.full_path]
                 )
                 self.maze.break_wall((cur_r, cur_c), ngbr, True)
+                yield self.maze
             except ValueError:
                 pass
 
     def generate(self) -> Maze | None:
+        """
+        - Wrapper for generator animate(), skips to last yield maze
+        """
         return list(self.animate())[-1]
 
     def animate(self):
         """
+        - Instantiate Maze with config set in __init__()
+            - yield empty maze
         - Instantiate and use Walkers to fill maze branch by branch
-                with new paths until no cell is unvisited
+                with new paths until no cell is left unvisited
+            - yield maze after each walker
         - Destroy walls if maze must not be perfect
-        - Return maze
+            - yield wall at each wall broken
+        - Find quickest path from entry to exit and write solution to maze
+        - yield last maze
         """
+        if not self.config.get("seed"):
+            random.seed(
+                f"{datetime.now().strftime('%Y%m%d%H%M%S')}{time.time()}"
+            )
+        else:
+            random.seed(self.config.get("seed"))
+
         self.maze = Maze(
             self.config.nb_row,
             self.config.nb_col,
@@ -125,9 +136,9 @@ class MazeGenerator:
             yield self.maze
 
         if self.maze.perfect is False:
-            self.destroy_walls()
+            for maze in self.destroy_walls():
+                yield maze
 
         self.maze.set_solution(PathFinder(self.maze, self.config).search())
 
-        # print(f"Path finding: {time.time() - start_time}")
         yield self.maze
