@@ -32,7 +32,7 @@ class Visualiser(App):
         self.__title = TTitle()
         self.__config_TO_REMOVE = config
         # self.action_new_maze()
-        self.__tmaze.new_animation()
+        self.__tmaze.generate_new_maze()
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -42,25 +42,25 @@ class Visualiser(App):
         yield Footer()
 
     # ########################################################################
-    # ########################################################### THEMES #####
+    # ######################################################### NEW MAZE #####
+    def action_new_maze(self):
+        self.__tmaze.generate_new_maze()
+
+    def action_next_step(self):
+        self.__tmaze.next_step_animation()
+
+    # ########################################################################
+    # ########################################################## ANIMATE #####
     async def action_animate(self):
         while self.__tmaze.next_step_animation():
             self.__tmaze.refresh()
             await asyncio.sleep(0.0005)
 
-    def action_new_maze(self):
-        # self.__tmaze.new_maze(self.__config_TO_REMOVE)
-        self.__tmaze.new_animation()
-
-    def action_next_step(self):
-        # self.__tmaze.new_maze(self.__config_TO_REMOVE)
-        self.__tmaze.next_step_animation()
-
     # ########################################################################
     # ########################################################## BORDERS #####
     def action_border(self) -> None:
         self.__borders.next()
-        self.__tmaze.refresh_maze()
+        self.__tmaze.refresh_maze_representation()
 
     # ########################################################################
     # ########################################################### THEMES #####

@@ -62,24 +62,16 @@ from visualiser.mcell import MCellHorizontal, MCellVertical, MCellAngle
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀█░▄▀░░█▀▀
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀░▀░▀▀▀░▀▀▀
 class TMaze(Static):
-    __to_print = reactive("My ass")
+    __to_print = reactive("No maze")
 
-    # TODO: CONFIG ! FIND A GOOD WAY TO DEAL WITH ############################
     def __init__(self, config, borders: Borders) -> None:
         super().__init__()
         self.__borders = borders
-        # REMOVE TO USE A ONE SHOT IN NEW_MAZE ???????
-        # self.__generator = MazeGenerator(config)
-        self.__config = config
-
-        # self.new_maze()
-        # self.__maze_generator = MazeGenerator(self.__config)
-        self.new_animation()
+        self.__maze_generator = MazeGenerator(config)
+        self.generate_new_maze()
 
     # ########################################################## NEW MAZE ####
-    def new_animation(self):
-        # TODO: move that in the constuctor ! ################################
-        self.__maze_generator = MazeGenerator(self.__config)
+    def generate_new_maze(self):
         self.__generator = self.__maze_generator.animate()
         self.next_step_animation()
 
@@ -87,15 +79,13 @@ class TMaze(Static):
         maze = next(self.__generator, None)
         if maze:
             self.__hexa_maze = maze
-            self.new_maze()
+            self.load_maze(maze)
             return True
         else:
             return False
 
-    def new_maze(self) -> None:
-        # generator = MazeGenerator(self.__config)
-        # self.__hexa_maze = generator.generate()
-
+    # ######################################################### LOAD MAZE ####
+    def load_maze(self, hexa_maze: Maze) -> None:
         self.__nb_row = self.__hexa_maze.nb_row * 2 + 1
         self.__nb_col = self.__hexa_maze.nb_col * 2 + 1
 
@@ -103,11 +93,10 @@ class TMaze(Static):
         self.__verticals = MCellVertical(self.__borders)
         self.__horizontals = MCellHorizontal(self.__borders)
 
-        self.__load_maze()
-        self.refresh_maze()
+        self.__convert_hexa_maze()
+        self.refresh_maze_representation()
 
-    # ######################################################### LOAD MAZE ####
-    def __load_maze(self) -> None:
+    def __convert_hexa_maze(self) -> None:
         """Convert the hexadecimal maze into the TMaze logic
 
         ┏━━━━┳━━━━━━━━┳━━━━┓
@@ -156,7 +145,7 @@ class TMaze(Static):
                 self.__verticals.add(row + 1, col, is_active=left)
 
     # ########################################################### REFRESH ####
-    def refresh_maze(self) -> None:
+    def refresh_maze_representation(self) -> None:
         """Update the maze str representation"""
 
         buffer = StringIO("")
