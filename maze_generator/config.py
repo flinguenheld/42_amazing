@@ -1,19 +1,39 @@
 from typing import Annotated, Any, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
+from datetime import datetime
+import time
 
 SIZE_MIN = 2
 SIZE_MAX = 1000
 
+# TODO: Find a way to make default exit (nb_row - 1, nb_col - 1)
+
 
 class Config(BaseModel):
-    nb_col: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH")]
-    nb_row: Annotated[int, Field(ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT")]
-    entry: Annotated[tuple[int, int], Field(alias="ENTRY")]
-    exit: Annotated[tuple[int, int], Field(alias="EXIT")]
-    output_file: Annotated[
-        str, Field(min_length=3, max_length=30, alias="OUTPUT_FILE")
+    nb_col: Annotated[
+        Optional[int],
+        Field(default=15, ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH"),
     ]
-    perfect: Annotated[bool, Field(alias="PERFECT")]
+    nb_row: Annotated[
+        Optional[int],
+        Field(default=15, ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT"),
+    ]
+    entry: Annotated[
+        Optional[tuple[int, int]], Field(default=(0, 0), alias="ENTRY")
+    ]
+    exit: Annotated[
+        Optional[tuple[int, int]], Field(default=(14, 14), alias="EXIT")
+    ]
+    output_file: Annotated[
+        Optional[str],
+        Field(
+            default="maze.txt",
+            min_length=3,
+            max_length=30,
+            alias="OUTPUT_FILE",
+        ),
+    ]
+    perfect: Annotated[Optional[bool], Field(default=False, alias="PERFECT")]
     seed: Annotated[
         Optional[Any],
         Field(default=None, alias="SEED"),

@@ -25,7 +25,7 @@ class Walker:
         self.max_r, self.max_c = maze.nb_row, maze.nb_col
         self.cur_r, self.cur_c = self.path[-1]
 
-    def walk(self) -> List[Tuple[int, int]]:
+    def walk(self, rand: random.Random) -> List[Tuple[int, int]]:
         """
         - Randomly choose a possible move from last path entry
         - Check for loop/blocked
@@ -39,7 +39,7 @@ class Walker:
             if len(valid_moves) == 0:
                 return self.path
             else:
-                r, c = random.choice(self.__get_valid_moves())
+                r, c = rand.choice(self.__get_valid_moves())
                 target = (self.cur_r + r, self.cur_c + c)
                 if target in self.path:
                     self.path.go_back(target)

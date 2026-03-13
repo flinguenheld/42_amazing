@@ -1,6 +1,9 @@
 from typing import Tuple
 from maze_generator.path import Path
 
+from datetime import datetime
+import time
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▄█░█▀█░▀▀█░█▀▀░
@@ -15,6 +18,7 @@ class Maze:
         - List[] of coordinates of cells needed for logo
     - Has a break_wall method that clears path between cell1 and cell2
     """
+
     WALL_MAP = {
         (-1, 0): 0b0001,
         (0, 1): 0b0010,
@@ -29,6 +33,7 @@ class Maze:
         entry: Tuple[int, int],
         exit: Tuple[int, int],
         perfect: bool,
+        seed: str,
     ) -> None:
         """
         - Initializes with all needed values
@@ -40,6 +45,12 @@ class Maze:
         self.start = entry
         self.end = exit
         self.perfect = perfect
+        if seed is None:
+            self.seed = (
+                f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
+            )
+        else:
+            self.seed = seed
         self.solution = None
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)
