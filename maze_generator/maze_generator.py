@@ -5,6 +5,8 @@ from maze_generator.path_finder import PathFinder
 
 
 from typing import Optional, Set
+from datetime import datetime
+import time
 import random
 
 
@@ -17,7 +19,8 @@ class MazeGenerator:
 
     def __init__(self, config: Optional[Config] = None) -> None:
         """
-            - Chooses between passed as arg/default Config object
+        - Chooses between passed as arg/default Config object
+        - Seeds random()
         """
         if config:
             self.config = config
@@ -32,7 +35,6 @@ class MazeGenerator:
                     "PERFECT": True,
                 }
             )
-
         self.full_path: Set[tuple[int, int]] = set()
 
     def destroy_walls(self) -> None:
@@ -92,12 +94,19 @@ class MazeGenerator:
         - Find quickest path from entry to exit and write solution to maze
         - yield last maze
         """
+        if not self.config.get("seed"):
+            random.seed(
+                f"{datetime.now().strftime('%Y%m%d%H%M%S')}{time.time()}"
+            )
+        else:
+            random.seed(self.config.get("seed"))
+
         self.maze = Maze(
-                self.config.nb_row,
-                self.config.nb_col,
-                self.config.entry,
-                self.config.exit,
-                self.config.perfect
+            self.config.nb_row,
+            self.config.nb_col,
+            self.config.entry,
+            self.config.exit,
+            self.config.perfect,
         )
 
         not_visited = {

@@ -1,10 +1,8 @@
 from typing import Annotated, Any, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from datetime import datetime
-
 SIZE_MIN = 2
-SIZE_MAX = 500
+SIZE_MAX = 1000
 
 
 class Config(BaseModel):
@@ -16,7 +14,10 @@ class Config(BaseModel):
         str, Field(min_length=3, max_length=30, alias="OUTPUT_FILE")
     ]
     perfect: Annotated[bool, Field(alias="PERFECT")]
-    seed: Annotated[Optional[Any], Field(default=datetime.now(), alias="SEED")]
+    seed: Annotated[
+        Optional[Any],
+        Field(default=None, alias="SEED"),
+    ]
 
     # Enable passing new value of modified attributes into checks before write
     class Config:
