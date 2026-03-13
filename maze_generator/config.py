@@ -1,5 +1,7 @@
-from typing import Annotated, Any
+from typing import Annotated, Any, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
+
+from datetime import datetime
 
 SIZE_MIN = 2
 SIZE_MAX = 500
@@ -14,6 +16,11 @@ class Config(BaseModel):
         str, Field(min_length=3, max_length=30, alias="OUTPUT_FILE")
     ]
     perfect: Annotated[bool, Field(alias="PERFECT")]
+    seed: Annotated[Optional[Any], Field(default=datetime.now(), alias="SEED")]
+
+    # Enable passing new value of modified attributes into checks before write
+    class Config:
+        validate_assignment = True
 
     @field_validator("entry", "exit")
     @classmethod
@@ -49,3 +56,9 @@ class Config(BaseModel):
             raise ValueError("Entry and Exit can't be equal")
 
         return self
+
+    def set(self, param_name: str, new_value: Any) -> None:
+        setattr(self, param_name, new_value)
+
+    def get(self, param_name: str) -> Any:
+        return getattr(self, param_name, None)
