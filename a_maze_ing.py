@@ -2,7 +2,7 @@ from config.config_parser import ConfigParser
 import sys
 from termcolor import cprint
 from visualiser.visualiser import Visualiser
-from maze_generator.config import Config
+from mazegen.config import Config
 
 
 def usage() -> str:

@@ -9,4 +9,13 @@ dependencies = [
     "pytest>=9.0.2",
     "termcolor>=3.3.0",
     "textual>=8.0.2",
+	"mazegen",
 ]
+
+[tool.uv.workspace]
+members = [
+    "maze_generator",
+]
+
+[tool.uv.sources]
+mazegen = { workspace = true }

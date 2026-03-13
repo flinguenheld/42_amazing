@@ -1,6 +1,6 @@
-from maze_generator.maze import Maze
-from maze_generator.config import Config
-from maze_generator.path import Path
+from mazegen.maze import Maze
+from mazegen.config import Config
+from mazegen.path import Path
 
 from typing import Dict, Tuple, List
 from collections import deque

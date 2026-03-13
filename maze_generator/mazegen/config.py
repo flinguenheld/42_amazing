@@ -1,7 +1,5 @@
 from typing import Annotated, Any, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
-from datetime import datetime
-import time
 
 SIZE_MIN = 2
 SIZE_MAX = 1000
@@ -10,6 +8,12 @@ SIZE_MAX = 1000
 
 
 class Config(BaseModel):
+    """
+    - Class that stores config related info, runnnig Field() checks
+                                                at each assignation
+    - Provides safe ways to get and set attributes
+    """
+
     nb_col: Annotated[
         Optional[int],
         Field(default=15, ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH"),
@@ -41,6 +45,7 @@ class Config(BaseModel):
 
     # Enable passing new value of modified attributes into checks before write
     class Config:
+        """ Configures BaseModel behaviour """
         validate_assignment = True
 
     @field_validator("entry", "exit")
@@ -79,7 +84,13 @@ class Config(BaseModel):
         return self
 
     def set(self, param_name: str, new_value: Any) -> None:
+        """
+        - Sets attribute passed as a string to new value (after runs checks)
+        """
         setattr(self, param_name, new_value)
 
     def get(self, param_name: str) -> Any:
+        """
+        - Gets attribute passed as a string, defaults to None if not found
+        """
         return getattr(self, param_name, None)

@@ -1,13 +1,14 @@
-from maze_generator.maze import Maze
-from maze_generator.config import Config
-from maze_generator.walker import Walker
-from maze_generator.path_finder import PathFinder
+from mazegen.maze import Maze
+from mazegen.config import Config
+from mazegen.walker import Walker
+from mazegen.path_finder import PathFinder
 
 
 from typing import Optional, Set
 import random
 
-# TODO: Build installable via pip package (uv build, .whl)
+# TODO: Find better way to organise methods:
+#        print(generate()) needs to print a Maze, not a generator
 
 
 class MazeGenerator:
@@ -135,4 +136,7 @@ class MazeGenerator:
                     yield maze
 
         self.__solve_maze()
-        yield self.__maze
+        if animate:
+            yield self.__maze
+        else:
+            return self.__maze

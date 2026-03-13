@@ -1,5 +1,5 @@
-from maze_generator.maze import Maze
-from maze_generator.path import Path
+from mazegen.maze import Maze
+from mazegen.path import Path
 from typing import List, Tuple, Set
 import random
 

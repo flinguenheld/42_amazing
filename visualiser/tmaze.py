@@ -1,8 +1,8 @@
-from maze_generator.maze_generator import MazeGenerator
+from mazegen.maze_generator import MazeGenerator
 from io import StringIO
 from textual.widgets import Static
 from textual.app import RenderResult
-from maze_generator.maze import Maze
+from mazegen.maze import Maze
 from textual.reactive import reactive
 from visualiser.borders import Borders
 from visualiser.mcell import MCellHorizontal, MCellVertical, MCellAngle
