@@ -12,7 +12,6 @@ class Path:
         self,
         path_start: List[Tuple[int, int]],
     ) -> None:
-        self.values: Dict[Tuple[int, int], int] = dict()
         self.path: List[Tuple[int, int]] = path_start
 
     def __getitem__(self, index: int) -> Tuple[int, int]:

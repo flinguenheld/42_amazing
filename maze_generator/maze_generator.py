@@ -24,50 +24,50 @@ class MazeGenerator:
         else:
             self.config = Config()
 
-    def destroy_walls(self):
+    def __destroy_walls(self):
         """
         - Receives a Maze object and a set of all cells coordinates
         - Iterates through all visited cells
         - Breaks random wall if not near a 0 cell/nor creating a 0 cell
         - Yield Maze at each wall broken
         """
-        for cur_r, cur_c in self.full_path:
+        for cur_r, cur_c in self.__full_path:
             if not (
-                0 > cur_r > self.maze.nb_row - 2
-                and 0 > cur_c > self.maze.nb_col - 2
-                and self.maze.values[cur_r][cur_c] != 0
+                0 > cur_r > self.__maze.nb_row - 2
+                and 0 > cur_c > self.__maze.nb_col - 2
+                and self.__maze.values[cur_r][cur_c] != 0
             ):
                 pass
             try:
-                if self.rand.randint(0, 1) != 1:
+                if self.__rand.randint(0, 1) != 1:
                     raise ValueError
                 for y in range(-1, 1):
                     for x in range(-1, 1):
                         if (
-                            0 >= cur_r - y >= self.maze.nb_row - 1
-                            and 0 >= cur_c - x >= self.maze.nb_col - 1
+                            0 >= cur_r - y >= self.__maze.nb_row - 1
+                            and 0 >= cur_c - x >= self.__maze.nb_col - 1
                             and (cur_r - y, cur_c - x)
-                            not in self.maze.cells_42
-                            and self.maze.values[cur_r - y][cur_c - x]
+                            not in self.__maze.cells_42
+                            and self.__maze.values[cur_r - y][cur_c - x]
                             == 0b0000
                         ):
                             raise ValueError
                 neighbours = {
                     (cur_r - r, cur_c - c)
-                    for r, c in self.maze.WALL_MAP.keys()
+                    for r, c in self.__maze.WALL_MAP.keys()
                 }
-                ngbr = self.rand.choice(
-                    [i for i in neighbours if i in self.full_path]
+                ngbr = self.__rand.choice(
+                    [i for i in neighbours if i in self.__full_path]
                 )
-                self.maze.break_wall((cur_r, cur_c), ngbr, True)
-                yield self.maze
+                self.__maze.break_wall((cur_r, cur_c), ngbr, True)
+                yield self.__maze
             except ValueError:
                 pass
 
-    def reset_attributes(self) -> Maze:
-        self.rand = random.Random(self.config.get("seed"))
+    def __reset_attributes(self) -> Maze:
+        self.__rand = random.Random(self.config.get("seed"))
 
-        self.maze = Maze(
+        self.__maze = Maze(
             self.config.nb_row,
             self.config.nb_col,
             self.config.entry,
@@ -76,40 +76,36 @@ class MazeGenerator:
             self.config.seed,
         )
 
-        self.full_path: Set[tuple[int, int]] = set()
-        self.not_visited = {
+        self.__full_path: Set[tuple[int, int]] = set()
+        self.__not_visited = {
             (r, c)
-            for r in range(self.maze.nb_row)
-            for c in range(self.maze.nb_col)
-            if (r, c) not in self.maze.cells_42
+            for r in range(self.__maze.nb_row)
+            for c in range(self.__maze.nb_col)
+            if (r, c) not in self.__maze.cells_42
         }
 
-        return self.maze
+        return self.__maze
 
-    def find_first_path(self) -> Maze:
-        path = Walker(self.maze, False, self.maze.start, self.maze.end).walk(
-            self.rand
+    def __find_first_path(self) -> Maze:
+        path = Walker(
+            self.__maze, False, self.__maze.start, self.__maze.end
+        ).walk(self.__rand)
+        self.__full_path.update(path)
+        self.__not_visited.difference_update(path)
+
+    def __find_next_path(self) -> Maze:
+        choice = self.__rand.choice(sorted(list(self.__not_visited)))
+        path = Walker(self.__maze, False, choice, self.__full_path).walk(
+            self.__rand
         )
-        self.full_path.update(path)
-        self.not_visited.difference_update(path)
+        self.__full_path.update(path)
+        self.__not_visited.difference_update(path)
 
-    def find_next_path(self) -> Maze:
-        choice = self.rand.choice(sorted(list(self.not_visited)))
-        path = Walker(self.maze, False, choice, self.full_path).walk(self.rand)
-        self.full_path.update(path)
-        self.not_visited.difference_update(path)
+    def __solve_maze(self) -> Maze:
+        self.__maze.set_solution(PathFinder(self.__maze, self.config).search())
+        return self.__maze
 
-    def solve_maze(self) -> Maze:
-        self.maze.set_solution(PathFinder(self.maze, self.config).search())
-        return self.maze
-
-    def generate(self) -> Maze | None:
-        """
-        - Returns last yield Maze from generator()
-        """
-        return list(self.animate())[-1]
-
-    def animate(self):
+    def generate(self, animate: Optional[bool] = False):
         """
         - Instantiate Maze with config set in __init__()
             - yield empty maze
@@ -121,19 +117,22 @@ class MazeGenerator:
         - Find quickest path from entry to exit and write solution to maze
         - yield last maze
         """
-        self.reset_attributes()
-        yield self.maze
+        self.__reset_attributes()
+        if animate:
+            yield self.__maze
 
-        self.find_first_path()
-        yield self.maze
+        self.__find_first_path()
+        if animate:
+            yield self.__maze
 
-        while len(self.not_visited) != 0:
-            self.find_next_path()
-            yield self.maze
+        while len(self.__not_visited) != 0:
+            self.__find_next_path()
+            yield self.__maze
 
-        if self.maze.perfect is False:
-            for maze in self.destroy_walls():
-                yield maze
+        if self.__maze.perfect is False:
+            for maze in self.__destroy_walls():
+                if animate:
+                    yield maze
 
-        self.solve_maze()
-        yield self.maze
+        self.__solve_maze()
+        yield self.__maze
