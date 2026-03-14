@@ -1,21 +1,16 @@
-import asyncio
-import time
-from textual.containers import (
-    VerticalGroup,
-)
-from textual.widgets import Footer, Header
-from textual.app import App, ComposeResult
-
+from textual.color import Color
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
-from visualiser.borders import Borders
+from textual.widgets import Footer, Header
+from textual.app import App, ComposeResult
+from textual.containers import ScrollableContainer, Vertical
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░█░▀█▀░█▀▀░█░█░█▀█░█░░░▀█▀░█▀▀░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
-class Visualiser(App):
+class Visualiser(App[None]):
     CSS_PATH = ["style/main.tcss"]
     BINDINGS = [
         ("t", "next_theme", "Next theme"),
@@ -27,45 +22,50 @@ class Visualiser(App):
 
     def __init__(self, config) -> None:
         super().__init__()
-        self.__borders = Borders()
-        self.__tmaze = TMaze(config, self.__borders)
-        self.__title = TTitle()
+        self.theme = "gruvbox"
+        self.__ttitle = TTitle()
         self.__config_TO_REMOVE = config
-        # self.action_new_maze()
-        self.__tmaze.new_animation()
+        self.__tmaze = TMaze(config, self.__get_colours())
+        self.action_new_maze()
 
     def compose(self) -> ComposeResult:
-        yield Header()
-        with VerticalGroup(id="main_layout"):
-            yield self.__title
-            yield self.__tmaze
+        yield Header(show_clock=True)
         yield Footer()
+        with Vertical(id="main_layout"):
+            yield self.__ttitle
+            with ScrollableContainer(id="scroll_layout"):
+                yield self.__tmaze
 
     # ########################################################################
-    # ########################################################### THEMES #####
-    async def action_animate(self):
-        while self.__tmaze.next_step_animation():
-            self.__tmaze.refresh()
-            await asyncio.sleep(0.0005)
-
+    # ################################################ ACTION - NEW MAZE #####
     def action_new_maze(self):
-        # self.__tmaze.new_maze(self.__config_TO_REMOVE)
-        self.__tmaze.new_animation()
+        self.__tmaze.generate_new_maze()
 
+    # ########################################################################
+    # ############################################### ACTION - NEXT STEP #####
     def action_next_step(self):
-        # self.__tmaze.new_maze(self.__config_TO_REMOVE)
         self.__tmaze.next_step_animation()
 
     # ########################################################################
-    # ########################################################## BORDERS #####
-    def action_border(self) -> None:
-        self.__borders.next()
-        self.__tmaze.refresh_maze()
+    # ################################################# ACTION - ANIMATE #####
+    async def action_animate(self):
+        await self.__tmaze.animate_all_steps()
 
     # ########################################################################
     # ########################################################### THEMES #####
     def on_mount(self) -> None:
         self.action_next_theme()
+
+    def __get_colours(self):
+
+        theme = self.get_theme(self.theme)
+        if theme:
+            return {
+                "background": Color.parse(theme.background),
+                "primary": Color.parse(theme.primary),
+                "secondary": Color.parse(theme.secondary),
+            }
+        return {}
 
     def action_next_theme(self) -> None:
         """Change theme"""
@@ -81,3 +81,5 @@ class Visualiser(App):
                 self.theme = "catppuccin-frappe"
             case _:
                 self.theme = "gruvbox"
+
+        self.__tmaze.up_colours(self.__get_colours())

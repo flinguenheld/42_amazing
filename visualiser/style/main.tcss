@@ -1,33 +1,55 @@
 Screen {
     align: center middle;
-	# border: heavy red;
+    content-align: center middle;
+    border: round $primary;
 }
 
 #main_layout {
-    # align: center middle;
-    # content-align: center middle;
-    border: heavy grey;
-    # width: auto;
-    # height: auto;
-}
-
-#maze-container {
     align: center middle;
-}
-
-TMaze {
-    # width: 100%;
+    content-align: center middle;
+    # border: heavy grey;
     content-align: center middle;
 }
 
 TTitle {
-    # width: 100%;
-    content-align: center middle;
+    width: 100%;
+    color: $primary;
+    # border: heavy grey;
     margin-bottom: 2;
+    content-align: center middle;
 }
 
-.centered {
-    # width: 100%;
+#scroll_layout {
+    border: round $primary;
+    align: center middle;
     content-align: center middle;
 }
+
+TMaze {
+    width: auto;
+    height: auto;
+    align: center middle;
+    # border: heavy green;
+}
+
+MazeCanvas {
+    width: auto;
+    height: auto;
+    # border: solid red;
+    align: center middle;
+    background: $background;
+
+}
+
+Header {
+    background: $primary;
+    color: $background;
+}
+
+Footer {
+    background: $primary;
+    color: $background;
+}
+
+
 
