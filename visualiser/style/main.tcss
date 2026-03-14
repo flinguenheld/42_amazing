@@ -36,13 +36,15 @@ VisualiserTEST {
 }
 
 CMaze {
-    background: red;
-    
+   # border: heavy green;
+    align: center middle;
+    width: 100%;
+    height: auto;
 }
 
 MyCanvas {
-        background: cornflowerblue;
-        # border: solid cornflowerblue;
-        # width: 1fr;
-        # height: 1fr;
+    background: $background;
+    # border: solid red;
+    width: auto;
+    height: auto;
 }

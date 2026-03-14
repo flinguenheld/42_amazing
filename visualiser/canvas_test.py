@@ -1,6 +1,7 @@
+from textual.widget import Widget
 from typing import Dict
 from maze_generator.maze import Maze
-from textual.containers import Horizontal
+from textual.containers import Horizontal, Vertical, HorizontalGroup
 from textual.widgets import Static
 from textual.app import ComposeResult
 from textual_canvas import Canvas
@@ -13,9 +14,11 @@ from maze_generator.maze_generator import MazeGenerator
 class MyCanvas(Canvas):
     def __init__(self, nb_row: int, nb_col: int, colours: Dict[str, Color]):
         super().__init__(
-            width=(nb_col * 4 + 2),
-            height=(nb_row * 4 + 2),
-            canvas_color=colours["background"],
+            width=(nb_col * 3 + (nb_col + 1)),
+            height=(nb_row * 3 + (nb_row + 1)),
+            # Background is managed in the css
+            # canvas_color=colours["background"],
+            # canvas_color=colours["background"],
             # canvas_color=colours["secondary"],
         )
         self.__colours = colours
@@ -89,7 +92,7 @@ class MyCanvas(Canvas):
                     self.__draw_line(row - 1, col + 2, vertical=True)
 
 
-class CMaze(Static):
+class CMaze(Widget):
     def __init__(self, config, colours: Dict[str, Color]):
         super().__init__()
         self.__config = config
@@ -107,10 +110,10 @@ class CMaze(Static):
     # ########################################################### COLOURS ####
     def up_colours(self, colours):
         # TODO: Recreate a Canvas !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        self.__canvas.remove()
-        # self.__canvas.up_colours(colours)
-        self.__canvas = MyCanvas(200, 200, colours)
-        self.mount(self.__canvas)
+        # self.__canvas.remove()
+        self.__canvas.up_colours(colours)
+        # self.__canvas = MyCanvas(200, 200, colours)
+        # self.mount(self.__canvas)
 
     # ########################################################################
     # ######################################################### UP CANVAS ####
