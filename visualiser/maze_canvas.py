@@ -1,10 +1,15 @@
-from typing import Dict
+from copy import deepcopy
+from typing import Dict, override, Self
 from textual.color import Color
 from textual_canvas import Canvas
 
 from maze_generator.maze import Maze
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▄█░█▀█░▀▀█░█▀▀░░░█▀▀░█▀█░█▀█░█░█░█▀█░█▀▀
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░█░█▀█░▄▀░░█▀▀░░░█░░░█▀█░█░█░▀▄▀░█▀█░▀▀█
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░▀░▀░▀░▀▀▀░▀▀▀░░░▀▀▀░▀░▀░▀░▀░░▀░░▀░▀░▀▀▀
 class MazeCanvas(Canvas):
     def __init__(self, nb_row: int, nb_col: int, colours: Dict[str, Color]):
         super().__init__(
@@ -14,6 +19,7 @@ class MazeCanvas(Canvas):
             # canvas_color=colours["background"],
             # canvas_color=colours["secondary"],
         )
+        self.__previous = None
         self.__colours = colours
 
     # ########################################################################
@@ -37,6 +43,18 @@ class MazeCanvas(Canvas):
         self.__draw_line(row - 1, col - 1)
         self.__draw_line(row, col - 1)
         self.__draw_line(row + 1, col - 1)
+
+    # ########################################################################
+    # ############################################################# CLEAR ####
+    @override
+    def clear(
+        self,
+        color: Color | None = None,
+        width: int | None = None,
+        height: int | None = None,
+    ) -> Self:
+        self.__previous = None
+        return super().clear(color, width, height)
 
     # ########################################################################
     # ######################################################### DIG HOLES ####
@@ -72,6 +90,10 @@ class MazeCanvas(Canvas):
                 row = (rh * 4) + 2
                 col = (ch * 4) + 2
 
+                # Only draw the updated values --
+                if self.__previous and cell_hexa == self.__previous[rh][ch]:
+                    continue
+
                 if cell_hexa & 0b1111 != 0b1111:
                     self.__draw_square(row, col)
 
@@ -83,3 +105,5 @@ class MazeCanvas(Canvas):
                     self.__draw_line(row - 1, col - 2, vertical=True)
                 if cell_hexa & 0b0010 != 0b0010:  # Right
                     self.__draw_line(row - 1, col + 2, vertical=True)
+
+        self.__previous = deepcopy(maze_hexa.values)

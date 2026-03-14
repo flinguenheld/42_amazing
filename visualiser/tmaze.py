@@ -9,6 +9,10 @@ from visualiser.maze_canvas import MazeCanvas
 from maze_generator.maze_generator import MazeGenerator
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▄█░█▀█░▀▀█░█▀▀
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀█░▄▀░░█▀▀
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀░▀░▀▀▀░▀▀▀
 class TMaze(Widget):
     def __init__(self, config, colours: Dict[str, Color]):
         super().__init__()
@@ -46,7 +50,7 @@ class TMaze(Widget):
     # ######################################################### ANIMATION ####
     async def animate_all_steps(self):
         while self.next_step_animation():
-            await asyncio.sleep(0.0001)
+            await asyncio.sleep(0)
 
     def next_step_animation(self) -> bool:
         if self.__mazegen_iter:
