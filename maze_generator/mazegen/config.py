@@ -1,3 +1,5 @@
+from mazegen.algorithms import Algorithm
+
 from typing import Annotated, Any, Optional
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -42,10 +44,12 @@ class Config(BaseModel):
         Optional[Any],
         Field(default=None, alias="SEED"),
     ]
+    algo: Annotated[Optional[str], Field(default="Wilson", alias="ALGO")]
 
     # Enable passing new value of modified attributes into checks before write
     class Config:
-        """ Configures BaseModel behaviour """
+        """Configures BaseModel behaviour"""
+
         validate_assignment = True
 
     @field_validator("entry", "exit")
@@ -82,6 +86,14 @@ class Config(BaseModel):
             raise ValueError("Entry and Exit can't be equal")
 
         return self
+
+    @model_validator(mode="after")
+    def algorithm_is_valid(self) -> Any:
+        """Checks algorithm is implemented as children of class Algorithm"""
+        for child in Algorithm.__subclasses__():
+            if self.algo in str(child):
+                return self
+        raise ValueError(f"{self.algo} is not a valid algorithm")
 
     def set(self, param_name: str, new_value: Any) -> None:
         """

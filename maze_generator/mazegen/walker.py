@@ -13,14 +13,12 @@ class Walker:
     def __init__(
         self,
         maze: Maze,
-        __first_path: bool,
         start: Tuple[int, int],
         __end: Set[Tuple[int, int]] | Tuple[int, int],
     ) -> None:
 
         self.__maze = maze
         self.__path = Path([start])
-        self.__first_path = __first_path
         self.__end = {__end} if isinstance(__end, tuple) else __end
         self.__cur_r, self.__cur_c = self.__path[-1]
 
