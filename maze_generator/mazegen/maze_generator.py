@@ -4,7 +4,7 @@ from mazegen.walker import Walker
 from mazegen.path_finder import PathFinder
 
 
-from typing import Optional, Set
+from typing import Optional, Set, List
 import random
 
 # TODO: Rework destroy_walls()
@@ -64,6 +64,25 @@ class MazeGenerator:
             except ValueError:
                 pass
 
+    def __has_neighbours(self, cell: tuple[int, int]) -> List[tuple[int, int]]:
+        moves = (
+            (0, 1),
+            (1, 0),
+            (0, -1),
+            (-1, 0),
+        )
+        neighbours: List[tuple[int, int]] = list()
+        for move in moves:
+            new = (cell[0] + move[0], cell[1] + move[1])
+            if (
+                0 < new[0] < self.__maze.nb_row - 2
+                and 0 < new[1] < self.__maze.nb_col - 2
+                and self.__maze.values[new[0]][new[1]] in {0xE, 0xD, 0xB, 0x7}
+                and new in self.__full_path
+            ):
+                neighbours.append((cell[0] + move[0], cell[1] + move[1]))
+        return neighbours
+
     def __reset_attributes(self) -> Maze:
         self.__rand = random.Random(self.config.get("seed"))
 
@@ -99,6 +118,15 @@ class MazeGenerator:
             self.__rand
         )
         self.__full_path.update(path)
+
+        if self.__maze.perfect is False and len(path) > 2:
+            first_cell_neighbours = [
+                i for i in self.__has_neighbours(path[0]) if i not in path
+            ]
+            if len(first_cell_neighbours) > 0:
+                target = self.__rand.choice(first_cell_neighbours)
+                self.__maze.break_wall(path[0], target, safe=True)
+
         self.__not_visited.difference_update(path)
 
     def __solve_maze(self) -> Maze:
@@ -124,9 +152,9 @@ class MazeGenerator:
             self.__find_next_path()
             yield self.__maze
 
-        if self.__maze.perfect is False:
-            for maze in self.__destroy_walls():
-                yield maze
+        #       if self.__maze.perfect is False:
+        #           for maze in self.__destroy_walls():
+        #               yield maze
 
         self.__solve_maze()
         yield self.__maze
