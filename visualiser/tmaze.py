@@ -80,7 +80,7 @@ class TMaze(Static):
     def new_animation(self):
         # TODO: move that in the constuctor ! ################################
         self.__maze_generator = MazeGenerator(self.__config)
-        self.__generator = self.__maze_generator.generate(animate=True)
+        self.__generator = self.__maze_generator.generate()
         self.next_step_animation()
 
     def next_step_animation(self) -> bool:

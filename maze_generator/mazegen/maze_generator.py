@@ -7,8 +7,7 @@ from mazegen.path_finder import PathFinder
 from typing import Optional, Set
 import random
 
-# TODO: Find better way to organise methods:
-#        print(generate()) needs to print a Maze, not a generator
+# TODO: Rework destroy_walls()
 
 
 class MazeGenerator:
@@ -40,7 +39,7 @@ class MazeGenerator:
             ):
                 pass
             try:
-                if self.__rand.randint(0, 1) != 1:
+                if self.__rand.randint(0, 2) != 1:
                     raise ValueError
                 for y in range(-1, 1):
                     for x in range(-1, 1):
@@ -106,25 +105,20 @@ class MazeGenerator:
         self.__maze.set_solution(PathFinder(self.__maze, self.config).search())
         return self.__maze
 
-    def generate(self, animate: Optional[bool] = False):
+    def generate(self):
         """
+        - Generator that yields maze at every step of the algorithm
         - Instantiate Maze with config set in __init__()
-            - yield empty maze
         - Instantiate and use Walkers to fill maze branch by branch
                 with new paths until no cell is left unvisited
-            - yield maze after each walker
         - Destroy walls if maze must not be perfect
-            - yield wall at each wall broken
         - Find quickest path from entry to exit and write solution to maze
-        - yield last maze
         """
         self.__reset_attributes()
-        if animate:
-            yield self.__maze
+        yield self.__maze
 
         self.__find_first_path()
-        if animate:
-            yield self.__maze
+        yield self.__maze
 
         while len(self.__not_visited) != 0:
             self.__find_next_path()
@@ -132,11 +126,13 @@ class MazeGenerator:
 
         if self.__maze.perfect is False:
             for maze in self.__destroy_walls():
-                if animate:
-                    yield maze
+                yield maze
 
         self.__solve_maze()
-        if animate:
-            yield self.__maze
-        else:
-            return self.__maze
+        yield self.__maze
+
+    def get_maze(self) -> Maze:
+        """
+        - Skips to last Maze yield by generate()
+        """
+        return list(self.generate())[-1]
