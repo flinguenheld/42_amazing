@@ -1,10 +1,9 @@
 from textual.color import Color
-from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header
-from textual.containers import VerticalGroup
-
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
+from textual.widgets import Footer, Header
+from textual.app import App, ComposeResult
+from textual.containers import ScrollableContainer, Vertical
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -24,32 +23,33 @@ class Visualiser(App[None]):
     def __init__(self, config) -> None:
         super().__init__()
         self.theme = "gruvbox"
-        self.__title = TTitle()
+        self.__ttitle = TTitle()
         self.__config_TO_REMOVE = config
-        self.__canvas_test = TMaze(config, self.__get_colours())
+        self.__tmaze = TMaze(config, self.__get_colours())
         self.action_new_maze()
 
     def compose(self) -> ComposeResult:
-        yield Header()
-        with VerticalGroup(id="main_layout"):
-            yield self.__title
-            yield self.__canvas_test
+        yield Header(show_clock=True)
         yield Footer()
+        with Vertical(id="main_layout"):
+            yield self.__ttitle
+            with ScrollableContainer(id="scroll_layout"):
+                yield self.__tmaze
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
     def action_new_maze(self):
-        self.__canvas_test.generate_new_maze()
+        self.__tmaze.generate_new_maze()
 
     # ########################################################################
     # ############################################### ACTION - NEXT STEP #####
     def action_next_step(self):
-        self.__canvas_test.next_step_animation()
+        self.__tmaze.next_step_animation()
 
     # ########################################################################
     # ################################################# ACTION - ANIMATE #####
     async def action_animate(self):
-        await self.__canvas_test.animate_all_steps()
+        await self.__tmaze.animate_all_steps()
 
     # ########################################################################
     # ########################################################### THEMES #####
@@ -82,4 +82,4 @@ class Visualiser(App[None]):
             case _:
                 self.theme = "gruvbox"
 
-        self.__canvas_test.up_colours(self.__get_colours())
+        self.__tmaze.up_colours(self.__get_colours())

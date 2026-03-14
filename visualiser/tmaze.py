@@ -4,7 +4,6 @@ from textual.color import Color
 from textual.widget import Widget
 from textual.app import ComposeResult
 from textual.containers import Horizontal
-
 from visualiser.maze_canvas import MazeCanvas
 from maze_generator.maze_generator import MazeGenerator
 

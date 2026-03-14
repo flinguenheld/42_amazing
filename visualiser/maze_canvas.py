@@ -1,9 +1,8 @@
 from copy import deepcopy
-from typing import Dict, override, Self
 from textual.color import Color
 from textual_canvas import Canvas
-
 from maze_generator.maze import Maze
+from typing import Dict, override, Self
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
