@@ -35,14 +35,14 @@ VisualiserTEST {
     border: heavy red;
 }
 
-CMaze {
+TMaze {
    # border: heavy green;
     align: center middle;
     width: 100%;
     height: auto;
 }
 
-MyCanvas {
+MazeCanvas {
     background: $background;
     # border: solid red;
     width: auto;
