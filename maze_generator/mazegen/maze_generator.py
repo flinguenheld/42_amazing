@@ -30,6 +30,7 @@ class MazeGenerator:
             self.config.exit,
             self.config.perfect,
             self.config.seed,
+            self.config.loop_ratio
         )
 
     def __solve_maze(self) -> Maze:

@@ -42,12 +42,13 @@ class Algorithm(ABC):
 
     def _create_loops(self) -> None:
         dead_ends = {0xE, 0xD, 0xB, 0x7}
+
         targets = [
             (r, c)
             for c in range(1, self._maze.nb_col - 1)
             for r in range(1, self._maze.nb_row - 1)
             if self._maze.values[r][c] in dead_ends
-        ]
+            and self._rand.randint(0, 100) in range(0, self._maze.loop_ratio)       ]
         for r, c in targets:
             target = None
             value = self._maze.values[r][c]

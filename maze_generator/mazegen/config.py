@@ -45,6 +45,9 @@ class Config(BaseModel):
         Field(default=None, alias="SEED"),
     ]
     algo: Annotated[Optional[str], Field(default="Wilson", alias="ALGO")]
+    loop_ratio: Annotated[
+        Optional[int], Field(default=100, ge=0, le=100, alias="LOOP_RATIO")
+    ]
 
     # Enable passing new value of modified attributes into checks before write
     class Config:
