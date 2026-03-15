@@ -34,6 +34,7 @@ class Maze:
         exit: Tuple[int, int],
         perfect: bool,
         seed: str,
+        loop_ratio: int,
     ) -> None:
         """
         - Initializes with all needed values
@@ -54,6 +55,7 @@ class Maze:
         else:
             self.seed = seed
         self.solution = None
+        self.loop_ratio = loop_ratio
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)
         ]
@@ -90,7 +92,7 @@ class Maze:
         self, cell1: Tuple[int, int], cell2: Tuple[int, int], safe: bool
     ) -> None:
         """
-        - Receives to Tuples of coordinates mapping to cells in maze.values
+        - Receives two Tuples of coordinates mapping to cells in maze.values
         - In safe mode: Clears path if doing so doesnt imply creating a 0 cell
         - Else: Just clears path
         """
