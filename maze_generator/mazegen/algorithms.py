@@ -1,7 +1,6 @@
 from mazegen.maze import Maze
 
 from mazegen.walker import Walker
-from mazegen.path import Path
 
 from typing import Generator, List, Set
 from abc import ABC, abstractmethod
@@ -41,6 +40,32 @@ class Algorithm(ABC):
                 neighbours.append(new)
         return neighbours
 
+    def _create_loops(self) -> None:
+        dead_ends = {0xE, 0xD, 0xB, 0x7}
+        targets = [
+            (r, c)
+            for c in range(1, self._maze.nb_col - 1)
+            for r in range(1, self._maze.nb_row - 1)
+            if self._maze.values[r][c] in dead_ends
+        ]
+        for r, c in targets:
+            target = None
+            value = self._maze.values[r][c]
+            match value:
+                case 0xE:
+                    target = (r + 1, c)
+                case 0xD:
+                    target = (r, c - 1)
+                case 0xB:
+                    target = (r - 1, c)
+                case 0x7:
+                    target = (r, c + 1)
+            if target not in self._maze.cells_42:
+                self._maze.break_wall((r, c), target, safe=True)
+            if target in targets:
+                targets.remove(target)
+            yield self._maze
+
 
 class Wilson(Algorithm):
     def __init__(self, maze: Maze, rand: random.Random) -> None:
@@ -55,6 +80,10 @@ class Wilson(Algorithm):
             self.__find_next_path()
             yield self._maze
 
+        if not self._maze.perfect:
+            for maze in self._create_loops():
+                yield maze
+
     def __find_first_path(self) -> Maze:
         path = Walker(self._maze, self._maze.start, self._maze.end).walk(
             self._rand
@@ -66,22 +95,8 @@ class Wilson(Algorithm):
         choice = self._rand.choice(sorted(list(self._not_visited)))
 
         path = Walker(self._maze, choice, self.__full_path).walk(self._rand)
-        if self._maze.perfect is False and len(path) > 3:
-            self.__create_loop(path)
         self.__full_path.update(path)
         self._not_visited.difference_update(path)
-
-    def __create_loop(self, path: Path) -> None:
-        first_cell_neighbours = [
-            i
-            for i in self._get_neighbours(path[0])
-            if i not in path
-            and i in self.__full_path
-            and self._maze.values[i[0]][i[1]] in {0xE, 0xD, 0xB, 0x7}
-        ]
-        if len(first_cell_neighbours) > 0:
-            target = self._rand.choice(first_cell_neighbours)
-            self._maze.break_wall(path[0], target, safe=True)
 
 
 class DFS(Algorithm):
@@ -95,7 +110,7 @@ class DFS(Algorithm):
         neighbours = super()._get_neighbours(cell)
         return [i for i in neighbours if i in self._not_visited]
 
-    def solve(self) -> None:
+    def solve(self) -> Generator[Maze, None, None]:
         while self.__visited:
             cur = self.__visited.pop()
             neighbours = self._get_neighbours(cur)
@@ -106,3 +121,7 @@ class DFS(Algorithm):
                 self.__visited.append(target)
                 self._not_visited.remove(target)
                 yield self._maze
+
+        if not self._maze.perfect:
+            for maze in self._create_loops():
+                yield maze

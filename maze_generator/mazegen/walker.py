@@ -36,13 +36,13 @@ class Walker:
             if len(valid_moves) == 0:
                 return self.__path
             else:
-                r, c = rand.choice(self.__get_valid_moves())
+                r, c = rand.choice(valid_moves)
                 target = (self.__cur_r + r, self.__cur_c + c)
                 if target in self.__path:
                     self.__path.go_back(target)
                 else:
                     self.__path.append(target)
-                self.__cur_r, self.__cur_c = self.__path[-1]
+                self.__cur_r, self.__cur_c = target 
         self.__write_path()
         return self.__path
 
@@ -50,10 +50,11 @@ class Walker:
         """
         - Write path data to maze
         """
-        for i, cell in enumerate(self.__path):
-            if i < len(self.__path) - 1:
+        length = len(self.__path) - 1
+        for i in range(length):
+            if i < length:
                 self.__maze.break_wall(
-                    self.__path[i], self.__path[i + 1], False
+                    self.__path[i], self.__path[i + 1], safe=False
                 )
 
     def __get_valid_moves(
@@ -65,15 +66,19 @@ class Walker:
         """
         moves = ((0, 1), (0, -1), (1, 0), (-1, 0))
         valid_moves: List[Tuple[int, int]] = []
+
+        prev = None
+        if len(self.__path) > 1:
+            prev = self.__path[-2]
+
         for r, c in moves:
             new_r, new_c = (self.__cur_r + r, self.__cur_c + c)
             if (
                 0 <= new_r < self.__maze.nb_row
                 and 0 <= new_c < self.__maze.nb_col
-                and (
-                    len(self.__path) == 1 or (new_r, new_c) != self.__path[-2]
-                )
+                and (new_r, new_c) != prev 
                 and (new_r, new_c) not in self.__maze.cells_42
             ):
                 valid_moves.append((r, c))
+
         return valid_moves
