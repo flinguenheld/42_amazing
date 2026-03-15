@@ -1,7 +1,7 @@
-import asyncio
 from textual.color import Color
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
+from visualiser.toptions import TOptions
 from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer, Vertical
@@ -12,13 +12,14 @@ from textual.containers import ScrollableContainer, Vertical
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
 class Visualiser(App[None]):
-    CSS_PATH = ["style/main.tcss"]
+    CSS_PATH = ["style/main.tcss", "style/options.tcss"]
     BINDINGS = [
         ("t", "next_theme", "Next theme"),
         ("g", "generate_new_maze", "Generate a new maze"),
         ("s", "start_new_maze", "Start a new maze"),
         ("a", "animate", "Animate"),
         ("n", "next_step", "Next step"),
+        ("o", "options", "Options"),
     ]
 
     def __init__(self, config) -> None:
@@ -44,6 +45,11 @@ class Visualiser(App[None]):
         self.title = "a_maze_ing"
         self.action_next_theme()
         self.action_generate_new_maze()
+
+    # ########################################################################
+    # ################################################# ACTION - OPTIONS #####
+    def action_options(self):
+        self.push_screen(TOptions())
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####

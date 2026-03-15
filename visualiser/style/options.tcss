@@ -1,0 +1,60 @@
+# Theme colours:
+#   - primary
+#   - secondary
+#   - accent
+#   - foreground
+#   - background
+#   - success
+#   - warning
+#   - error
+#   - surface
+#   - panel
+
+TOptions {
+    align: center middle;
+}
+
+#layout_options {
+    width: 80%;
+    height: 80%;
+    border: thick $primary;
+    background: $surface;
+    padding: 5;
+}
+.option_label {
+    width: 30;
+    align: left middle;
+    border: round transparent;
+}
+
+.option_inputs {
+    height: auto;
+    width: auto;
+    content-align: center middle;
+}
+
+.option_select_coordinate .option_select_size {
+    width: 15;
+    content-align: center middle;
+}
+.option_select_coordinate_algo {
+    # width: auto;
+    content-align: center middle;
+}
+
+.option_checkbox {
+    width: 30;
+    content-align: center middle;
+    # border: round transparent;
+}
+
+# ############################################################
+# ############################################### BUTTONS ####
+#option_button_layout {
+    margin: 5 0 0 0;
+    align: center middle;
+}
+.option_button {
+    width: 30;
+    margin: 0 5;
+}

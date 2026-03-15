@@ -24,7 +24,7 @@ Screen {
     content-align: center middle;
 }
 
-TTitle {
+.ttitles {
     width: 100%;
     color: $primary;
     # border: heavy grey;
@@ -74,4 +74,3 @@ Footer {
 .footer-key--description {
     color: $background;
 }
-
