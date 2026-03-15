@@ -18,13 +18,17 @@ class MazeCanvas(Canvas):
             # canvas_color=colours["background"],
             # canvas_color=colours["secondary"],
         )
-        self.__previous = None
+        self.__previous_maze = None
         self.__colours = colours
 
     # ########################################################################
     # ########################################################### COLOURS ####
     def up_colours(self, colours: Dict[str, Color]):
         self.__colours = colours
+        if self.__previous_maze:
+            last_maze = deepcopy(self.__previous_maze)
+            self.clear()
+            self.dig_holes(last_maze)
 
     # ########################################################################
     # ############################################################## DRAW ####
@@ -52,7 +56,7 @@ class MazeCanvas(Canvas):
         width: int | None = None,
         height: int | None = None,
     ) -> Self:
-        self.__previous = None
+        self.__previous_maze = None
         return super().clear(color, width, height)
 
     # ########################################################################
@@ -90,7 +94,10 @@ class MazeCanvas(Canvas):
                 col = (ch * 4) + 2
 
                 # Only draw the updated values --
-                if self.__previous and cell_hexa == self.__previous[rh][ch]:
+                if (
+                    self.__previous_maze
+                    and cell_hexa == self.__previous_maze.values[rh][ch]
+                ):
                     continue
 
                 if cell_hexa & 0b1111 != 0b1111:
@@ -105,4 +112,4 @@ class MazeCanvas(Canvas):
                 if cell_hexa & 0b0010 != 0b0010:  # Right
                     self.__draw_line(row - 1, col + 2, vertical=True)
 
-        self.__previous = deepcopy(maze_hexa.values)
+        self.__previous_maze = deepcopy(maze_hexa)

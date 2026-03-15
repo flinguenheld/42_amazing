@@ -1,3 +1,4 @@
+import asyncio
 from textual.color import Color
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
@@ -14,10 +15,10 @@ class Visualiser(App[None]):
     CSS_PATH = ["style/main.tcss"]
     BINDINGS = [
         ("t", "next_theme", "Next theme"),
-        ("b", "border", "Next border"),
-        ("m", "new_maze", "New maze"),
-        ("n", "next_step", "Next step"),
+        ("g", "generate_new_maze", "Generate a new maze"),
+        ("s", "start_new_maze", "Start a new maze"),
         ("a", "animate", "Animate"),
+        ("n", "next_step", "Next step"),
     ]
 
     def __init__(self, config) -> None:
@@ -26,8 +27,9 @@ class Visualiser(App[None]):
         self.__ttitle = TTitle()
         self.__config_TO_REMOVE = config
         self.__tmaze = TMaze(config, self.__get_colours())
-        self.action_new_maze()
 
+    # ########################################################################
+    # ########################################################## COMPOSE #####
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Footer()
@@ -37,27 +39,31 @@ class Visualiser(App[None]):
                 yield self.__tmaze
 
     # ########################################################################
+    # ############################################################ MOUNT #####
+    async def on_mount(self) -> None:
+        self.title = "a_maze_ing"
+        self.action_next_theme()
+        self.action_generate_new_maze()
+
+    # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
-    def action_new_maze(self):
+    def action_generate_new_maze(self):
         self.__tmaze.generate_new_maze()
 
     # ########################################################################
-    # ############################################### ACTION - NEXT STEP #####
+    # ############################################### ACTION - ANIMATION #####
+    def action_start_new_maze(self):
+        self.__tmaze.start_new_maze()
+
+    async def action_animate(self):
+        await self.__tmaze.animate_all_steps()
+
     def action_next_step(self):
         self.__tmaze.next_step_animation()
 
     # ########################################################################
-    # ################################################# ACTION - ANIMATE #####
-    async def action_animate(self):
-        await self.__tmaze.animate_all_steps()
-
-    # ########################################################################
     # ########################################################### THEMES #####
-    def on_mount(self) -> None:
-        self.action_next_theme()
-
     def __get_colours(self):
-
         theme = self.get_theme(self.theme)
         if theme:
             return {

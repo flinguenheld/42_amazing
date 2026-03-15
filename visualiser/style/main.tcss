@@ -1,3 +1,16 @@
+# Theme colours:
+#   - primary
+#   - secondary
+#   - accent
+#   - foreground
+#   - background
+#   - success
+#   - warning
+#   - error
+#   - surface
+#   - panel
+
+
 Screen {
     align: center middle;
     content-align: center middle;
@@ -44,12 +57,21 @@ MazeCanvas {
 Header {
     background: $primary;
     color: $background;
+    # text-style: blink;
+}
+HeaderClockSpace {
+    color: $background;
 }
 
 Footer {
     background: $primary;
     color: $background;
 }
+.footer-key--key {
+    color: red;
+}
 
-
+.footer-key--description {
+    color: $background;
+}
 

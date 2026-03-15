@@ -41,12 +41,17 @@ class TMaze(Widget):
     # ########################################################################
     # ##################################################### GENERATE MAZE ####
     def generate_new_maze(self):
+        maze = self.__maze_generator.get_maze()
+        self.__canvas.clear()
+        self.__canvas.dig_holes(maze)
+
+    # ########################################################################
+    # ######################################################### ANIMATION ####
+    def start_new_maze(self):
         self.__mazegen_iter = self.__maze_generator.generate()
         self.__canvas.clear()
         self.next_step_animation()
 
-    # ########################################################################
-    # ######################################################### ANIMATION ####
     async def animate_all_steps(self):
         while self.next_step_animation():
             await asyncio.sleep(0)
@@ -56,6 +61,5 @@ class TMaze(Widget):
             maze = next(self.__mazegen_iter, None)
             if maze:
                 self.__canvas.dig_holes(maze)
-                self.__canvas.refresh()
                 return True
         return False
