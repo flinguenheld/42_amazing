@@ -1,7 +1,10 @@
-from textual.color import Color
+from mazegen.config import Config
+
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.tconfig import TConfig
+
+from textual.color import Color
 from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer, Vertical
@@ -12,7 +15,7 @@ from textual.containers import ScrollableContainer, Vertical
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
 class Visualiser(App[None]):
-    CSS_PATH = ["style/main.tcss", "style/options.tcss"]
+    CSS_PATH = ["style/main.tcss", "style/config.tcss"]
     BINDINGS = [
         ("g", "generate_new_maze", "Generate a new maze"),
         ("s", "start_new_maze", "Start a new maze"),
@@ -22,11 +25,11 @@ class Visualiser(App[None]):
         ("c", "config", "Config"),
     ]
 
-    def __init__(self, config) -> None:
+    def __init__(self, config: Config) -> None:
         super().__init__()
         self.theme = "catppuccin-latte"
         self.__ttitle = TTitle()
-        self.__config_TO_REMOVE = config
+        self.__config = config
         self.__tmaze = TMaze(config, self.__get_colours())
 
     # ########################################################################
@@ -49,7 +52,7 @@ class Visualiser(App[None]):
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
     def action_config(self):
-        self.push_screen(TConfig(self.__config_TO_REMOVE))
+        self.push_screen(TConfig(self.__config))
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
