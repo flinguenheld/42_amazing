@@ -4,10 +4,11 @@ from textual.widgets import Label, Button, Checkbox, Select
 from textual.containers import (
     HorizontalGroup,
     VerticalScroll,
+    ScrollableContainer,
 )
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
-from visualiser.ttitle import TTitleOption
+from visualiser.ttitle import TTitleConfig
 
 # TODO: READ OPTIONS
 # TODO: SAVE OPTIONS
@@ -16,14 +17,15 @@ from visualiser.ttitle import TTitleOption
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▀█░█▀█░▀█▀░▀█▀░█▀█░█▀█░█▀▀
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀▀░░█░░░█░░█░█░█░█░▀▀█
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀░░░░▀░░▀▀▀░▀▀▀░▀░▀░▀▀▀
-class TOptions(ModalScreen):
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░░░█░█░█░█░█▀▀░░█░░█░█
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀▀▀
+class TConfig(ModalScreen):
+    BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
     ALGORITHMS = ["Wilson", "DFS"]
-    MAX_SIZE = 150
+    MAX_SIZE = 200
 
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
 
         self._width = InputSize("Width:", self.MAX_SIZE, "Width")
@@ -41,14 +43,19 @@ class TOptions(ModalScreen):
             classes="option_select_coordinate_algo",
         )
         self._perfect = Checkbox(classes="option_checkbox")
-        self._cancel = Button(
-            "Cancel", variant="primary", classes="option_button"
+        self._bt_cancel = Button(
+            "Cancel", variant="default", classes="option_button"
         )
-        self._save = Button("Save", variant="error", classes="option_button")
+        self._bt_update = Button(
+            "Update", variant="primary", classes="option_button"
+        )
+        self._bt_save = Button(
+            "Save file", variant="error", classes="option_button"
+        )
 
     def compose(self) -> ComposeResult:
-        with VerticalScroll(id="layout_options"):
-            yield TTitleOption()
+        with ScrollableContainer(id="layout_options"):
+            yield TTitleConfig()
             yield self._width
             yield self._height
             yield self._entry
@@ -61,8 +68,9 @@ class TOptions(ModalScreen):
                 yield self._perfect
 
             with HorizontalGroup(id="option_button_layout"):
-                yield self._cancel
-                yield self._save
+                yield self._bt_cancel
+                yield self._bt_update
+                yield self._bt_save
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "cancel":

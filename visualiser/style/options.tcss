@@ -16,10 +16,10 @@ TOptions {
 
 #layout_options {
     width: 80%;
-    height: 80%;
+    height: auto;
     border: thick $primary;
     background: $surface;
-    padding: 5;
+    padding: 2 5 2 5;
 }
 .option_label {
     width: 30;
@@ -54,6 +54,7 @@ TOptions {
     margin: 5 0 0 0;
     align: center middle;
 }
+
 .option_button {
     width: 30;
     margin: 0 5;
