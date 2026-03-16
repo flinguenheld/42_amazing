@@ -11,12 +11,12 @@ import time
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░▀░▀░▀░▀▀▀░▀▀▀░
 class Maze:
     """
-    - Maze class that stores all maze related info:
-        - Size
-        - Start/End
-        - List[List[]] of cell's values
-        - List[] of coordinates of cells needed for logo
-    - Has a break_wall method that clears path between cell1 and cell2
+        - Maze class that stores all maze related info:
+            - Size
+            - Start/End
+            - List[List[]] of cell's values
+    - List[] of coordinates of cells needed for logo
+        - Has a break_wall method that clears path between cell1 and cell2
     """
 
     WALL_MAP = {
@@ -24,6 +24,13 @@ class Maze:
         (0, 1): 0b0010,
         (1, 0): 0b0100,
         (0, -1): 0b1000,
+    }
+
+    LETTER_MAP = {
+        (-1, 0): "N",
+        (0, 1): "E",
+        (1, 0): "S",
+        (0, -1): "W",
     }
 
     def __init__(
@@ -113,7 +120,7 @@ class Maze:
                     )
 
     def set_solution(self, path: Path) -> None:
-        """ Setter for self.solution """
+        """Setter for self.solution"""
         self.solution = path
 
     def __str__(self) -> str:
@@ -125,4 +132,12 @@ class Maze:
             for char in line:
                 res = f"{res}{char:X}"
             res = f"{res}\n"
+        res = f"{res}\n\n{self.start}\n{self.end}\n"
+        for i in range(len(self.solution) - 2):
+            cur = self.solution[i]
+            nxt = self.solution[i + 1]
+            char = self.LETTER_MAP[(nxt[0] - cur[0], cur[1] - nxt[1])]
+            res = f"{res}{char}"
+        res = f"{res}\n"
+
         return res
