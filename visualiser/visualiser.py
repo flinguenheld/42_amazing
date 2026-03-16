@@ -7,6 +7,7 @@ from visualiser.tconfig import TConfig
 from textual.color import Color
 from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
+from textual.screen import ScreenResultType
 from textual.containers import ScrollableContainer, Vertical
 
 
@@ -44,15 +45,21 @@ class Visualiser(App[None]):
 
     # ########################################################################
     # ############################################################ MOUNT #####
-    async def on_mount(self) -> None:
+    async def on_mount(self, blah: ScreenResultType) -> None:
         self.title = "a_maze_ing"
         self.action_next_theme()
         self.action_generate_new_maze()
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
-    def action_config(self):
-        self.push_screen(TConfig(self.__config))
+    # TODO: KEEP THAT ?????
+    def on_after_config(self) -> None:
+        pass
+
+    async def action_config(self) -> None:
+        self.push_screen(
+            TConfig(self.__config), callback=self.on_after_config()
+        )
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
@@ -76,9 +83,9 @@ class Visualiser(App[None]):
         theme = self.get_theme(self.theme)
         if theme:
             return {
-                "background": Color.parse(theme.background),
                 "primary": Color.parse(theme.primary),
                 "secondary": Color.parse(theme.secondary),
+                "background": Color.parse(theme.background),
             }
         return {}
 

@@ -1,14 +1,15 @@
 from typing import Tuple
 from pydantic import ValidationError
-from config.config_parser import ConfigParser
+
 from textual.widget import Widget
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Label, Button, Checkbox, Select
 from textual.containers import HorizontalGroup, ScrollableContainer
 
-from visualiser.ttitle import TTitleConfig
 from mazegen.config import Config
+from visualiser.ttitle import TTitleConfig
+from config.config_parser import ConfigParser
 
 # TODO: READ OPTIONS
 # TODO: SAVE OPTIONS
@@ -92,8 +93,8 @@ class TConfig(ModalScreen):
     def _update_config(self):
         # try:
         new_config_values = {
-            "WIDTH": self._height.get_value(),
-            "HEIGHT": self._width.get_value(),
+            "WIDTH": self._width.get_value(),
+            "HEIGHT": self._height.get_value(),
             "ENTRY": self._entry.get_value(),
             "EXIT": self._exit.get_value(),
             "ALGO": self._algorithm.value,
