@@ -16,7 +16,7 @@ from textual.containers import ScrollableContainer, Vertical
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
 class Visualiser(App[None]):
-    CSS_PATH = ["style/main.tcss", "style/config.tcss"]
+    CSS_PATH = ["style/main.tcss", "style/config.tcss", "style/message.tcss"]
     BINDINGS = [
         ("g", "generate_new_maze", "Generate a new maze"),
         ("s", "start_new_maze", "Start a new maze"),

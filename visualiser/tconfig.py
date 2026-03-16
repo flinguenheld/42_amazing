@@ -9,6 +9,7 @@ from textual.containers import HorizontalGroup, ScrollableContainer
 
 from mazegen.config import Config
 from visualiser.ttitle import TTitleConfig
+from visualiser.tmessage import TMessageError, TMessage
 from config.config_parser import ConfigParser
 
 # TODO: READ OPTIONS
@@ -77,7 +78,7 @@ class TConfig(ModalScreen):
             self._algorithm.refresh(layout=True)
 
         except ValidationError as e:
-            pass
+            self.notify(f"{e}", severity="error")
             # TODO: ADD TESTS ??????
             # cprint("Config file error", file=sys.stderr, color="red")
             # for err in e.errors():
@@ -90,34 +91,39 @@ class TConfig(ModalScreen):
 
     # ########################################################################
     # #################################################### UPDATE CONFIG #####
-    def _update_config(self):
-        # try:
-        new_config_values = {
-            "WIDTH": self._width.get_value(),
-            "HEIGHT": self._height.get_value(),
-            "ENTRY": self._entry.get_value(),
-            "EXIT": self._exit.get_value(),
-            "ALGO": self._algorithm.value,
-        }
+    def _update_config(self) -> bool:
+        try:
+            new_config_values = {
+                "WIDTH": self._width.get_value(),
+                "HEIGHT": self._height.get_value(),
+                "ENTRY": self._entry.get_value(),
+                "EXIT": self._exit.get_value(),
+                "ALGO": self._algorithm.value,
+            }
+            self.notify("hello", severity="error")
+            new_config = Config.model_validate(new_config_values)
 
-        new_config = Config.model_validate(new_config_values)
-        self._config.nb_col = new_config.nb_col
-        self._config.nb_row = new_config.nb_row
-        self._config.entry = new_config.entry
-        self._config.exit = new_config.exit
-        self._config.algo = new_config.algo
+        except ValidationError as e:
+            self.notify("haaaaaa", severity="error")
+            return False
 
-        # except ValidationError as e:
-        #     pass
-        # TODO: ADD TESTS ??????
-        # cprint("Config file error", file=sys.stderr, color="red")
-        # for err in e.errors():
-        #     cprint(f"  - {err['msg']}", file=sys.stderr, color="red")
-        # cprint(usage(), file=sys.stderr, color="yellow")
+        else:
+            self._config.nb_col = new_config.nb_col
+            self._config.nb_row = new_config.nb_row
+            self._config.entry = new_config.entry
+            self._config.exit = new_config.exit
+            self._config.algo = new_config.algo
+            return True
 
-        # except FileNotFoundError:
-        #     cprint("Config file not found", file=sys.stderr, color="red")
-        #     cprint(usage(), file=sys.stderr, color="yellow")
+    # TODO: ADD TESTS ??????
+    # cprint("Config file error", file=sys.stderr, color="red")
+    # for err in e.errors():
+    #     cprint(f"  - {err['msg']}", file=sys.stderr, color="red")
+    # cprint(usage(), file=sys.stderr, color="yellow")
+
+    # except FileNotFoundError:
+    #     cprint("Config file not found", file=sys.stderr, color="red")
+    #     cprint(usage(), file=sys.stderr, color="yellow")
 
     # ########################################################################
     # ########################################################## COMPOSE #####
@@ -146,8 +152,11 @@ class TConfig(ModalScreen):
         if event.button == self._bt_cancel:
             self.app.pop_screen()
         elif event.button == self._bt_update:
-            self._update_config()
-            self.app.pop_screen()
+            if self._update_config():
+                self.app.pop_screen()
+            else:
+                self.app.push_screen(TMessageError("blah"))
+
         elif event.button == self._bt_save:
             self.app.exit()
 

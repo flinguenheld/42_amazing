@@ -1,0 +1,50 @@
+# Theme colours:
+#   - primary
+#   - secondary
+#   - accent
+#   - foreground
+#   - background
+#   - success
+#   - warning
+#   - error
+#   - surface
+#   - panel
+
+TMessage {
+    align: center middle;
+}
+
+# ################################################################ LAYOUT #####
+#layout_message {
+    width: 60%;
+    height: auto;
+    padding: 2 5 2 5;
+    border: thick $primary;
+    color: $background;
+}
+
+.layout_message_error {
+    background: $error;
+}
+.layout_success {
+    background: $success;
+}
+.layout_warning {
+    background: $warning;
+}
+
+# ############################################################### MESSAGE #####
+.message_label {
+    width: 100%;
+    content-align: center middle;
+    border: round transparent;
+    margin: 2;
+}
+
+# ############################################################
+# ############################################### BUTTONS ####
+.message_button {
+    width: 30;
+    align: center middle;
+    margin: 0 2;
+}
