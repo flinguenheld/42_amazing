@@ -203,9 +203,9 @@ class InputCoordinate(Widget):
 
     def set_value(self, values: Tuple[int, int]) -> None:
         if (
-            values[0] >= 5
+            values[0] >= 0
             and values[0] <= self._max
-            and values[1] >= 5
+            and values[1] >= 0
             and values[1] <= self._max
         ):
             self._x.value = values[0]

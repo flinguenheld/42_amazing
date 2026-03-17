@@ -2,7 +2,7 @@ from copy import deepcopy
 from textual.color import Color
 from textual_canvas import Canvas
 from mazegen.maze import Maze
-from typing import Dict, override, Self
+from typing import Dict, override, Self, Tuple
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -30,7 +30,6 @@ class MazeCanvas(Canvas):
             last_maze = deepcopy(self.__previous_maze)
             self.clear()
             self.dig_holes(last_maze)
-            self.draw_start_exit()
 
     # ########################################################################
     # ############################################################## DRAW ####
@@ -60,15 +59,10 @@ class MazeCanvas(Canvas):
     def draw_point_hexa_coordinates(self, row, col, colour: str):
         self.__draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
 
-    def draw_start_exit(self):
+    def draw_exit(self):
         # Use the previous maze to easily call the method with animation
 
         if self.__previous_maze:
-            self.draw_point_hexa_coordinates(
-                row=self.__previous_maze.start[0],
-                col=self.__previous_maze.start[1],
-                colour="warning",
-            )
             self.draw_point_hexa_coordinates(
                 row=self.__previous_maze.end[0],
                 col=self.__previous_maze.end[1],

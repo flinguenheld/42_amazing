@@ -28,6 +28,7 @@ class TMaze(Widget):
         self.__canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
         self.__last_size = (config.nb_row, config.nb_col)
         self.__player: Optional[Player] = None
+        self.__is_ready = False
 
     def compose(self) -> ComposeResult:
         yield self.__canvas
@@ -35,7 +36,7 @@ class TMaze(Widget):
     # ########################################################################
     # ################################################## PLAYER MOVEMENTS ####
     def move_player(self, key: str):
-        if self.__player:
+        if self.__player and self.__is_ready:
             self.__player.move(key)
 
             # Clean previous --
@@ -52,22 +53,34 @@ class TMaze(Widget):
                     )
                 )
                 self.reset_player()
+                self.__is_ready = True
 
             # draw new position --
             else:
-                (row, col) = self.__player.get_position()
-                self.__canvas.draw_point_hexa_coordinates(row, col, "warning")
+                self.__draw_player()
 
     def reset_player(self) -> None:
         if self.__player:
             self.__player.reset()
-            self.__canvas.draw_start_exit()
+            self.__canvas.draw_exit()
+            self.__draw_player()
+
+    def __draw_player(self) -> None:
+        if self.__player and self.__is_ready:
+            row, col = self.__player.get_position()
+            self.__canvas.draw_point_hexa_coordinates(row, col, "warning")
+
+    def __draw_exit(self) -> None:
+        if self.__is_ready:
+            self.__canvas.draw_exit()
 
     # ########################################################################
     # ########################################################### COLOURS ####
     def up_colours(self, colours):
         self.__colours = colours
         self.__canvas.up_colours(colours)
+        self.__draw_player()
+        self.__draw_exit()
 
     # ########################################################################
     # ###################################################### RESET CANVAS ####
@@ -103,8 +116,10 @@ class TMaze(Widget):
         maze = self.__maze_generator.get_maze()
         self.__clear_or_reset_canvas()
         self.__canvas.dig_holes(maze)
-        self.__canvas.draw_start_exit()
         self.__player = Player(maze)
+        self.__is_ready = True
+        self.__draw_player()
+        self.__draw_exit()
 
     # ########################################################################
     # ######################################################### ANIMATION ####
@@ -113,6 +128,7 @@ class TMaze(Widget):
         Generate a new maze and get an iterator to the first step
         """
         self.__maze_gen_iterator.start_new_generator()
+        self.__is_ready = False
         self.__clear_or_reset_canvas()
         self.next_step_animation()
 
@@ -121,15 +137,21 @@ class TMaze(Widget):
             await asyncio.sleep(0)
 
     def next_step_animation(self) -> bool:
-        maze = self.__maze_gen_iterator.next_step()
-        if maze:
-            self.__canvas.dig_holes(maze)
-            return True
-        else:
-            # Done !
-            self.__canvas.draw_start_exit()
-            self.__player = Player(self.__maze_gen_iterator.last_generated())
-            return False
+        if self.__maze_gen_iterator.in_progress():
+            maze = self.__maze_gen_iterator.next_step()
+            if maze:
+                self.__canvas.dig_holes(maze)
+                return True
+            else:
+                # Done !
+                self.__player = Player(
+                    self.__maze_gen_iterator.last_generated()
+                )
+                self.__is_ready = True
+                self.__draw_player()
+                self.__draw_exit()
+
+        return False
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -142,20 +164,27 @@ class MazeGenIterator:
     def __init__(self, generator: MazeGenerator):
         self._last = None
         self._mazegen_iter = None
+        self._in_progress = False
         self._maze_generator = generator
 
     def start_new_generator(self) -> None:
-        self._last = None
         self._mazegen_iter = self._maze_generator.generate()
+        self._in_progress = True
+        self._last = None
 
     def last_generated(self) -> Optional[Maze]:
         return self._last
 
+    def in_progress(self) -> bool:
+        return self._in_progress
+
     def next_step(self) -> Optional[Maze]:
-        if self._mazegen_iter:
+        if self._mazegen_iter and self._in_progress:
             new_maze = next(self._mazegen_iter, None)
             if new_maze:
                 self._last = new_maze
                 return new_maze
+            else:
+                self._in_progress = False
 
         return None
