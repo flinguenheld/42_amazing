@@ -85,7 +85,14 @@ class Visualiser(App[None]):
             return {
                 "primary": Color.parse(theme.primary),
                 "secondary": Color.parse(theme.secondary),
+                "accent": Color.parse(theme.accent),
+                "foreground": Color.parse(theme.foreground),
                 "background": Color.parse(theme.background),
+                "success": Color.parse(theme.success),
+                "warning": Color.parse(theme.warning),
+                "error": Color.parse(theme.error),
+                "surface": Color.parse(theme.surface),
+                "panel": Color.parse(theme.panel),
             }
         return {}
 

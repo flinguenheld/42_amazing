@@ -68,6 +68,7 @@ class TMaze(Widget):
         maze = self.__maze_generator.get_maze()
         self.__clear_or_reset_canvas()
         self.__canvas.dig_holes(maze)
+        self.__canvas.add_start_exit()
 
     # ########################################################################
     # ######################################################### ANIMATION ####
@@ -89,4 +90,6 @@ class TMaze(Widget):
             if maze:
                 self.__canvas.dig_holes(maze)
                 return True
+            else:
+                self.__canvas.add_start_exit()
         return False

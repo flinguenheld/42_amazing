@@ -24,28 +24,57 @@ class MazeCanvas(Canvas):
     # ########################################################################
     # ########################################################### COLOURS ####
     def up_colours(self, colours: Dict[str, Color]):
+        """Save colours and redraw the maze"""
         self.__colours = colours
         if self.__previous_maze:
             last_maze = deepcopy(self.__previous_maze)
             self.clear()
             self.dig_holes(last_maze)
+            self.add_start_exit()
 
     # ########################################################################
     # ############################################################## DRAW ####
-    def __draw_line(self, row: int, col: int, vertical: bool = False):
+    def __draw_line(
+        self,
+        row: int,
+        col: int,
+        vertical: bool = False,
+        colour: str = "primary",
+    ):
         if vertical:
             self.draw_line(
-                col, row, col, row + 2, color=self.__colours["primary"]
+                col, row, col, row + 2, color=self.__colours[colour]
             )
         else:
             self.draw_line(
-                col, row, col + 2, row, color=self.__colours["primary"]
+                col, row, col + 2, row, color=self.__colours[colour]
             )
 
-    def __draw_square(self, row, col):
-        self.__draw_line(row - 1, col - 1)
-        self.__draw_line(row, col - 1)
-        self.__draw_line(row + 1, col - 1)
+    def __draw_square(self, row, col, colour: str = "primary"):
+        self.__draw_line(row - 1, col - 1, False, colour)
+        self.__draw_line(row, col - 1, False, colour)
+        self.__draw_line(row + 1, col - 1, False, colour)
+
+    # ########################################################################
+    # ######################################################## START EXIT ####
+    def __draw_point_hexa_coordinates(self, row, col, colour: str):
+        self.__draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
+
+    # TODO: START END INSTEAD OF ENTRY EXIT ??????????????????????????????????
+    def add_start_exit(self):
+        # Use the previous maze to easily call the method with animation
+
+        if self.__previous_maze:
+            self.__draw_point_hexa_coordinates(
+                row=self.__previous_maze.start[0],
+                col=self.__previous_maze.start[1],
+                colour="warning",
+            )
+            self.__draw_point_hexa_coordinates(
+                row=self.__previous_maze.end[0],
+                col=self.__previous_maze.end[1],
+                colour="success",
+            )
 
     # ########################################################################
     # ############################################################# CLEAR ####
