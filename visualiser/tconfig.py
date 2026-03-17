@@ -27,22 +27,22 @@ from config.config_parser import ConfigParser
 class TConfig(ModalScreen):
     BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
     ALGORITHMS = ["Wilson", "DFS"]
-    MAX_SIZE = 200
-
-    # TODO: ADD A VARIABLE
-    PATH = "config_test.txt"
 
     def __init__(self, config: Config):
         super().__init__()
         self._config: Config = config
 
-        self._width = InputSize("Width:", self.MAX_SIZE, "Width")
-        self._height = InputSize("Height:", self.MAX_SIZE, "Height")
+        self._width = InputSize(
+            "Width:", Config.MIN_SIZE, Config.MAX_SIZE, "Width"
+        )
+        self._height = InputSize(
+            "Height:", Config.MIN_SIZE, Config.MAX_SIZE, "Height"
+        )
         self._entry = InputCoordinate(
-            "Entry coordinates:", self.MAX_SIZE - 1, "X", "Y"
+            "Entry coordinates:", Config.MAX_SIZE - 1, "X", "Y"
         )
         self._exit = InputCoordinate(
-            "Exit coordinates:", self.MAX_SIZE - 1, "X", "Y"
+            "Exit coordinates:", Config.MAX_SIZE - 1, "X", "Y"
         )
         self._algorithm = Select(
             ((algo, algo) for algo in self.ALGORITHMS),
@@ -68,26 +68,19 @@ class TConfig(ModalScreen):
 
     # ########################################################################
     # ############################################# READ EXISTING CONFIG #####
-    def read_existing_config(self):
+    def read_existing_config(self) -> None:
         try:
             self._height.set_value(self._config.nb_row)
             self._width.set_value(self._config.nb_col)
             self._entry.set_value(self._config.entry)
             self._exit.set_value(self._config.exit)
-            self._algorithm.value = "DFS"
+            self._algorithm.value = self._config.algo
             self._algorithm.refresh(layout=True)
 
         except ValidationError as e:
-            self.notify(f"{e}", severity="error")
-            # TODO: ADD TESTS ??????
-            # cprint("Config file error", file=sys.stderr, color="red")
-            # for err in e.errors():
-            #     cprint(f"  - {err['msg']}", file=sys.stderr, color="red")
-            # cprint(usage(), file=sys.stderr, color="yellow")
-
-        # except FileNotFoundError:
-        #     cprint("Config file not found", file=sys.stderr, color="red")
-        #     cprint(usage(), file=sys.stderr, color="yellow")
+            # Can't append normally...
+            self.app.push_screen(TMessageError(f"{e.errors()[0]['msg']}"))
+            self.app.exit()
 
     # ########################################################################
     # #################################################### UPDATE CONFIG #####
@@ -100,11 +93,10 @@ class TConfig(ModalScreen):
                 "EXIT": self._exit.get_value(),
                 "ALGO": self._algorithm.value,
             }
-            self.notify("hello", severity="error")
             new_config = Config.model_validate(new_config_values)
 
         except ValidationError as e:
-            self.notify("haaaaaa", severity="error")
+            self.app.push_screen(TMessageError(f"{e.errors()[0]['msg']}"))
             return False
 
         else:
@@ -113,17 +105,8 @@ class TConfig(ModalScreen):
             self._config.entry = new_config.entry
             self._config.exit = new_config.exit
             self._config.algo = new_config.algo
+            print(self._config)
             return True
-
-    # TODO: ADD TESTS ??????
-    # cprint("Config file error", file=sys.stderr, color="red")
-    # for err in e.errors():
-    #     cprint(f"  - {err['msg']}", file=sys.stderr, color="red")
-    # cprint(usage(), file=sys.stderr, color="yellow")
-
-    # except FileNotFoundError:
-    #     cprint("Config file not found", file=sys.stderr, color="red")
-    #     cprint(usage(), file=sys.stderr, color="yellow")
 
     # ########################################################################
     # ########################################################## COMPOSE #####
@@ -151,11 +134,10 @@ class TConfig(ModalScreen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button == self._bt_cancel:
             self.app.pop_screen()
+
         elif event.button == self._bt_update:
             if self._update_config():
                 self.app.pop_screen()
-            else:
-                self.app.push_screen(TMessageError("blah"))
 
         elif event.button == self._bt_save:
             self.app.exit()
@@ -166,13 +148,13 @@ class TConfig(ModalScreen):
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀▀░█░█░░█░░░░▀▀█░░█░░▄▀░░█▀▀
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▀▀░▀░▀░▀░░░▀▀▀░░▀░░░░▀▀▀░▀▀▀░▀▀▀░▀▀▀
 class InputSize(Widget):
-    def __init__(self, title: str, max: int, prompt: str):
+    def __init__(self, title: str, min: int, max: int, prompt: str):
         super().__init__(classes="option_inputs")
         self._max = max
         self._title = title
         self._prompt = prompt
         self._input = Select(
-            ((str(algo), algo) for algo in range(5, self._max)),
+            ((str(algo), algo) for algo in range(min, self._max)),
             prompt=self._prompt,
             value=5,
             classes="option_select_size",
@@ -230,4 +212,5 @@ class InputCoordinate(Widget):
             self._y.value = values[1]
 
     def get_value(self) -> Tuple[int, int]:
-        return (self._x.value, self._y.value)
+        """!! Values are reversed to fit (row,col) instead of (x,y) !!"""
+        return (self._y.value, self._x.value)

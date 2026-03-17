@@ -1,10 +1,7 @@
 from mazegen.algorithms import Algorithm
 
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, Optional, Tuple
 from pydantic import BaseModel, Field, field_validator, model_validator
-
-SIZE_MIN = 2
-SIZE_MAX = 1000
 
 
 class Config(BaseModel):
@@ -35,22 +32,21 @@ class Config(BaseModel):
                 smaller than nb_col - 1 or nb_row - 1 and cannot be equal
     """
 
+    MIN_SIZE: int = 5
+    MAX_SIZE: int = 200
+
     nb_col: Annotated[
-        Optional[int],
-        Field(default=15, ge=SIZE_MIN, le=SIZE_MAX, alias="WIDTH"),
+        int,
+        Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH"),
     ]
     nb_row: Annotated[
-        Optional[int],
-        Field(default=15, ge=SIZE_MIN, le=SIZE_MAX, alias="HEIGHT"),
+        int,
+        Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT"),
     ]
-    entry: Annotated[
-        Optional[tuple[int, int]], Field(default=(0, 0), alias="ENTRY")
-    ]
-    exit: Annotated[
-        Optional[tuple[int, int]], Field(default=(14, 14), alias="EXIT")
-    ]
+    entry: Annotated[Tuple[int, int], Field(default=(0, 0), alias="ENTRY")]
+    exit: Annotated[Tuple[int, int], Field(default=(4, 4), alias="EXIT")]
     output_file: Annotated[
-        Optional[str],
+        str,
         Field(
             default="maze.txt",
             min_length=3,
@@ -58,18 +54,19 @@ class Config(BaseModel):
             alias="OUTPUT_FILE",
         ),
     ]
-    perfect: Annotated[Optional[bool], Field(default=False, alias="PERFECT")]
+    perfect: Annotated[bool, Field(default=False, alias="PERFECT")]
     seed: Annotated[
         Optional[Any],
         Field(default=None, alias="SEED"),
     ]
-    algo: Annotated[Optional[str], Field(default="Wilson", alias="ALGO")]
+    algo: Annotated[str, Field(default="Wilson", alias="ALGO")]
     loop_ratio: Annotated[
-        Optional[int], Field(default=100, ge=0, le=100, alias="LOOP_RATIO")
+        int, Field(default=100, ge=0, le=100, alias="LOOP_RATIO")
     ]
 
     class Config:
         """Configure BaseModel behaviour"""
+
         # Enable passing new value into checks before assignation
         validate_assignment = True
 
@@ -84,20 +81,20 @@ class Config(BaseModel):
 
     @model_validator(mode="after")
     def are_in_the_maze(self) -> Any:
-        """Check entry and exit are inside the maze limits"""
-        entry_row, entry_col = self.entry
-        exit_row, exit_col = self.exit
+        """Checks entry and exit are inside the maze limits"""
+        (entry_row, entry_col) = self.entry
+        (exit_row, exit_col) = self.exit
 
-        if entry_row >= self.nb_row:
-            raise ValueError(f"Entry Y can't be higher than {self.nb_row}")
-        if exit_row >= self.nb_row:
-            raise ValueError(f"Exit Y can't be higher than {self.nb_row}")
-
-        if entry_col >= self.nb_col:
-            raise ValueError(f"Entry X can't be higher than {self.nb_col}")
-        if exit_col >= self.nb_col:
-            raise ValueError(f"Exit X can't be higher than {self.nb_col}")
-
+        if entry_row >= self.nb_row or entry_col >= self.nb_col:
+            raise ValueError(
+                f"Entry ({entry_col}, {entry_row}) has to be"
+                f" inside the maze ({self.nb_col}, {self.nb_row}))"
+            )
+        if exit_row >= self.nb_row or exit_col >= self.nb_col:
+            raise ValueError(
+                f"Exit ({exit_col}, {exit_row}) has to be"
+                f" inside the maze ({self.nb_col}, {self.nb_row}))"
+            )
         return self
 
     @model_validator(mode="after")
