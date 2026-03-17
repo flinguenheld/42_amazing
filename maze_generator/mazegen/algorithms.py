@@ -116,8 +116,8 @@ class Wilson(Algorithm):
         super().__init__(maze, rand)
         if self._maze.cells_42:
             mid_r, mid_c = (
-                int((self.nb_row - 1) / 2),
-                int((self.nb_col - 1) / 2),
+                int((self._maze.nb_row - 1) / 2),
+                int((self._maze.nb_col - 1) / 2),
             )
             self.__first_start = (mid_r - 1, mid_c + 2)
             self.__first_end = (mid_r + 1, mid_c + 2)
@@ -146,7 +146,7 @@ class Wilson(Algorithm):
 
     def __find_first_path(self) -> Maze:
         """Use Walker's LERW to find first path from maze's entry to exit"""
-        path = Walker(self._maze, self.__first_start, self.__first.end).walk(
+        path = Walker(self._maze, self.__first_start, self.__first_end).walk(
             self._rand
         )
         self.__full_path.update(path)
