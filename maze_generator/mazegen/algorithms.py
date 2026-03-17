@@ -34,6 +34,7 @@ class Algorithm(ABC):
     )
 
     def __init__(self, maze: Maze, rand: random.Random) -> None:
+        """Corrects maze's start or exit if they are in logo"""
         self._maze = maze
         self._rand = rand
         self._not_visited: Set[tuple[int, int]] = {
@@ -48,10 +49,14 @@ class Algorithm(ABC):
         """Abstract method to be implemented by each algorithm"""
         pass
 
-    def _get_neighbours(self, cell: tuple[int, int]) -> List[tuple[int, int]]:
+    @staticmethod
+    def _get_neighbours(
+        maze: Maze, cell: tuple[int, int]
+    ) -> List[tuple[int, int]]:
         """Get neighbouring cells within maze
 
         - Args:
+            maze: Maze object, current maze state
             cell: tuple[int, int], coordinate of cell which neighbours
                                                         are to be returned
         - Returns
@@ -59,12 +64,9 @@ class Algorithm(ABC):
                                         from arg and within maze limits
         """
         neighbours: List[tuple[int, int]] = list()
-        for move in self.MOVES:
+        for move in Algorithm.MOVES:
             new = (cell[0] + move[0], cell[1] + move[1])
-            if (
-                0 <= new[0] < self._maze.nb_row
-                and 0 <= new[1] < self._maze.nb_col
-            ):
+            if 0 <= new[0] < maze.nb_row and 0 <= new[1] < maze.nb_col:
                 neighbours.append(new)
         return neighbours
 
@@ -96,7 +98,7 @@ class Algorithm(ABC):
                 case 0x7:
                     target = (r, c + 1)
             if target not in self._maze.cells_42:
-                self._maze.break_wall((r, c), target, safe=True)
+                self._maze.break_wall((r, c), target, safe=False)
             if target in targets:
                 targets.remove(target)
             yield self._maze
@@ -112,6 +114,16 @@ class Wilson(Algorithm):
     def __init__(self, maze: Maze, rand: random.Random) -> None:
         """Initialise set of all visited coordinates"""
         super().__init__(maze, rand)
+        if self._maze.cells_42:
+            mid_r, mid_c = (
+                int((self._maze.nb_row - 1) / 2),
+                int((self._maze.nb_col - 1) / 2),
+            )
+            self.__first_start = (mid_r - 1, mid_c + 2)
+            self.__first_end = (mid_r + 1, mid_c + 2)
+        else:
+            self.__first_start = self._maze.start
+            self.__first_end = self._maze.end
         self.__full_path: Set[tuple[int, int]] = set()
 
     def solve(self) -> Generator[Maze, None, None]:
@@ -134,7 +146,7 @@ class Wilson(Algorithm):
 
     def __find_first_path(self) -> Maze:
         """Use Walker's LERW to find first path from maze's entry to exit"""
-        path = Walker(self._maze, self._maze.start, self._maze.end).walk(
+        path = Walker(self._maze, self.__first_start, self.__first_end).walk(
             self._rand
         )
         self.__full_path.update(path)
@@ -165,12 +177,12 @@ class DFS(Algorithm):
 
     def _get_neighbours(self, cell: tuple[int, int]) -> List[tuple[int, int]]:
         """Add condition 'don't be visited' to parent's implementation"""
-        neighbours = super()._get_neighbours(cell)
+        neighbours = super()._get_neighbours(self._maze, cell)
         return [i for i in neighbours if i in self._not_visited]
 
     def solve(self) -> Generator[Maze, None, None]:
         """Jump from current cell to first neighbour until current cell
-                        has no neighbours, then go back to first cell that 
+                        has no neighbours, then go back to first cell that
                         has unvisited neighbours and go again
         - Yield:
             maze at every step
