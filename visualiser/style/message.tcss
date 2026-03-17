@@ -26,10 +26,10 @@ TMessage {
 .layout_message_error {
     background: $error;
 }
-.layout_success {
+.layout_message_success {
     background: $success;
 }
-.layout_warning {
+.layout_message_warning {
     background: $warning;
 }
 

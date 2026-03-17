@@ -30,7 +30,7 @@ class MazeCanvas(Canvas):
             last_maze = deepcopy(self.__previous_maze)
             self.clear()
             self.dig_holes(last_maze)
-            self.add_start_exit()
+            self.draw_start_exit()
 
     # ########################################################################
     # ############################################################## DRAW ####
@@ -56,21 +56,20 @@ class MazeCanvas(Canvas):
         self.__draw_line(row + 1, col - 1, False, colour)
 
     # ########################################################################
-    # ######################################################## START EXIT ####
-    def __draw_point_hexa_coordinates(self, row, col, colour: str):
+    # ######################################################### DRAW HEXA ####
+    def draw_point_hexa_coordinates(self, row, col, colour: str):
         self.__draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
 
-    # TODO: START END INSTEAD OF ENTRY EXIT ??????????????????????????????????
-    def add_start_exit(self):
+    def draw_start_exit(self):
         # Use the previous maze to easily call the method with animation
 
         if self.__previous_maze:
-            self.__draw_point_hexa_coordinates(
+            self.draw_point_hexa_coordinates(
                 row=self.__previous_maze.start[0],
                 col=self.__previous_maze.start[1],
                 colour="warning",
             )
-            self.__draw_point_hexa_coordinates(
+            self.draw_point_hexa_coordinates(
                 row=self.__previous_maze.end[0],
                 col=self.__previous_maze.end[1],
                 colour="success",

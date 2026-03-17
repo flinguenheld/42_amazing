@@ -1,14 +1,19 @@
+from typing import ClassVar
+from textual.binding import Binding, BindingType
+from textual.events import Key
 from mazegen.config import Config
 
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.tconfig import TConfig
 
+from textual import events
 from textual.color import Color
 from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
 from textual.screen import ScreenResultType
 from textual.containers import ScrollableContainer, Vertical
+from visualiser.tmessage import TMessageWarning, TMessageError, TMessage
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -24,6 +29,10 @@ class Visualiser(App[None]):
         ("n", "next_step", "Next step"),
         ("a", "animate", "Animate"),
         ("c", "config", "Config"),
+        ("up", "ignore", ""),
+        ("down", "ignore", ""),
+        ("left", "ignore", ""),
+        ("right", "ignore", ""),
     ]
 
     def __init__(self, config: Config) -> None:
@@ -40,7 +49,7 @@ class Visualiser(App[None]):
         yield Footer()
         with Vertical(id="main_layout"):
             yield self.__ttitle
-            with ScrollableContainer(id="scroll_layout"):
+            with ScrollableNoArrow(id="scroll_layout"):
                 yield self.__tmaze
 
     # ########################################################################
@@ -49,6 +58,11 @@ class Visualiser(App[None]):
         self.title = "a_maze_ing"
         self.action_next_theme()
         self.action_generate_new_maze()
+
+    # ########################################################################
+    # ######################################################## MOVEMENTS #####
+    def on_key(self, event: events.Key) -> None:
+        self.__tmaze.move_player(event.key)
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
@@ -112,3 +126,21 @@ class Visualiser(App[None]):
                 self.theme = "gruvbox"
 
         self.__tmaze.up_colours(self.__get_colours())
+
+
+# ############################################################################
+# ############################################################################
+# ######################################## PREVENT SCROLLING WITH ARROWS #####
+class ScrollableNoArrow(ScrollableContainer):
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("up", "ignore", "Scroll Up", show=False),
+        Binding("down", "ignore", "Scroll Down", show=False),
+        Binding("left", "ignore", "Scroll Left", show=False),
+        Binding("right", "ignore", "Scroll Right", show=False),
+        Binding("home", "scroll_home", "Scroll Home", show=False),
+        Binding("end", "scroll_end", "Scroll End", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("ctrl+pageup", "page_left", "Page Left", show=False),
+        Binding("ctrl+pagedown", "page_right", "Page Right", show=False),
+    ]

@@ -9,7 +9,12 @@ from textual.containers import Vertical, Center
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀▀░▀▀█░▀▀█░█▀█░█░█░█▀▀
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀
 class TMessage(ModalScreen):
-    BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
+    # TODO: Fix BINDNIGS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    BINDINGS = [
+        ("escape", "app.pop_screen", "Pop screen"),
+        ("enter", "app.pop_screen", "Pop screen"),
+        ("space", "app.pop_screen", "Pop screen"),
+    ]
 
     def __init__(self, message: str, type: str) -> None:
         super().__init__()

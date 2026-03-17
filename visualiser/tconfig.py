@@ -9,7 +9,7 @@ from textual.containers import HorizontalGroup, ScrollableContainer
 
 from mazegen.config import Config
 from visualiser.ttitle import TTitleConfig
-from visualiser.tmessage import TMessageError, TMessage
+from visualiser.tmessage import TMessageError
 from config.config_parser import ConfigParser
 
 # TODO: READ OPTIONS
