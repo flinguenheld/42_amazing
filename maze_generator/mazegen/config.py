@@ -1,6 +1,6 @@
 from mazegen.algorithms import Algorithm
 
-from typing import Annotated, Any, Optional, Tuple
+from typing import Annotated, Any, Optional, Tuple, ClassVar
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
@@ -32,16 +32,14 @@ class Config(BaseModel):
                 smaller than nb_col - 1 or nb_row - 1 and cannot be equal
     """
 
-    MIN_SIZE: int = 5
-    MAX_SIZE: int = 200
+    MIN_SIZE: ClassVar[int] = 5
+    MAX_SIZE: ClassVar[int] = 200
 
     nb_col: Annotated[
-        int,
-        Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH"),
+        int, Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH")
     ]
     nb_row: Annotated[
-        int,
-        Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT"),
+        int, Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT")
     ]
     entry: Annotated[Tuple[int, int], Field(default=(0, 0), alias="ENTRY")]
     exit: Annotated[Tuple[int, int], Field(default=(4, 4), alias="EXIT")]
