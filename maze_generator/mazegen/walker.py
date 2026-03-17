@@ -5,9 +5,8 @@ import random
 
 
 class Walker:
-    """
-    - Class that walks (LERW) from point a to point b in maze
-                                                creating a path
+    """Class that walks (LERW) from point a to point b in maze
+                                                  creating a path
     """
 
     def __init__(
@@ -24,12 +23,17 @@ class Walker:
 
     def walk(self, rand: random.Random) -> List[Tuple[int, int]]:
         """
+        - Args:
+            rand: random.Random, Random instance for indepence
+
         - Randomly choose a possible move from last path entry
         - Check for loop/blocked
         - Erase loop if so
         - Else append move to path
         - Write corresponding values into maze
-        - Return Path object
+
+        - Return:
+            Path object
         """
         while (self.__cur_r, self.__cur_c) not in self.__end:
             valid_moves = self.__get_valid_moves()
@@ -47,9 +51,7 @@ class Walker:
         return self.__path
 
     def __write_path(self) -> None:
-        """
-        - Write path data to maze
-        """
+        """Write path data to maze"""
         length = len(self.__path) - 1
         for i in range(length):
             if i < length:
@@ -60,9 +62,9 @@ class Walker:
     def __get_valid_moves(
         self,
     ) -> List[Tuple[int, int]]:
-        """
-        - Try every move and check result is within bounds
-        - Return validated moves
+        """Try every move and check result is within bounds
+        - Return:
+            validated moves as list
         """
         moves = ((0, 1), (0, -1), (1, 0), (-1, 0))
         valid_moves: List[Tuple[int, int]] = []

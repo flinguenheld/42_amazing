@@ -8,6 +8,24 @@ import random
 
 
 class Algorithm(ABC):
+    """Parent class for all implemented algorithms
+
+    - Public attributes:
+        MOVES: tuple[tuple[int, int]], coordinate evolution for
+                                            one step in any direction
+
+    - Attributes accessible to children:
+        Set in __init__():
+         - Args
+            maze: Maze object passed by MazeGenerator
+            rand: rand object passed by MazeGenerator
+
+        _maze
+        _rand
+        _not_visited: Set[tuple[int, int]], all cells not yet visited
+                                                        and not in logo
+    """
+
     MOVES = (
         (0, 1),
         (1, 0),
@@ -27,9 +45,19 @@ class Algorithm(ABC):
 
     @abstractmethod
     def solve(self) -> Generator[Maze, None, None]:
+        """Abstract method to be implemented by each algorithm"""
         pass
 
     def _get_neighbours(self, cell: tuple[int, int]) -> List[tuple[int, int]]:
+        """Get neighbouring cells within maze
+
+        - Args:
+            cell: tuple[int, int], coordinate of cell which neighbours
+                                                        are to be returned
+        - Returns
+            list[tuple[int, int]] of cells in MOVES offset
+                                        from arg and within maze limits
+        """
         neighbours: List[tuple[int, int]] = list()
         for move in self.MOVES:
             new = (cell[0] + move[0], cell[1] + move[1])
@@ -41,6 +69,11 @@ class Algorithm(ABC):
         return neighbours
 
     def _create_loops(self) -> None:
+        """Iterate through all 'dead-end' cell in the maze (3 walls)
+                                    and leave only two parallel walls
+        - Yield:
+            maze at each broken wall
+        """
         dead_ends = {0xE, 0xD, 0xB, 0x7}
 
         targets = [
@@ -48,7 +81,8 @@ class Algorithm(ABC):
             for c in range(1, self._maze.nb_col - 1)
             for r in range(1, self._maze.nb_row - 1)
             if self._maze.values[r][c] in dead_ends
-            and self._rand.randint(0, 100) in range(0, self._maze.loop_ratio)       ]
+            and self._rand.randint(0, 100) in range(0, self._maze.loop_ratio)
+        ]
         for r, c in targets:
             target = None
             value = self._maze.values[r][c]
@@ -69,11 +103,24 @@ class Algorithm(ABC):
 
 
 class Wilson(Algorithm):
+    """Algorithm that uses LERW to create a perfect maze
+
+    - Public attributes:
+        see Algorithm class
+    """
+
     def __init__(self, maze: Maze, rand: random.Random) -> None:
+        """Initialise set of all visited coordinates"""
         super().__init__(maze, rand)
         self.__full_path: Set[tuple[int, int]] = set()
 
     def solve(self) -> Generator[Maze, None, None]:
+        """Find arbitraty first path, then all random others,
+                                        then create loops if needed
+        - Yield:
+            maze at every step
+        """
+
         self.__find_first_path()
         yield self._maze
 
@@ -86,6 +133,7 @@ class Wilson(Algorithm):
                 yield maze
 
     def __find_first_path(self) -> Maze:
+        """Use Walker's LERW to find first path from maze's entry to exit"""
         path = Walker(self._maze, self._maze.start, self._maze.end).walk(
             self._rand
         )
@@ -93,6 +141,7 @@ class Wilson(Algorithm):
         self._not_visited.difference_update(path)
 
     def __find_next_path(self) -> Maze:
+        """Use Walker's LERW to find any but first path from random to maze"""
         choice = self._rand.choice(sorted(list(self._not_visited)))
 
         path = Walker(self._maze, choice, self.__full_path).walk(self._rand)
@@ -101,17 +150,31 @@ class Wilson(Algorithm):
 
 
 class DFS(Algorithm):
+    """Algorithm using DFS to generate a perfect maze
+
+    - Public attributes:
+        see Algorithm class
+    """
+
     def __init__(self, maze: Maze, rand: random.Random) -> None:
+        """Choose starting position and initialize visited cells list"""
         super().__init__(maze, rand)
         start = rand.choice(sorted(list(self._not_visited)))
         self.__visited = [start]
         self._not_visited.remove(start)
 
     def _get_neighbours(self, cell: tuple[int, int]) -> List[tuple[int, int]]:
+        """Add condition 'don't be visited' to parent's implementation"""
         neighbours = super()._get_neighbours(cell)
         return [i for i in neighbours if i in self._not_visited]
 
     def solve(self) -> Generator[Maze, None, None]:
+        """Jump from current cell to first neighbour until current cell
+                        has no neighbours, then go back to first cell that 
+                        has unvisited neighbours and go again
+        - Yield:
+            maze at every step
+        """
         while self.__visited:
             cur = self.__visited.pop()
             neighbours = self._get_neighbours(cur)

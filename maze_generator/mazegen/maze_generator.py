@@ -8,36 +8,48 @@ import random
 
 
 class MazeGenerator:
-    """
-    - Standalone class that fully handles the instantiation/filling
-            of a Maze based on a Config object passed on initialization.
+    """ Class handling the whole process of generating a Maze
+
+    - Public attributes:
+        self.config: Config object passed on instanciation or generated
     """
 
     def __init__(self, config: Optional[Config] = None) -> None:
-        """- Chooses between passed as arg/default Config object"""
+        """Sets public config to either passed as argument or default"""
         if config is not None:
             self.config = config
         else:
             self.config = Config()
 
     def __reset_attributes(self) -> Maze:
+        """Set/update private attributes before generation"""
         self.__rand = random.Random(self.config.get("seed"))
 
         self.__maze = Maze(
-            self.config.nb_row,
-            self.config.nb_col,
-            self.config.entry,
-            self.config.exit,
-            self.config.perfect,
-            self.config.seed,
-            self.config.loop_ratio
+            self.config.get("nb_row"),
+            self.config.get("nb_col"),
+            self.config.get("entry"),
+            self.config.get("exit"),
+            self.config.get("perfect"),
+            self.config.get("seed"),
+            self.config.get("loop_ratio")
         )
 
     def __solve_maze(self) -> Maze:
+        """Write PathFinder's result into maze.solution
+
+        - Return:
+            maze
+        """
         self.__maze.set_solution(PathFinder(self.__maze, self.config).search())
         return self.__maze
 
     def generate(self):
+        """ Clear maze, choose and execute algorithm, solve maze
+
+        - Yield:
+            maze at every step
+        """
         self.__reset_attributes()
         yield self.__maze
 
@@ -53,7 +65,5 @@ class MazeGenerator:
         yield self.__maze
 
     def get_maze(self) -> Maze:
-        """
-        - Skips to last Maze yield by generate()
-        """
+        """Skip to last maze of generate() and return it"""
         return list(self.generate())[-1]

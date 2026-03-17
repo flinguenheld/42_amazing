@@ -7,24 +7,26 @@ from collections import deque
 
 
 class PathFinder:
-    """
-    - Class generating a list of lists of tuples,
-            representing path of coordinates for every
-            possible solution for the maze, sorted by length
-    """
+    """Class using BFS to find quickest path between maze.entry and
+    maze.exit"""
 
     def __init__(self, maze: Maze, config: Config) -> None:
-        self.maze: Maze = maze
-        self.maze.start = config.entry
-        self.maze.end = config.exit
-        self.tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
-        self.queue = deque([self.maze.start])
+        self.__maze: Maze = maze
+        self.__maze.start = config.entry
+        self.__maze.end = config.exit
+        self.__tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
+        self.__queue = deque([self.__maze.start])
 
     @staticmethod
     def get_valid_moves(val: int) -> List[Tuple[int, int]]:
+        """Find out which direction we can go in from current cell's value
+
+        - Return:
+            possible moves as list
+        """
         moves = list()
         b = f"{val:04b}"
-        walls = [char == '0' for char in b]
+        walls = [char == "0" for char in b]
         if walls[0] is True:
             moves.append((0, -1))
         if walls[1] is True:
@@ -36,23 +38,32 @@ class PathFinder:
         return moves
 
     def search(self) -> Path | None:
-        while self.queue:
-            cur = self.queue.popleft()
-            if cur == self.maze.end:
+        """Go from current cell to first accessible neighbour repeatedly
+                                until current cell has no accessible
+                                neighbours, go back to last cell who has
+                                accessible unvisited neighbours
+        - Return:
+            Path object if found
+            None otherwise
+        """
+        while self.__queue:
+            cur = self.__queue.popleft()
+            if cur == self.__maze.end:
                 return self.backtrack()
-            val = self.maze.values[cur[0]][cur[1]]
+            val = self.__maze.values[cur[0]][cur[1]]
             for move in self.get_valid_moves(val):
                 new_r, new_c = (cur[0] + move[0], cur[1] + move[1])
-                if (new_r, new_c) not in self.tab:
-                    self.tab[(new_r, new_c)] = cur
-                    self.queue.append((new_r, new_c))
+                if (new_r, new_c) not in self.__tab:
+                    self.__tab[(new_r, new_c)] = cur
+                    self.__queue.append((new_r, new_c))
         return None
 
     def backtrack(self) -> Path:
-        cur = self.maze.end
-        path = Path([self.maze.end])
-        while cur != self.maze.start:
-            cur = self.tab[cur]
+        """Follow trail from end to start to reconstruct coordinates list"""
+        cur = self.__maze.end
+        path = Path([self.__maze.end])
+        while cur != self.__maze.start:
+            cur = self.__tab[cur]
             path.append(cur)
         path.path.reverse()
         return path
