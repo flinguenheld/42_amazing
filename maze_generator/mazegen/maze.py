@@ -101,8 +101,6 @@ class Maze:
                 (mid_r + 2, mid_c + 2),
                 (mid_r + 2, mid_c + 3),
             }
-            self.start = (mid_r - 1, mid_c + 2)
-            self.end = (mid_r + 1, mid_c + 2)
         else:
             self.cells_42 = set()
 
@@ -140,11 +138,12 @@ class Maze:
                 res = f"{res}{char:X}"
             res = f"{res}\n"
         res = f"{res}\n\n{self.start}\n{self.end}\n"
-        for i in range(len(self.solution) - 2):
-            cur = self.solution[i]
-            nxt = self.solution[i + 1]
-            char = self.LETTER_MAP[(nxt[0] - cur[0], cur[1] - nxt[1])]
-            res = f"{res}{char}"
+        if getattr(self, "solution"):
+            for i in range(len(self.solution) - 2):
+                cur = self.solution[i]
+                nxt = self.solution[i + 1]
+                char = self.LETTER_MAP[(nxt[0] - cur[0], cur[1] - nxt[1])]
+                res = f"{res}{char}"
         res = f"{res}\n"
 
         return res

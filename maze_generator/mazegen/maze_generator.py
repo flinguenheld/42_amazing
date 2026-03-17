@@ -8,7 +8,7 @@ import random
 
 
 class MazeGenerator:
-    """ Class handling the whole process of generating a Maze
+    """Class handling the whole process of generating a Maze
 
     - Public attributes:
         self.config: Config object passed on instanciation or generated
@@ -21,10 +21,8 @@ class MazeGenerator:
         else:
             self.config = Config()
 
-    def __reset_attributes(self) -> Maze:
-        """Set/update private attributes before generation"""
-        self.__rand = random.Random(self.config.get("seed"))
-
+    def init_maze(self) -> None:
+        """Resets maze with config info"""
         self.__maze = Maze(
             self.config.get("nb_row"),
             self.config.get("nb_col"),
@@ -32,8 +30,29 @@ class MazeGenerator:
             self.config.get("exit"),
             self.config.get("perfect"),
             self.config.get("seed"),
-            self.config.get("loop_ratio")
+            self.config.get("loop_ratio"),
         )
+        if self.__maze.start in self.__maze.cells_42:
+            self.__maze.start = [
+                i
+                for i in Algorithm._get_neighbours(
+                    self.__maze, self.__maze.start
+                )
+                if i not in self.__maze.cells_42
+            ][0]
+        if self.__maze.end in self.__maze.cells_42:
+            self.__maze.start = [
+                i
+                for i in Algorithm._get_neighbours(
+                    self.__maze, self.__maze.end
+                )
+                if i not in self.__maze.cells_42
+            ][0]
+
+    def __reset_attributes(self) -> Maze:
+        """Set/update private attributes before generation"""
+        self.__rand = random.Random(self.config.get("seed"))
+        self.init_maze()
 
     def __solve_maze(self) -> Maze:
         """Write PathFinder's result into maze.solution
@@ -45,7 +64,7 @@ class MazeGenerator:
         return self.__maze
 
     def generate(self):
-        """ Clear maze, choose and execute algorithm, solve maze
+        """Clear maze, choose and execute algorithm, solve maze
 
         - Yield:
             maze at every step
@@ -62,6 +81,9 @@ class MazeGenerator:
             yield maze
 
         self.__solve_maze()
+        if self.config.get("output_file"):
+            with open(self.config.get("output_file"), "w") as fd:
+                fd.write(str(maze))
         yield self.__maze
 
     def get_maze(self) -> Maze:

@@ -12,8 +12,6 @@ class PathFinder:
 
     def __init__(self, maze: Maze, config: Config) -> None:
         self.__maze: Maze = maze
-        self.__maze.start = config.entry
-        self.__maze.end = config.exit
         self.__tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
         self.__queue = deque([self.__maze.start])
 
