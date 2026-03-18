@@ -3,10 +3,16 @@ import asyncio
 from typing import Tuple, Set, Callable
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▀▀░█▀█░█▀▄░▀█▀░█░█░░░▀█▀░█░█░█▀█
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▀▀░█░█░█▀▄░░█░░░█░░░░░█░░█▄█░█░█
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░░▀▀▀░▀░▀░░▀░░░▀░░░░░▀░░▀░▀░▀▀▀
 class FortyTwo:
+    """Allows TMaze to enlight the 42 in the middle of maze"""
+
     def __init__(self, drawing_function: Callable) -> None:
-        self._points = None
         self._drawing_function = drawing_function
+        self._points = None
         self._colours = [
             "secondary",
             "accent",
@@ -23,7 +29,8 @@ class FortyTwo:
 
     async def cycle(self) -> None:
         if self._points:
-            await self._colour_them(random.choice(self._colours))
+            for _ in range(1, random.randint(3, 6)):
+                await self._colour_them(random.choice(self._colours))
             await self._colour_them("background")
 
     async def _colour_them(self, colour) -> None:

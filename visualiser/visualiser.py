@@ -1,6 +1,6 @@
 from typing import ClassVar, Dict, Any
 from textual.binding import Binding, BindingType
-from textual.events import Key
+
 from mazegen.config import Config
 
 from visualiser.tmaze import TMaze
@@ -13,7 +13,6 @@ from textual.widgets import Footer, Header
 from textual.app import App, ComposeResult
 from textual.screen import ScreenResultType
 from textual.containers import ScrollableContainer, Vertical
-from visualiser.tmessage import TMessageWarning, TMessageError, TMessage
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
