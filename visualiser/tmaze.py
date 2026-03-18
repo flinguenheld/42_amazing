@@ -7,10 +7,11 @@ from textual.containers import Horizontal
 
 from mazegen.maze import Maze
 from mazegen.config import Config
+from mazegen.maze_generator import MazeGenerator
+
 from visualiser.player import Player
 from visualiser.maze_canvas import MazeCanvas
 from visualiser.tmessage import TMessageSuccess, TMessageError
-from mazegen.maze_generator import MazeGenerator
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -27,8 +28,9 @@ class TMaze(Widget):
         self.__maze_gen_iterator = MazeGenIterator(self.__maze_generator)
         self.__canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
         self.__last_size = (config.nb_row, config.nb_col)
+
+        # Also use to check if maze is ready:
         self.__player: Optional[Player] = None
-        self.__is_ready = False
 
     def compose(self) -> ComposeResult:
         yield self.__canvas
@@ -36,12 +38,9 @@ class TMaze(Widget):
     # ########################################################################
     # ################################################## PLAYER MOVEMENTS ####
     def move_player(self, key: str):
-        if self.__player and self.__is_ready:
+        if self.__player:
+            self.player_clean()
             self.__player.move(key)
-
-            # Clean previous --
-            (row, col) = self.__player.get_previous_position()
-            self.__canvas.draw_point_hexa_coordinates(row, col, "primary")
 
             # Victory ? --
             if self.__player.is_winning():
@@ -52,26 +51,33 @@ class TMaze(Widget):
                         f"Shortest path: {shortest - 1}"
                     )
                 )
-                self.reset_player()
-                self.__is_ready = True
+                self.player_reset()
 
             # draw new position --
             else:
-                self.__draw_player()
+                self.__player_draw()
 
-    def reset_player(self) -> None:
+    # ########################################################################
+    # ###################################################### PLAYER RESET ####
+    def player_reset(self) -> None:
         if self.__player:
             self.__player.reset()
-            self.__canvas.draw_exit()
-            self.__draw_player()
+            self.__player_draw()
 
-    def __draw_player(self) -> None:
-        if self.__player and self.__is_ready:
+    # ########################################################################
+    # ####################################################### PLAYER DRAW ####
+    def player_clean(self) -> None:
+        self.__player_draw(colour="primary")
+
+    def __player_draw(self, colour: str = "warning") -> None:
+        if self.__player:
             row, col = self.__player.get_position()
-            self.__canvas.draw_point_hexa_coordinates(row, col, "warning")
+            self.__canvas.draw_point_hexa_coordinates(row, col, colour)
 
-    def __draw_exit(self) -> None:
-        if self.__is_ready:
+    # ########################################################################
+    # ######################################################### EXIT DRAW ####
+    def __exit_draw(self) -> None:
+        if self.__player:
             self.__canvas.draw_exit()
 
     # ########################################################################
@@ -79,8 +85,8 @@ class TMaze(Widget):
     def up_colours(self, colours):
         self.__colours = colours
         self.__canvas.up_colours(colours)
-        self.__draw_player()
-        self.__draw_exit()
+        self.__player_draw()
+        self.__exit_draw()
 
     # ########################################################################
     # ###################################################### RESET CANVAS ####
@@ -117,9 +123,8 @@ class TMaze(Widget):
         self.__clear_or_reset_canvas()
         self.__canvas.dig_holes(maze)
         self.__player = Player(maze)
-        self.__is_ready = True
-        self.__draw_player()
-        self.__draw_exit()
+        self.__player_draw()
+        self.__exit_draw()
 
     # ########################################################################
     # ######################################################### ANIMATION ####
@@ -127,8 +132,8 @@ class TMaze(Widget):
         """
         Generate a new maze and get an iterator to the first step
         """
+        self.__player = None
         self.__maze_gen_iterator.start_new_generator()
-        self.__is_ready = False
         self.__clear_or_reset_canvas()
         self.next_step_animation()
 
@@ -147,9 +152,8 @@ class TMaze(Widget):
                 self.__player = Player(
                     self.__maze_gen_iterator.last_generated()
                 )
-                self.__is_ready = True
-                self.__draw_player()
-                self.__draw_exit()
+                self.__player_draw()
+                self.__exit_draw()
 
         return False
 
