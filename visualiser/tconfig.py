@@ -12,6 +12,8 @@ from visualiser.ttitle import TTitleConfig
 from visualiser.tmessage import TMessageError
 from config.config_parser import ConfigParser
 
+import sys
+
 # TODO: READ OPTIONS
 # TODO: SAVE OPTIONS
 # TODO: GET & UPDATE THE OBJECT
@@ -109,6 +111,23 @@ class TConfig(ModalScreen):
             return True
 
     # ########################################################################
+    # ###################################################### SAVE CONFIG #####
+    def _save_config(self) -> bool:
+        if not self._update_config():
+            return False
+        conf = self._config.model_dump(by_alias=True)
+        res = ""
+        for k, v in conf.items():
+            if v:
+                if isinstance(v, tuple):
+                    res = f"{res}{k}={v[1]},{v[0]}\n"
+                else:
+                    res = f"{res}{k}={v}\n"
+        with open(sys.argv[1], "w") as fd:
+            fd.write(res)
+        return True
+
+    # ########################################################################
     # ########################################################## COMPOSE #####
     def compose(self) -> ComposeResult:
         with ScrollableContainer(id="layout_options"):
@@ -140,7 +159,8 @@ class TConfig(ModalScreen):
                 self.app.pop_screen()
 
         elif event.button == self._bt_save:
-            self.app.exit()
+            if self._save_config():
+                self.app.pop_screen()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

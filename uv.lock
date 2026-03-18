@@ -91,6 +91,12 @@ linkify = [
 name = "mazegen"
 version = "0.1.0"
 source = { editable = "maze_generator" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pydantic", specifier = ">=2.12.5" }]
 
 [[package]]
 name = "mdit-py-plugins"
