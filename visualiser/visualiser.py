@@ -28,6 +28,7 @@ class Visualiser(App[None]):
         ("t", "next_theme", "Next theme"),
         ("n", "next_step", "Next step"),
         ("a", "animate", "Animate"),
+        ("r", "restart", "Restart"),
         ("c", "config", "Config"),
         ("up", "ignore", ""),
         ("down", "ignore", ""),
@@ -63,6 +64,12 @@ class Visualiser(App[None]):
     # ######################################################## MOVEMENTS #####
     def on_key(self, event: events.Key) -> None:
         self.__tmaze.move_player(event.key)
+
+    # ########################################################################
+    # ################################################# ACTION - OPTIONS #####
+    def action_restart(self) -> None:
+        self.__tmaze.player_clean()
+        self.__tmaze.player_reset()
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####

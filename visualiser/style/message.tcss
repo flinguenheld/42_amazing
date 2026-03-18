@@ -15,7 +15,7 @@ TMessage {
 }
 
 # ################################################################ LAYOUT #####
-#layout_message {
+#message_layout_base {
     width: 60%;
     height: auto;
     padding: 2 5 2 5;
@@ -23,14 +23,23 @@ TMessage {
     color: $background;
 }
 
-.layout_message_error {
+.message_layout_error {
     background: $error;
 }
-.layout_message_success {
+.message_layout_success {
     background: $success;
 }
-.layout_message_warning {
+.message_layout_warning {
     background: $warning;
+}
+
+# ################################################################# TITLE #####
+.message_title {
+    width: 100%;
+    content-align: center middle;
+    # border: round $background;
+    # background: $primary;
+    margin: 2;
 }
 
 # ############################################################### MESSAGE #####
@@ -41,8 +50,7 @@ TMessage {
     margin: 2;
 }
 
-# ############################################################
-# ############################################### BUTTONS ####
+# ################################################################ BUTTON #####
 .message_button {
     width: 30;
     align: center middle;

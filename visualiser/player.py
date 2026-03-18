@@ -11,18 +11,18 @@ class Player:
         self._maze = maze
         self.reset()
 
+    # ########################################################################
+    # ############################################################ RESET #####
     def reset(self):
+        self._counter = 0
         self._row = self._maze.start[0]
         self._col = self._maze.start[1]
-        self._previous_position = self._maze.start
-        self._counter = 0
 
     # ########################################################################
     # ############################################################# MOVE #####
     def move(self, key: str):
 
         cell_hexa = self._maze.values[self._row][self._col]
-        self._previous_position = (self._row, self._col)
 
         match key:
             case "up":
@@ -49,9 +49,6 @@ class Player:
 
     def get_position(self) -> Tuple[int, int]:
         return (self._row, self._col)
-
-    def get_previous_position(self) -> Tuple[int, int]:
-        return self._previous_position
 
     def get_counter(self) -> Tuple[int, int]:
         return (self._counter, len(self._maze.solution))
