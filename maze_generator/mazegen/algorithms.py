@@ -70,7 +70,7 @@ class Algorithm(ABC):
                 neighbours.append(new)
         return neighbours
 
-    def _create_loops(self) -> None:
+    def _create_loops(self) -> Generator[Maze, None, None]:
         """Iterate through all 'dead-end' cell in the maze (3 walls)
                                     and leave only two parallel walls
         - Yield:
@@ -86,7 +86,7 @@ class Algorithm(ABC):
             and self._rand.randint(0, 100) in range(0, self._maze.loop_ratio)
         ]
         for r, c in targets:
-            target = None
+            target = (r, c)
             value = self._maze.values[r][c]
             match value:
                 case 0xE:
@@ -144,21 +144,21 @@ class Wilson(Algorithm):
             for maze in self._create_loops():
                 yield maze
 
-    def __find_first_path(self) -> Maze:
+    def __find_first_path(self) -> None:
         """Use Walker's LERW to find first path from maze's entry to exit"""
         path = Walker(self._maze, self.__first_start, self.__first_end).walk(
             self._rand
         )
-        self.__full_path.update(path)
-        self._not_visited.difference_update(path)
+        self.__full_path.update(path.get_list())
+        self._not_visited.difference_update(path.get_list())
 
-    def __find_next_path(self) -> Maze:
+    def __find_next_path(self) -> None:
         """Use Walker's LERW to find any but first path from random to maze"""
         choice = self._rand.choice(sorted(list(self._not_visited)))
 
         path = Walker(self._maze, choice, self.__full_path).walk(self._rand)
-        self.__full_path.update(path)
-        self._not_visited.difference_update(path)
+        self.__full_path.update(path.get_list())
+        self._not_visited.difference_update(path.get_list())
 
 
 class DFS(Algorithm):
@@ -175,7 +175,9 @@ class DFS(Algorithm):
         self.__visited = [start]
         self._not_visited.remove(start)
 
-    def _get_neighbours(self, cell: tuple[int, int]) -> List[tuple[int, int]]:
+    def _get_unvisited_neighbours(
+        self, cell: tuple[int, int]
+    ) -> List[tuple[int, int]]:
         """Add condition 'don't be visited' to parent's implementation"""
         neighbours = super()._get_neighbours(self._maze, cell)
         return [i for i in neighbours if i in self._not_visited]
@@ -189,7 +191,7 @@ class DFS(Algorithm):
         """
         while self.__visited:
             cur = self.__visited.pop()
-            neighbours = self._get_neighbours(cur)
+            neighbours = self._get_unvisited_neighbours(cur)
             if neighbours:
                 target = self._rand.choice(neighbours)
                 self.__visited.append(cur)

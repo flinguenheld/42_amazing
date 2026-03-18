@@ -3,7 +3,7 @@ from mazegen.config import Config
 from mazegen.path_finder import PathFinder
 
 from mazegen.algorithms import Algorithm
-from typing import Optional
+from typing import Optional, Generator
 import random
 
 
@@ -49,7 +49,7 @@ class MazeGenerator:
                 if i not in self.__maze.cells_42
             ][0]
 
-    def __reset_attributes(self) -> Maze:
+    def __reset_attributes(self) -> None:
         """Set/update private attributes before generation"""
         self.__rand = random.Random(self.config.get("seed"))
         self.init_maze()
@@ -63,7 +63,7 @@ class MazeGenerator:
         self.__maze.set_solution(PathFinder(self.__maze, self.config).search())
         return self.__maze
 
-    def generate(self):
+    def generate(self) -> Generator[Maze, None, None]:
         """Clear maze, choose and execute algorithm, solve maze
 
         - Yield:

@@ -35,7 +35,7 @@ class PathFinder:
             moves.append((-1, 0))
         return moves
 
-    def search(self) -> Path | None:
+    def search(self) -> Path:
         """Go from current cell to first accessible neighbour repeatedly
                                 until current cell has no accessible
                                 neighbours, go back to last cell who has
@@ -54,7 +54,7 @@ class PathFinder:
                 if (new_r, new_c) not in self.__tab:
                     self.__tab[(new_r, new_c)] = cur
                     self.__queue.append((new_r, new_c))
-        return None
+        return Path([])
 
     def backtrack(self) -> Path:
         """Follow trail from end to start to reconstruct coordinates list"""

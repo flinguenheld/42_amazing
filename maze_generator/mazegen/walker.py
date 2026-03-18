@@ -6,7 +6,7 @@ import random
 
 class Walker:
     """Class that walks (LERW) from point a to point b in maze
-                                                  creating a path
+    creating a path
     """
 
     def __init__(
@@ -21,7 +21,7 @@ class Walker:
         self.__end = {__end} if isinstance(__end, tuple) else __end
         self.__cur_r, self.__cur_c = self.__path[-1]
 
-    def walk(self, rand: random.Random) -> List[Tuple[int, int]]:
+    def walk(self, rand: random.Random) -> Path:
         """
         - Args:
             rand: random.Random, Random instance for indepence
@@ -42,11 +42,11 @@ class Walker:
             else:
                 r, c = rand.choice(valid_moves)
                 target = (self.__cur_r + r, self.__cur_c + c)
-                if target in self.__path:
+                if target in self.__path.get_list():
                     self.__path.go_back(target)
                 else:
                     self.__path.append(target)
-                self.__cur_r, self.__cur_c = target 
+                self.__cur_r, self.__cur_c = target
         self.__write_path()
         return self.__path
 
@@ -78,7 +78,7 @@ class Walker:
             if (
                 0 <= new_r < self.__maze.nb_row
                 and 0 <= new_c < self.__maze.nb_col
-                and (new_r, new_c) != prev 
+                and (new_r, new_c) != prev
                 and (new_r, new_c) not in self.__maze.cells_42
             ):
                 valid_moves.append((r, c))

@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, List
 from mazegen.path import Path
 
 from datetime import datetime
@@ -26,7 +26,7 @@ class Maze:
                                                 walls if perfect = False
         values: List[List[int]], two-dimensional array of hexadecimal values,
                                   each cell representing 4 of the maze's walls
-        cells_42: List[Tuple[int, int]], list of coordinates belonging
+        cells_42: List[tuple[int, int]], list of coordinates belonging
                                                                 to the 42 logo
     """
 
@@ -48,8 +48,8 @@ class Maze:
         self,
         nb_row: int,
         nb_col: int,
-        entry: Tuple[int, int],
-        exit: Tuple[int, int],
+        entry: tuple[int, int],
+        exit: tuple[int, int],
         perfect: bool,
         seed: str,
         loop_ratio: int,
@@ -67,12 +67,12 @@ class Maze:
         self.end = exit
         self.perfect = perfect
         if seed is None:
-            self.seed = (
+            self.seed: Any = (
                 f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
             )
         else:
             self.seed = seed
-        self.solution = None
+        self.solution: List = []
         self.loop_ratio = loop_ratio
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)
@@ -105,10 +105,12 @@ class Maze:
             self.cells_42 = set()
 
     def break_wall(
-        self, cell1: Tuple[int, int], cell2: Tuple[int, int], safe: bool
+        self, cell1: tuple[int, int], cell2: tuple[int, int], safe: bool
     ) -> None:
         """Breaks wall between passed coordinates wall in self.values,
-                                                        possibly safely"""
+        possibly safely"""
+        if cell1 == cell2:
+            return
         cells = [cell1, cell2]
         for cell in cells:
             ocell = [ocell for ocell in cells if ocell != cell][0]
@@ -127,23 +129,25 @@ class Maze:
 
     def set_solution(self, path: Path) -> None:
         """Setter for self.solution"""
-        self.solution = path
+        self.solution = path.get_list()
 
     def __str__(self) -> str:
         """Representation of values, entry/exit and solution
-                                            as a single string"""
+        as a single string"""
         res = ""
         for line in self.values:
             for char in line:
                 res = f"{res}{char:X}"
             res = f"{res}\n"
         res = f"{res}\n\n{self.start}\n{self.end}\n"
-        if getattr(self, "solution"):
+        if getattr(self, "solution") is not None:
             for i in range(len(self.solution) - 2):
                 cur = self.solution[i]
                 nxt = self.solution[i + 1]
-                char = self.LETTER_MAP[(nxt[0] - cur[0], cur[1] - nxt[1])]
-                res = f"{res}{char}"
+                to_print: str = self.LETTER_MAP[
+                    (nxt[0] - cur[0], cur[1] - nxt[1])
+                ]
+                res = f"{res}{to_print}"
         res = f"{res}\n"
 
         return res
