@@ -1,3 +1,6 @@
+from typing import Dict, Any
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀░░░█▀█░█▀█░█▀▄░█▀▀░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░░█░█░█░█░█▀▀░░█░░█░█░░░█▀▀░█▀█░█▀▄░▀▀█░█▀▀░█▀▄
@@ -7,7 +10,9 @@ class ConfigParser:
         self.__file_name = file_name
 
     @staticmethod
-    def __parse_line(line: str, dictionary: dict[str, str | tuple[str, str]]):
+    def __parse_line(
+        line: str, dictionary: dict[str, str | tuple[str, str]]
+    ) -> None:
         """
         - Split the line in two with =
         - Split again with , if necessary
@@ -30,7 +35,7 @@ class ConfigParser:
 
         Raise Value error if forbidden, missing or invalid data
         """
-        parsed_values = {}
+        parsed_values: Dict[str, Any] = {}
         with open(self.__file_name, "r") as f:
             for line in f.readlines():
                 ConfigParser.__parse_line(line, parsed_values)

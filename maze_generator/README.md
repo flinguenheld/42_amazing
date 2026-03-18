@@ -20,10 +20,8 @@ With customized Config object:
     from mazegen.maze_generator import MazeGenerator
     from mazegen.config import Config
 
-    config = Config.model_validate({"HEIGHT": 20,
-                                    "WIDTH": 40,
-                                    "SEED": 42,
-                                    "ALGO": "Wilson"})
+    config = Config(height=20, width=20, seed="42", algo="Wilson")
+
     generator = MazeGenerator(config)
 
 
@@ -35,8 +33,10 @@ To get direct access to the generated maze, it's parameters and it's solution :
     
     generator = MazeGenerator()
     maze = generator.get_maze()
+    print(maze.solution)
+    print(maze.seed)
 
-This returns a Maze object, which holds all the relevant informations about itself.
+This returns a Maze object, which holds all the relevant parameters that define it:
 It also includes a break\_wall() method, which takes two tuples of coordinates and 
 breaks the wall between the two represented cells. 
 
@@ -44,7 +44,6 @@ breaks the wall between the two represented cells.
     
     generator = MazeGenerator()
     maze = generator.get_maze()
-    print(maze.solution)
     # safe is a bool that prevents the creation of cells like 0b0000
     maze.break_wall((0, 0), (0, 1), safe=True)
 
@@ -84,6 +83,10 @@ It can also be modified after initialisation through it's setter, here an exampl
     temp_config = Config()
     del temp_config
 
+    # Initialises config with custom parameters (by attribute name)
+    temp_config1 = Config(width=40, height=40, entry=(0, 0), exit=(39, 39))
+    del temp_config1
+
     # Initalises config with custom dict (by alias)
     config = Config.model_validate({"WIDTH": 40,
                                     "HEIGHT": 20,
@@ -96,6 +99,7 @@ It can also be modified after initialisation through it's setter, here an exampl
 
     generator = MazeGenerator(config)
     maze = generator.get_maze()
+    print(maze)
 
 Data always gets routed through checks before assignation. 
 Here are all parameters and their default value:

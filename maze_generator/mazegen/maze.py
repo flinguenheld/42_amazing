@@ -72,7 +72,7 @@ class Maze:
             )
         else:
             self.seed = seed
-        self.solution: List = []
+        self.solution: List[tuple[int, int]] = []
         self.loop_ratio = loop_ratio
         self.values = [
             [0xF for _ in range(0, self.nb_col)] for _ in range(0, self.nb_row)

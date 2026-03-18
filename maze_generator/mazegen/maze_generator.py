@@ -3,7 +3,7 @@ from mazegen.config import Config
 from mazegen.path_finder import PathFinder
 
 from mazegen.algorithms import Algorithm
-from typing import Optional, Generator
+from typing import Optional, Generator, Any
 import random
 
 
@@ -72,7 +72,7 @@ class MazeGenerator:
         self.__reset_attributes()
         yield self.__maze
 
-        algo = [
+        algo: Any = [
             i
             for i in Algorithm.__subclasses__()
             if self.config.get("algo") in str(i)
