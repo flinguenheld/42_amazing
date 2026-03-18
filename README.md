@@ -23,16 +23,21 @@ This project uses uv for automatic virtual environment management.
 A Makefile has been provided as required. Run: 
 
     make install
-to install dependencies needed by the project. To execute run:
+to install dependencies needed by the project. 
+ 
+To execute run: 
 
     make run
 this will fetch the config.txt file in the repository and pass it to the script 
+ 
 
     make clean
 removes cached folders and files, as well as venv and info created by uv 
+ 
 
     make lint
 runs flake8 and mypy on current directory
+ 
 
     make lint-strict
 runs flake8 and mypy --strict on current directory
@@ -51,17 +56,22 @@ Command to fix the pytest import failure:
 
 ## Resources
 
-<https://en.wikipedia.org/wiki/Maze_generation_algorithm>
-For reference about the Wilson and DFS algorithm for maze generation
-<https://geeks4geeks.org>
-To answer various Python questions
-<https://textual.textualize.io/guide>
-For reference about textual - graphical library
+<https://en.wikipedia.org/wiki/Maze_generation_algorithm> 
+For reference about the Wilson and DFS algorithm for maze generation 
+<https://geeks4geeks.org> 
+To answer various Python questions 
+<https://textual.textualize.io/guide> 
+For reference about textual - graphical library 
+ 
+AI was used throuhought the project as an help understanding 
+complex previously unseen python concepts. 
+ 
+This repository contains no AI generated code/content.
 
 ## Config File
 
 The config.txt file needs simple but strict encoding of values: KEY=value 
-All keys and example values in an example config.txt:
+All keys and example values in an example config.txt: 
 
     WIDTH=20
     HEIGHT=20
@@ -74,16 +84,168 @@ All keys and example values in an example config.txt:
 
 Note a default config.txt is already present in the repository. 
 Configuration can also be modified either in memory or in file 
-through the visualiser. See #Bonus.
+through the visualiser. See #Bonus. 
 
 ## Algorithm
 
-We have implemented both the Wilson and DFS algorithms for maze generation.
+We have implemented both the Wilson and DFS algorithms for maze generation. 
  
 The Wilson algorithm starts by picking a random start cell and a random end cell. 
 It walks, with each step being random, from start to end, and on finish marks 
-traversed cells as in-maze.
-Then it chooses randomly a not-in-maze cell, and walks again until it reaches an in-maze cell.
-And it repeats the last step until no cell is left out of maze.
+traversed cells as in-maze. 
+Then it chooses randomly a not-in-maze cell, and walks again until it reaches an in-maze cell. 
+And it repeats the last step until no cell is left out of maze. 
+ 
+It never ends up blocking and looping infinitely thanks to LERW. Loop Erased Random Walk.
+Essentially, at each random step, if position after step in in the path we have already walked, 
+revert the path all the way back to that cell and go back from here. 
+ 
+The principal argument towards the choice of this algorithm is it's unbiased character. 
+In opposite to most other algorithms, this one generates a uniform spanning tree. 
+From what I understand of graph theory, this implies that each possible maze within a given size 
+has an equal chance of being the algorithm's result as any other. 
+ 
+The DFS algorithm starts from a random cell, marks it as visited, and then goes from neighbours 
+to neighbours, at the condition neighbour is unvisited. When it reaches a cell with no unvisited 
+neighbours, it backtracks to the last cell that has any unvisited neighbours and keeps going. 
+ 
+This one, although it is biased towards long corridors, usually create more visually 
+pleasing mazes compared to the Wilson. It's simplicity of concept and code is also a 
+strong argument. 
+ 
+## Code reusability
+
+> As required by the subject, this repository contains a mazegen-0.1.0-any.whl package, 
+> installable via any python module install helper, which contains the generation part 
+> of our project. Here is the documentation findable inside the package 
+ 
+
+-------------------------------------------------------------------------------
+### Instantiation
+
+The MazeGenerator class constructor can take a Config class object as argument, 
+in which it will seek parameters elements needed for the maze generation. 
+For more information, see #Config.
+ 
+For default configuration :
+
+    from mazegen.maze_generator import MazeGenerator
+    
+    generator = MazeGenerator()
+
+ 
+With customized Config object:
+
+    from mazegen.maze_generator import MazeGenerator
+    from mazegen.config import Config
+
+    config = Config(height=20, width=20, seed="42", algo="Wilson")
+
+    generator = MazeGenerator(config)
 
 
+### Usage
+
+To get direct access to the generated maze, it's parameters and it's solution : 
+
+    from mazegen.maze_generator import MazeGenerator
+    
+    generator = MazeGenerator()
+    maze = generator.get_maze()
+    print(maze.solution)
+    print(maze.seed)
+
+This returns a Maze object, which holds all the relevant parameters that define it:
+It also includes a break\_wall() method, which takes two tuples of coordinates and 
+breaks the wall between the two represented cells. 
+
+    from mazegen.maze_generator import MazeGenerator
+    
+    generator = MazeGenerator()
+    maze = generator.get_maze()
+    # safe is a bool that prevents the creation of cells like 0b0000
+    maze.break_wall((0, 0), (0, 1), safe=True)
+
+ 
+> Reminder: cells are hexadecimal values from 0x0 to 0xF whose bytes,
+>  from least to most significant, represent North, East, South and West walls. 
+
+get\_maze() skips to the very last element yielded by a generator (generate()) 
+and returns it. If you wish to animate the generation or only use generated data 
+up to a certain point, you may also use generate():
+
+    from mazegen.maze_generator import MazeGenerator
+
+    generator = MazeGenerator()
+    for maze in generator.generate():
+        print(maze)
+
+The actual maze (two-dimensional array of hexadecimal values) 
+    is stored in maze.values
+
+Maze's \_\_str\_\_() returns the maze in hexadecimal values, entry and exit 
+coordinates, and instructions to 'walk' from one to the other. 
+
+### Config
+
+To customize the generated maze, we would use a Config object passed to MazeGenerator
+on initialization. The Config class inherits from pydantic's BaseModel and runs various
+data sanity related checks to ensure coherent data is going to end up in the maze.
+
+Config().model\_validate() can be given a dictionnary whose keys define which 
+parameter is set and it's values... the value.
+It can also be modified after initialisation through it's setter, here an example of both:
+
+    from mazegen.maze_generator import MazeGenerator
+
+    # Initialises config with default values
+    temp_config = Config()
+    del temp_config
+
+    # Initialises config with custom parameters (by attribute name)
+    temp_config1 = Config(width=40, height=40, entry=(0, 0), exit=(39, 39))
+    del temp_config1
+
+    # Initalises config with custom dict (by alias)
+    config = Config.model_validate({"WIDTH": 40,
+                                    "HEIGHT": 20,
+                                    "SEED": 42,
+                                    "ALGO": DFS})
+
+    # Sets new values after initialisation (by attr name)
+    config.set("perfect", False)
+    config.set("loop_ratio", 75)
+
+    generator = MazeGenerator(config)
+    maze = generator.get_maze()
+    print(maze)
+
+Data always gets routed through checks before assignation. 
+Here are all parameters and their default value:
+
+| Parameter | Alias   | Default |
+| --------- | ------- | ------- |
+| nb\_col   | WIDTH   | 15      |
+| nb\_row   | HEIGHT  | 15      |
+| entry     | ENTRY   | (0, 0)  |
+| exit      | EXIT    | (14, 14)|
+| output\_file | OUTPUT\_FILE | maze.txt |
+| perfect   | PERFECT | False   |
+| seed      | SEED    | date+"AUTO"+time |
+| algo      | ALGO    | Wilson  |
+| loop\_ratio | LOOP\_RATIO | 100 |
+
+The Config class also provides a getter (get()) which defaults to None 
+if there are no attributes of the given name. 
+
+-------------------------------------------------------------------------------
+
+## Bonuses
+
+As for additionnal functionnalities to be considered bonuses that we have implemented: 
++ Maze generation animation
++ Playable maze (arrow keys to find your way out) 
++ Several generation algorithms
++ Logo animation
++ Path finding animation
++ Modifiable config inside app
