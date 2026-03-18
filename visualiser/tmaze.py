@@ -1,5 +1,5 @@
 import asyncio
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 from textual.color import Color
 from textual.widget import Widget
 from textual.app import ComposeResult
@@ -37,7 +37,7 @@ class TMaze(Widget):
 
     # ########################################################################
     # ################################################## PLAYER MOVEMENTS ####
-    def move_player(self, key: str):
+    def move_player(self, key: str) -> None:
         if self.__player:
             self.player_clean()
             self.__player.move(key)
@@ -82,7 +82,7 @@ class TMaze(Widget):
 
     # ########################################################################
     # ########################################################### COLOURS ####
-    def up_colours(self, colours):
+    def up_colours(self, colours: Dict[Any, Any]) -> None:
         self.__colours = colours
         self.__canvas.up_colours(colours)
         self.__player_draw()
@@ -90,7 +90,7 @@ class TMaze(Widget):
 
     # ########################################################################
     # ###################################################### RESET CANVAS ####
-    def reset_canvas(self):
+    def reset_canvas(self) -> None:
         """
         Delete the current canvas to create and mount a brand new one
         (mandatory to change the area size and adapt the position)
@@ -115,7 +115,7 @@ class TMaze(Widget):
 
     # ########################################################################
     # ##################################################### GENERATE MAZE ####
-    def generate_new_maze(self):
+    def generate_new_maze(self) -> None:
         """
         Generate a new maze and display it directly
         """
@@ -128,7 +128,7 @@ class TMaze(Widget):
 
     # ########################################################################
     # ######################################################### ANIMATION ####
-    def start_new_maze(self):
+    def start_new_maze(self) -> None:
         """
         Generate a new maze and get an iterator to the first step
         """
@@ -137,7 +137,7 @@ class TMaze(Widget):
         self.__clear_or_reset_canvas()
         self.next_step_animation()
 
-    async def animate_all_steps(self):
+    async def animate_all_steps(self) -> None:
         while self.next_step_animation():
             await asyncio.sleep(0)
 
@@ -166,7 +166,7 @@ class MazeGenIterator:
     """Wrapper to create a generator and keep the last maze on each step"""
 
     def __init__(self, generator: MazeGenerator):
-        self._last = None
+        self._last: Optional[Maze] = None
         self._mazegen_iter = None
         self._in_progress = False
         self._maze_generator = generator

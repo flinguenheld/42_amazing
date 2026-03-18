@@ -13,14 +13,14 @@ class Player:
 
     # ########################################################################
     # ############################################################ RESET #####
-    def reset(self):
+    def reset(self) -> None:
         self._counter = 0
         self._row = self._maze.start[0]
         self._col = self._maze.start[1]
 
     # ########################################################################
     # ############################################################# MOVE #####
-    def move(self, key: str):
+    def move(self, key: str) -> None:
 
         cell_hexa = self._maze.values[self._row][self._col]
 

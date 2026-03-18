@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, Dict, Any
 from textual.binding import Binding, BindingType
 from textual.events import Key
 from mazegen.config import Config
@@ -84,23 +84,23 @@ class Visualiser(App[None]):
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
-    def action_generate_new_maze(self):
+    def action_generate_new_maze(self) -> None:
         self.__tmaze.generate_new_maze()
 
     # ########################################################################
     # ############################################### ACTION - ANIMATION #####
-    def action_start_new_maze(self):
+    def action_start_new_maze(self) -> None:
         self.__tmaze.start_new_maze()
 
-    async def action_animate(self):
+    async def action_animate(self) -> None:
         await self.__tmaze.animate_all_steps()
 
-    def action_next_step(self):
+    def action_next_step(self) -> None:
         self.__tmaze.next_step_animation()
 
     # ########################################################################
     # ########################################################### THEMES #####
-    def __get_colours(self):
+    def __get_colours(self) -> Dict[Any, Any]:
         theme = self.get_theme(self.theme)
         if theme:
             return {

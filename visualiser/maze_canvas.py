@@ -2,7 +2,7 @@ from copy import deepcopy
 from textual.color import Color
 from textual_canvas import Canvas
 from mazegen.maze import Maze
-from typing import Dict, override, Self, Tuple
+from typing import Dict, override, Self, Tuple, Any, Generator
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -18,12 +18,12 @@ class MazeCanvas(Canvas):
             # canvas_color=colours["background"],
             # canvas_color=colours["secondary"],
         )
-        self.__previous_maze = None
+        self.__previous_maze: None | Maze = None
         self.__colours = colours
 
     # ########################################################################
     # ########################################################### COLOURS ####
-    def up_colours(self, colours: Dict[str, Color]):
+    def up_colours(self, colours: Dict[str, Color]) -> None:
         """Save colours and redraw the maze"""
         self.__colours = colours
         if self.__previous_maze:
@@ -39,7 +39,7 @@ class MazeCanvas(Canvas):
         col: int,
         vertical: bool = False,
         colour: str = "primary",
-    ):
+    ) -> None:
         if vertical:
             self.draw_line(
                 col, row, col, row + 2, color=self.__colours[colour]
@@ -49,17 +49,21 @@ class MazeCanvas(Canvas):
                 col, row, col + 2, row, color=self.__colours[colour]
             )
 
-    def __draw_square(self, row, col, colour: str = "primary"):
+    def __draw_square(
+        self, row: int, col: int, colour: str = "primary"
+    ) -> None:
         self.__draw_line(row - 1, col - 1, False, colour)
         self.__draw_line(row, col - 1, False, colour)
         self.__draw_line(row + 1, col - 1, False, colour)
 
     # ########################################################################
     # ######################################################### DRAW HEXA ####
-    def draw_point_hexa_coordinates(self, row, col, colour: str):
+    def draw_point_hexa_coordinates(
+        self, row: int, col: int, colour: str
+    ) -> None:
         self.__draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
 
-    def draw_exit(self):
+    def draw_exit(self) -> None:
         # Use the previous maze to easily call the method with animation
 
         if self.__previous_maze:
@@ -77,13 +81,13 @@ class MazeCanvas(Canvas):
         color: Color | None = None,
         width: int | None = None,
         height: int | None = None,
-    ) -> Self:
+    ) -> Any:
         self.__previous_maze = None
         return super().clear(color, width, height)
 
     # ########################################################################
     # ######################################################### DIG HOLES ####
-    def dig_holes(self, maze_hexa: Maze):
+    def dig_holes(self, maze_hexa: Maze) -> None:
         """
         Loop in the given maze and draw where it's open.
 
