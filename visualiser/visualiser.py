@@ -25,11 +25,12 @@ class Visualiser(App[None]):
     BINDINGS = [
         ("g", "generate_new_maze", "Generate a new maze"),
         ("s", "start_new_maze", "Start a new maze"),
-        ("t", "next_theme", "Next theme"),
         ("n", "next_step", "Next step"),
         ("a", "animate", "Animate"),
-        ("r", "restart", "Restart"),
+        ("r", "restart", "Restart player"),
+        ("t", "next_theme", "Next theme"),
         ("c", "config", "Config"),
+        ("f", "forty_two", "42"),
         ("up", "ignore", ""),
         ("down", "ignore", ""),
         ("left", "ignore", ""),
@@ -59,6 +60,7 @@ class Visualiser(App[None]):
         self.title = "a_maze_ing"
         self.action_next_theme()
         self.action_generate_new_maze()
+        self.set_interval(10, self.action_forty_two)
 
     # ########################################################################
     # ######################################################## MOVEMENTS #####
@@ -70,6 +72,11 @@ class Visualiser(App[None]):
     def action_restart(self) -> None:
         self.__tmaze.player_clean()
         self.__tmaze.player_reset()
+
+    # ########################################################################
+    # ###################################################### ACTION - 42 #####
+    async def action_forty_two(self) -> None:
+        await self.__tmaze.run_forty_two()
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####

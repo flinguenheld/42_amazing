@@ -1,3 +1,4 @@
+from time import sleep
 import asyncio
 from typing import Dict, Optional, Any
 from textual.color import Color
@@ -9,6 +10,7 @@ from mazegen.maze import Maze
 from mazegen.config import Config
 from mazegen.maze_generator import MazeGenerator
 
+from visualiser.forty_two import FortyTwo
 from visualiser.player import Player
 from visualiser.maze_canvas import MazeCanvas
 from visualiser.tmessage import TMessageSuccess, TMessageError
@@ -31,6 +33,7 @@ class TMaze(Widget):
 
         # Also use to check if maze is ready:
         self.__player: Optional[Player] = None
+        self.__forty_two = FortyTwo(self.__forty_two_draw_cell)
 
     def compose(self) -> ComposeResult:
         yield self.__canvas
@@ -114,12 +117,23 @@ class TMaze(Widget):
             self.__canvas.clear()
 
     # ########################################################################
+    # ################################################################ 42 ####
+    async def run_forty_two(self) -> None:
+        if self.__player:
+            await self.__forty_two.cycle()
+
+    def __forty_two_draw_cell(self, row, col, colour):
+        """Method called by FortyTwo"""
+        self.__canvas.draw_point_hexa_coordinates(row, col, colour)
+
+    # ########################################################################
     # ##################################################### GENERATE MAZE ####
     def generate_new_maze(self) -> None:
         """
         Generate a new maze and display it directly
         """
         maze = self.__maze_generator.get_maze()
+        self.__forty_two.update_points(maze.cells_42)
         self.__clear_or_reset_canvas()
         self.__canvas.dig_holes(maze)
         self.__player = Player(maze)
@@ -149,11 +163,12 @@ class TMaze(Widget):
                 return True
             else:
                 # Done !
-                self.__player = Player(
-                    self.__maze_gen_iterator.last_generated()
-                )
-                self.__player_draw()
-                self.__exit_draw()
+                final_maze = self.__maze_gen_iterator.last_generated()
+                if final_maze:
+                    self.__player = Player(final_maze)
+                    self.__forty_two.update_points(final_maze.cells_42)
+                    self.__player_draw()
+                    self.__exit_draw()
 
         return False
 
