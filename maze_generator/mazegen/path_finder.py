@@ -1,19 +1,19 @@
 from mazegen.maze import Maze
-from mazegen.config import Config
 from mazegen.path import Path
 
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 from collections import deque
 
 
 class PathFinder:
-    """Class using BFS to find quickest path between maze.entry and
+    """Class using BFS to find quickest path between maze.entry or passed start and
     maze.exit"""
 
-    def __init__(self, maze: Maze, config: Config) -> None:
+    def __init__(self, maze: Maze, start: Optional[int] = None) -> None:
+        self.__start = maze.entry if start is None else start
         self.__maze: Maze = maze
         self.__tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
-        self.__queue = deque([self.__maze.entry])
+        self.__queue = deque([self.__start])
 
     @staticmethod
     def get_valid_moves(val: int) -> List[Tuple[int, int]]:
@@ -60,7 +60,7 @@ class PathFinder:
         """Follow trail from end to start to reconstruct coordinates list"""
         cur = self.__maze.exit
         path = Path([self.__maze.exit])
-        while cur != self.__maze.entry:
+        while cur != self.__start:
             cur = self.__tab[cur]
             path.append(cur)
         path.path.reverse()

@@ -60,7 +60,7 @@ class MazeGenerator:
         - Return:
             maze
         """
-        self.__maze.set_solution(PathFinder(self.__maze, self.config).search())
+        self.__maze.set_solution(PathFinder(self.__maze).search())
         return self.__maze
 
     def generate(self) -> Generator[Maze, None, None]:
