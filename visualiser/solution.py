@@ -40,7 +40,6 @@ class Solution:
             for index in range(0, len(self._points), 1):
                 if self._points[index] == to:
                     break
-
                 group = self._points[index : index + 2]
                 if len(group) == 2:
                     self._draw(group[0], group[1])

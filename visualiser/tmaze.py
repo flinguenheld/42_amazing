@@ -1,3 +1,4 @@
+import asyncio
 from typing import Dict, Optional, Any
 
 from textual.color import Color
@@ -106,10 +107,17 @@ class TMaze(Widget):
         Delete the current canvas to create and mount a brand new one
         (mandatory to change the area size and adapt the position)
         """
+        self._canvas.clear()
         self._canvas.remove()
+
         self._canvas = MazeCanvas(
             self._config.nb_row, self._config.nb_col, colours=self._colours
         )
+
+        self._maze_animation = MazeAnimation(
+            self._maze_generator, self._canvas.dig_holes
+        )
+
         self.mount(self._canvas)
 
     # ########################################################################
