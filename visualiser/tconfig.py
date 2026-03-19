@@ -56,7 +56,11 @@ class TConfig(ModalScreen):
             classes="option_checkbox", value=self._config.perfect
         )
         self._loop_ratio = Select(
-            [(str(i), i) for i in range(0, 101)], value=self._config.loop_ratio
+            [(str(i), i) for i in range(0, 101)],
+            value=self._config.loop_ratio,
+            classes="option_hidden"
+            if self._config.perfect 
+            else "option_select_ratio",
         )
         self._bt_cancel = Button(
             "Cancel", variant="default", classes="option_button"
@@ -146,10 +150,9 @@ class TConfig(ModalScreen):
             with HorizontalGroup():
                 yield Label("Perfect:", classes="option_label")
                 yield self._perfect
-            if self._config.perfect == False:
-                with HorizontalGroup():
-                    yield Label("Loop Ratio", classes="option_label")
-                    yield self._loop_ratio
+            with HorizontalGroup():
+                yield Label("Loop Ratio:", classes="option_label")
+                yield self._loop_ratio
 
             with HorizontalGroup(id="option_button_layout"):
                 yield self._bt_cancel
@@ -169,6 +172,13 @@ class TConfig(ModalScreen):
         elif event.button == self._bt_save:
             if self._save_config():
                 self.app.pop_screen()
+
+    def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
+        if event.checkbox == self._perfect:
+            if self._perfect.value == True:
+                self._loop_ratio.classes = "option_hidden"
+            else:
+                self._loop_ratio.classes = "option_select_ratio"
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

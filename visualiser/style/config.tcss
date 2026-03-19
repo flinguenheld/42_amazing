@@ -27,13 +27,17 @@ TOptions {
     border: round transparent;
 }
 
+.option_hidden {
+	display: none;
+}
+
 .option_inputs {
     height: auto;
     width: auto;
     content-align: center middle;
 }
 
-.option_select_coordinate .option_select_size {
+.option_select_coordinate .option_select_size .option_select_ratio {
     width: 15;
     content-align: center middle;
 }
