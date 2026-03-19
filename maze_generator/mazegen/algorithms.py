@@ -122,8 +122,8 @@ class Wilson(Algorithm):
             self.__first_start = (mid_r - 1, mid_c + 2)
             self.__first_end = (mid_r + 1, mid_c + 2)
         else:
-            self.__first_start = self._maze.start
-            self.__first_end = self._maze.end
+            self.__first_start = self._maze.entry
+            self.__first_end = self._maze.exit
         self.__full_path: Set[tuple[int, int]] = set()
 
     def solve(self) -> Generator[Maze, None, None]:

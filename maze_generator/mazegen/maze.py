@@ -63,8 +63,8 @@ class Maze:
         """
         self.nb_col = nb_col
         self.nb_row = nb_row
-        self.start = entry
-        self.end = exit
+        self.entry = entry
+        self.exit = exit
         self.perfect = perfect
         if seed is None:
             self.seed: Any = (
@@ -139,7 +139,7 @@ class Maze:
             for char in line:
                 res = f"{res}{char:X}"
             res = f"{res}\n"
-        res = f"{res}\n\n{self.start}\n{self.end}\n"
+        res = f"{res}\n\n{self.entry}\n{self.exit}\n"
         if getattr(self, "solution") is not None:
             for i in range(len(self.solution) - 2):
                 cur = self.solution[i]

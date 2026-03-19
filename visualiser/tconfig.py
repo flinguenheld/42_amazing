@@ -49,10 +49,15 @@ class TConfig(ModalScreen):
         self._algorithm = Select(
             ((algo, algo) for algo in self.ALGORITHMS),
             prompt="Algorithm",
-            value=self.ALGORITHMS[0],
+            value=self._config.algo,
             classes="option_select_coordinate_algo",
         )
-        self._perfect = Checkbox(classes="option_checkbox")
+        self._perfect = Checkbox(
+            classes="option_checkbox", value=self._config.perfect
+        )
+        self._loop_ratio = Select(
+            [(str(i), i) for i in range(0, 101)], value=self._config.loop_ratio
+        )
         self._bt_cancel = Button(
             "Cancel", variant="default", classes="option_button"
         )
@@ -94,6 +99,10 @@ class TConfig(ModalScreen):
                 "ENTRY": self._entry.get_value(),
                 "EXIT": self._exit.get_value(),
                 "ALGO": self._algorithm.value,
+                "PERFECT": self._perfect.value,
+                "LOOP_RATIO": self._loop_ratio.value
+                if self._loop_ratio.value != Select.NULL
+                else 100,
             }
             new_config = Config.model_validate(new_config_values)
 
@@ -102,12 +111,7 @@ class TConfig(ModalScreen):
             return False
 
         else:
-            self._config.nb_col = new_config.nb_col
-            self._config.nb_row = new_config.nb_row
-            self._config.entry = new_config.entry
-            self._config.exit = new_config.exit
-            self._config.algo = new_config.algo
-            print(self._config)
+            self._config.__dict__.update(new_config.__dict__)
             return True
 
     # ########################################################################
@@ -142,6 +146,10 @@ class TConfig(ModalScreen):
             with HorizontalGroup():
                 yield Label("Perfect:", classes="option_label")
                 yield self._perfect
+            if self._config.perfect == False:
+                with HorizontalGroup():
+                    yield Label("Loop Ratio", classes="option_label")
+                    yield self._loop_ratio
 
             with HorizontalGroup(id="option_button_layout"):
                 yield self._bt_cancel
@@ -222,14 +230,9 @@ class InputCoordinate(Widget):
             yield self._y
 
     def set_value(self, values: Tuple[int, int]) -> None:
-        if (
-            values[0] >= 0
-            and values[0] <= self._max
-            and values[1] >= 0
-            and values[1] <= self._max
-        ):
-            self._x.value = values[0]
-            self._y.value = values[1]
+        if 0 <= values[0] <= self._max and 0 <= values[1] <= self._max:
+            self._x.value = values[1]
+            self._y.value = values[0]
 
     def get_value(self) -> Tuple[int, int]:
         """!! Values are reversed to fit (row,col) instead of (x,y) !!"""

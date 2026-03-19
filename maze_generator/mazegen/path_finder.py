@@ -13,7 +13,7 @@ class PathFinder:
     def __init__(self, maze: Maze, config: Config) -> None:
         self.__maze: Maze = maze
         self.__tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()
-        self.__queue = deque([self.__maze.start])
+        self.__queue = deque([self.__maze.entry])
 
     @staticmethod
     def get_valid_moves(val: int) -> List[Tuple[int, int]]:
@@ -41,12 +41,12 @@ class PathFinder:
                                 neighbours, go back to last cell who has
                                 accessible unvisited neighbours
         - Return:
-            Path object if found
+            Path object if foundpath
             None otherwise
         """
         while self.__queue:
             cur = self.__queue.popleft()
-            if cur == self.__maze.end:
+            if cur == self.__maze.exit:
                 return self.backtrack()
             val = self.__maze.values[cur[0]][cur[1]]
             for move in self.get_valid_moves(val):
@@ -58,9 +58,9 @@ class PathFinder:
 
     def backtrack(self) -> Path:
         """Follow trail from end to start to reconstruct coordinates list"""
-        cur = self.__maze.end
-        path = Path([self.__maze.end])
-        while cur != self.__maze.start:
+        cur = self.__maze.exit
+        path = Path([self.__maze.exit])
+        while cur != self.__maze.entry:
             cur = self.__tab[cur]
             path.append(cur)
         path.path.reverse()

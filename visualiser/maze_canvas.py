@@ -68,8 +68,8 @@ class MazeCanvas(Canvas):
 
         if self.__previous_maze:
             self.draw_point_hexa_coordinates(
-                row=self.__previous_maze.end[0],
-                col=self.__previous_maze.end[1],
+                row=self.__previous_maze.exit[0],
+                col=self.__previous_maze.exit[1],
                 colour="success",
             )
 

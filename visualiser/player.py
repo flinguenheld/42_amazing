@@ -15,8 +15,8 @@ class Player:
     # ############################################################ RESET #####
     def reset(self) -> None:
         self._counter = 0
-        self._row = self._maze.start[0]
-        self._col = self._maze.start[1]
+        self._row = self._maze.entry[0]
+        self._col = self._maze.entry[1]
 
     # ########################################################################
     # ############################################################# MOVE #####
@@ -45,7 +45,7 @@ class Player:
     # ########################################################################
     # ######################################################## ACCESSORS #####
     def is_winning(self) -> bool:
-        return self.get_position() == self._maze.end
+        return self.get_position() == self._maze.exit
 
     def get_position(self) -> Tuple[int, int]:
         return (self._row, self._col)
