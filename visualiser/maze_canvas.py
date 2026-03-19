@@ -1,8 +1,8 @@
 from copy import deepcopy
+from mazegen.maze import Maze
 from textual.color import Color
 from textual_canvas import Canvas
-from mazegen.maze import Maze
-from typing import Dict, override, Self, Tuple, Any, Generator
+from typing import Dict, override, Any, List, Tuple
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -58,16 +58,33 @@ class MazeCanvas(Canvas):
 
     # ########################################################################
     # ######################################################### DRAW HEXA ####
-    def draw_point_hexa_coordinates(
+    def draw_line_hexa(
+        self,
+        row_from: int,
+        col_from: int,
+        row_to: int,
+        col_to: int,
+        colour: str,
+    ):
+        self.draw_line(
+            row_from * 4 + 2,
+            col_from * 4 + 2,
+            row_to * 4 + 2,
+            col_to * 4 + 2,
+            self.__colours[colour],
+        )
+
+    def draw_square_hexa_coordinates(
         self, row: int, col: int, colour: str
     ) -> None:
         self.__draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
 
+    # TODO: PUT THAT IT TMAZE ????????????????????????????????????????????????
     def draw_exit(self) -> None:
         # Use the previous maze to easily call the method with animation
 
         if self.__previous_maze:
-            self.draw_point_hexa_coordinates(
+            self.draw_square_hexa_coordinates(
                 row=self.__previous_maze.exit[0],
                 col=self.__previous_maze.exit[1],
                 colour="success",

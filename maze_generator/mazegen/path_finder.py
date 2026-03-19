@@ -9,7 +9,9 @@ class PathFinder:
     """Class using BFS to find quickest path between maze.entry
     or passed start and maze.exit"""
 
-    def __init__(self, maze: Maze, start: Optional[int] = None) -> None:
+    def __init__(
+        self, maze: Maze, start: Optional[Tuple[int, int]] = None
+    ) -> None:
         self.__start = maze.entry if start is None else start
         self.__maze: Maze = maze
         self.__tab: Dict[Tuple[int, int], Tuple[int, int]] = dict()

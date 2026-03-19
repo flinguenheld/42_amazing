@@ -27,6 +27,8 @@ class Visualiser(App[None]):
         ("n", "next_step", "Next step"),
         ("a", "animate", "Animate"),
         ("r", "restart", "Restart player"),
+        ("w", "solution", "Run solution"),
+        ("u", "solution_deactivate", "Clean solution"),
         ("t", "next_theme", "Next theme"),
         ("c", "config", "Config"),
         ("f", "forty_two", "42"),
@@ -71,6 +73,14 @@ class Visualiser(App[None]):
     def action_restart(self) -> None:
         self.__tmaze.player_clean()
         self.__tmaze.player_reset()
+
+    # ########################################################################
+    # ################################################ ACTION - SOLUTION #####
+    async def action_solution(self) -> None:
+        await self.__tmaze.run_solution()
+
+    def action_solution_deactivate(self) -> None:
+        self.__tmaze.deactivate_solution()
 
     # ########################################################################
     # ###################################################### ACTION - 42 #####

@@ -8,12 +8,13 @@ from textual.containers import Horizontal
 from mazegen.maze import Maze
 from mazegen.config import Config
 from mazegen.maze_generator import MazeGenerator
-from visualiser.maze_animation import MazeAnimation
 
 from visualiser.player import Player
+from visualiser.solution import Solution
 from visualiser.forty_two import FortyTwo
 from visualiser.maze_canvas import MazeCanvas
 from visualiser.tmessage import TMessageSuccess
+from visualiser.maze_animation import MazeAnimation
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -23,33 +24,38 @@ from visualiser.tmessage import TMessageSuccess
 class TMaze(Widget):
     def __init__(self, config: Config, colours: Dict[str, Color]):
         super().__init__()
-        self.__config = config
-        self.__colours = colours
-        self.__container = Horizontal()
-        self.__maze_generator = MazeGenerator(config)
-        self.__canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
-        self.__maze_animation = MazeAnimation(
-            self.__maze_generator, self.__canvas.dig_holes
-        )
-        self.__last_size = (config.nb_row, config.nb_col)
+        self._config = config
+        self._colours = colours
 
-        # Also used to check if maze is ready:
-        self.__player: Optional[Player] = None
-        self.__forty_two = FortyTwo(self.__forty_two_draw_cell)
+        self._maze_generator = MazeGenerator(config)
+        self._canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
+        self._maze_animation = MazeAnimation(
+            self._maze_generator, self._canvas.dig_holes
+        )
+
+        # Use to smartly clear or reset the canvas
+        self._last_size = (config.nb_row, config.nb_col)
+
+        self._solution = Solution(self.__solution_draw_cell)
+        self._forty_two = FortyTwo(self.__forty_two_draw_cell)
+
+        self._player: Optional[Player] = None
+        self._active_maze: Optional[Player] = None
 
     def compose(self) -> ComposeResult:
-        yield self.__canvas
+        yield self._canvas
 
     # ########################################################################
     # ################################################## PLAYER MOVEMENTS ####
     def move_player(self, key: str) -> None:
-        if self.__player:
+        if self._active_maze and self._player:
             self.player_clean()
-            self.__player.move(key)
+            self._player.move(key)
+            self._solution.clean_up_to(self._player.get_position())
 
             # Victory ? --
-            if self.__player.is_winning():
-                counter, shortest = self.__player.get_counter()
+            if self._player.is_winning():
+                counter, shortest = self._player.get_counter()
                 self.app.push_screen(
                     TMessageSuccess(
                         f"Done in {counter} steps\n"
@@ -60,38 +66,38 @@ class TMaze(Widget):
 
             # draw new position --
             else:
-                self.__player_draw()
+                self.__draw_player()
 
     # ########################################################################
     # ###################################################### PLAYER RESET ####
     def player_reset(self) -> None:
-        if self.__player:
-            self.__player.reset()
-            self.__player_draw()
+        if self._player:
+            self._player.reset()
+            self.__draw_player()
 
     # ########################################################################
     # ####################################################### PLAYER DRAW ####
     def player_clean(self) -> None:
-        self.__player_draw(colour="primary")
+        self.__draw_player(colour="primary")
 
-    def __player_draw(self, colour: str = "warning") -> None:
-        if self.__player:
-            row, col = self.__player.get_position()
-            self.__canvas.draw_point_hexa_coordinates(row, col, colour)
+    def __draw_player(self, colour: str = "warning") -> None:
+        if self._player:
+            row, col = self._player.get_position()
+            self._canvas.draw_square_hexa_coordinates(row, col, colour)
 
     # ########################################################################
     # ######################################################### EXIT DRAW ####
-    def __exit_draw(self) -> None:
-        if self.__player:
-            self.__canvas.draw_exit()
+    def __draw_exit(self) -> None:
+        if self._player:
+            self._canvas.draw_exit()
 
     # ########################################################################
     # ########################################################### COLOURS ####
     def up_colours(self, colours: Dict[Any, Any]) -> None:
-        self.__colours = colours
-        self.__canvas.up_colours(colours)
-        self.__player_draw()
-        self.__exit_draw()
+        self._colours = colours
+        self._canvas.up_colours(colours)
+        self.__draw_player()
+        self.__draw_exit()
 
     # ########################################################################
     # ###################################################### RESET CANVAS ####
@@ -100,11 +106,11 @@ class TMaze(Widget):
         Delete the current canvas to create and mount a brand new one
         (mandatory to change the area size and adapt the position)
         """
-        self.__canvas.remove()
-        self.__canvas = MazeCanvas(
-            self.__config.nb_row, self.__config.nb_col, colours=self.__colours
+        self._canvas.remove()
+        self._canvas = MazeCanvas(
+            self._config.nb_row, self._config.nb_col, colours=self._colours
         )
-        self.mount(self.__canvas)
+        self.mount(self._canvas)
 
     # ########################################################################
     # #################################################### CLEAR OR RESET ####
@@ -112,21 +118,47 @@ class TMaze(Widget):
         """
         Only reset when the size has been updated
         """
-        if (self.__config.nb_row, self.__config.nb_col) != self.__last_size:
+        if (self._config.nb_row, self._config.nb_col) != self._last_size:
             self.reset_canvas()
-            self.__last_size = (self.__config.nb_row, self.__config.nb_col)
+            self._last_size = (self._config.nb_row, self._config.nb_col)
         else:
-            self.__canvas.clear()
+            self._canvas.clear()
 
     # ########################################################################
     # ################################################################ 42 ####
     async def run_forty_two(self) -> None:
-        if self.__player:
-            await self.__forty_two.cycle()
+        if self._player:
+            await self._forty_two.cycle()
 
     def __forty_two_draw_cell(self, row, col, colour):
         """Method called by FortyTwo"""
-        self.__canvas.draw_point_hexa_coordinates(row, col, colour)
+        self._canvas.draw_square_hexa_coordinates(row, col, colour)
+
+    # ########################################################################
+    # ########################################################## SOLUTION ####
+    async def run_solution(self) -> None:
+        if self._active_maze and self._player:
+            self.deactivate_solution()
+
+            await self._solution.cycle(
+                self._active_maze, self._player.get_position()
+            )
+
+    def deactivate_solution(self) -> None:
+        self._solution.deactivate(True)
+        self.__draw_exit()
+        self.__draw_player()
+
+    def __solution_draw_cell(
+        self,
+        row_from: int,
+        col_from: int,
+        row_to: int,
+        col_to: int,
+        colour: str,
+    ):
+        """Method called by Solution"""
+        self._canvas.draw_line_hexa(row_from, col_from, row_to, col_to, colour)
 
     # ########################################################################
     # ##################################################### GENERATE MAZE ####
@@ -134,13 +166,15 @@ class TMaze(Widget):
         """
         Generate a new maze and display it directly
         """
-        maze = self.__maze_generator.get_maze()
-        self.__forty_two.update_points(maze.cells_42)
+        self._solution.deactivate(clean=False)
+
+        self._active_maze = self._maze_generator.get_maze()
+        self._forty_two.update_points(self._active_maze.cells_42)
         self.__clear_or_reset_canvas()
-        self.__canvas.dig_holes(maze)
-        self.__player = Player(maze)
-        self.__player_draw()
-        self.__exit_draw()
+        self._canvas.dig_holes(self._active_maze)
+        self._player = Player(self._active_maze)
+        self.__draw_player()
+        self.__draw_exit()
 
     # ########################################################################
     # ######################################################### ANIMATION ####
@@ -148,23 +182,27 @@ class TMaze(Widget):
         """
         Generate a new maze and place an iterator to the first step
         """
-        self.__maze_animation.start_new_animation()
+        self._solution.deactivate(clean=False)
+
+        self._maze_animation.start_new_animation()
         self.__clear_or_reset_canvas()
-        self.__player = None
+        self._player = None
+        self.__maze = None
 
     def __finish_animation(self):
-        if not self.__maze_animation.is_active():
-            maze = self.__maze_animation.get_last_maze()
+        if not self._maze_animation.is_active():
+            maze = self._maze_animation.get_last_maze()
             if maze:
-                self.__forty_two.update_points(maze.cells_42)
-                self.__player = Player(maze)
-                self.__player_draw()
-                self.__exit_draw()
+                self._active_maze = maze
+                self._forty_two.update_points(self._active_maze.cells_42)
+                self._player = Player(self._active_maze)
+                self.__draw_player()
+                self.__draw_exit()
 
     async def animate_all_steps(self) -> None:
-        await self.__maze_animation.cycle()
+        await self._maze_animation.cycle()
         self.__finish_animation()
 
     def next_step_animation(self):
-        self.__maze_animation.next_step()
+        self._maze_animation.next_step()
         self.__finish_animation()
