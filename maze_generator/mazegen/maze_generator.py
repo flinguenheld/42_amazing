@@ -1,8 +1,8 @@
 from mazegen.maze import Maze
 from mazegen.config import Config
 from mazegen.path_finder import PathFinder
-
 from mazegen.algorithms import Algorithm
+
 from typing import Optional, Generator, Any
 import random
 
@@ -16,7 +16,7 @@ class MazeGenerator:
 
     def __init__(self, config: Optional[Config] = None) -> None:
         """Sets public config to either passed as argument or default"""
-        if config is not None:
+        if config and isinstance(config, Config):
             self.config = config
         else:
             self.config = Config()
@@ -32,19 +32,19 @@ class MazeGenerator:
             self.config.get("seed"),
             self.config.get("loop_ratio"),
         )
-        if self.__maze.start in self.__maze.cells_42:
-            self.__maze.start = [
+        if self.__maze.entry in self.__maze.cells_42:
+            self.__maze.entry = [
                 i
                 for i in Algorithm._get_neighbours(
-                    self.__maze, self.__maze.start
+                    self.__maze, self.__maze.entry
                 )
                 if i not in self.__maze.cells_42
             ][0]
-        if self.__maze.end in self.__maze.cells_42:
-            self.__maze.start = [
+        if self.__maze.exit in self.__maze.cells_42:
+            self.__maze.exit = [
                 i
                 for i in Algorithm._get_neighbours(
-                    self.__maze, self.__maze.end
+                    self.__maze, self.__maze.exit
                 )
                 if i not in self.__maze.cells_42
             ][0]
