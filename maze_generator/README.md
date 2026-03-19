@@ -63,6 +63,8 @@ up to a certain point, you may also use generate():
 
 The actual maze (two-dimensional array of hexadecimal values)  
     is stored in maze.values  
+  
+The maze's solution is stored as a list of tuples like (x, y)
 
 Maze's \_\_str\_\_() returns the maze in hexadecimal values, entry and exit  
 coordinates, and instructions to 'walk' from one to the other.  

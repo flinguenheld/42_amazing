@@ -6,8 +6,8 @@ from collections import deque
 
 
 class PathFinder:
-    """Class using BFS to find quickest path between maze.entry or passed start and
-    maze.exit"""
+    """Class using BFS to find quickest path between maze.entry
+    or passed start and maze.exit"""
 
     def __init__(self, maze: Maze, start: Optional[int] = None) -> None:
         self.__start = maze.entry if start is None else start
