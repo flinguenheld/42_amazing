@@ -85,6 +85,14 @@ class Algorithm(ABC):
             if self._maze.values[r][c] in dead_ends
             and self._rand.randint(0, 100) in range(0, self._maze.loop_ratio)
         ]
+        if not targets:
+            target = (
+                self._rand.choice([i for i in range(1, self._maze.nb_row)]),
+                self._rand.choice([i for i in range(1, self._maze.nb_col)]),
+            )
+            nb_target = random.choice(self._get_neighbours(self._maze, target))
+            self._maze.break_wall(target, nb_target, safe=True)
+
         for r, c in targets:
             target = (r, c)
             value = self._maze.values[r][c]

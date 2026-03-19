@@ -18,6 +18,12 @@ def main() -> None:
         parser = ConfigParser(sys.argv[1])
         parsed = parser.parse_file()
         config = Config.model_validate(parsed)
+        if config.get("nb_row") <= 9 or config.get("nb_col") <= 9:
+            cprint(
+                "Size too small, omitting 42 logo",
+                file=sys.stderr,
+                color="red",
+            )
 
         application = Visualiser(config=config)
         application.run()
