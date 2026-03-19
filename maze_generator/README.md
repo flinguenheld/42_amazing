@@ -4,21 +4,20 @@
 
 ## Instantiation
 
-The MazeGenerator class constructor can take a Config class object as argument, 
-in which it will seek parameters elements needed for the maze generation. 
-For more information, see #Config.
+The MazeGenerator class constructor can take a Config object as argument,  
+in which it will seek parameters elements needed for the maze generation.  
+For more information, see [Config](#config).  
  
-For default configuration :
+For default configuration :  
 
-    from mazegen.maze_generator import MazeGenerator
+    from mazegen import MazeGenerator
     
     generator = MazeGenerator()
 
  
-With customized Config object:
+With customized Config object:  
 
-    from mazegen.maze_generator import MazeGenerator
-    from mazegen.config import Config
+    from mazegen import MazeGenerator, Config
 
     config = Config(height=20, width=20, seed="42", algo="Wilson")
 
@@ -27,55 +26,56 @@ With customized Config object:
 
 ## Usage
 
-To get direct access to the generated maze, it's parameters and it's solution : 
+To get direct access to the generated maze, it's parameters and it's solution :  
 
-    from mazegen.maze_generator import MazeGenerator
+    from mazegen import MazeGenerator
     
     generator = MazeGenerator()
     maze = generator.get_maze()
     print(maze.solution)
     print(maze.seed)
 
-This returns a Maze object, which holds all the relevant parameters that define it:
-It also includes a break\_wall() method, which takes two tuples of coordinates and 
-breaks the wall between the two represented cells. 
+This returns a Maze object, which holds all the relevant parameters that define it:  
+It also includes a break\_wall() method, which takes two tuples of coordinates and  
+breaks the wall between the two represented cells.  
 
-    from mazegen.maze_generator import MazeGenerator
+    from mazegen import MazeGenerator
     
     generator = MazeGenerator()
     maze = generator.get_maze()
+
     # safe is a bool that prevents the creation of cells like 0b0000
     maze.break_wall((0, 0), (0, 1), safe=True)
 
  
-> Reminder: cells are hexadecimal values from 0x0 to 0xF whose bytes,
->  from least to most significant, represent North, East, South and West walls. 
+> Reminder: cells are hexadecimal values from 0x0 to 0xF whose bytes,  
+>  from least to most significant, represent North, East, South and West walls.  
 
-get\_maze() skips to the very last element yielded by a generator (generate()) 
-and returns it. If you wish to animate the generation or only use generated data 
-up to a certain point, you may also use generate():
+get\_maze() skips to the very last element yielded by a generator (generate())  
+and returns it. If you wish to animate the generation or only use generated data  
+up to a certain point, you may also use generate():  
 
-    from mazegen.maze_generator import MazeGenerator
+    from mazegen import MazeGenerator
 
     generator = MazeGenerator()
     for maze in generator.generate():
         print(maze)
 
-The actual maze (two-dimensional array of hexadecimal values) 
-    is stored in maze.values
+The actual maze (two-dimensional array of hexadecimal values)  
+    is stored in maze.values  
 
-Maze's \_\_str\_\_() returns the maze in hexadecimal values, entry and exit 
-coordinates, and instructions to 'walk' from one to the other. 
+Maze's \_\_str\_\_() returns the maze in hexadecimal values, entry and exit  
+coordinates, and instructions to 'walk' from one to the other.  
 
 ## Config
 
-To customize the generated maze, we would use a Config object passed to MazeGenerator
-on initialization. The Config class inherits from pydantic's BaseModel and runs various
-data sanity related checks to ensure coherent data is going to end up in the maze.
-
-Config().model\_validate() can be given a dictionnary whose keys define which 
-parameter is set and it's values... the value.
-It can also be modified after initialisation through it's setter, here an example of both:
+To customize the generated maze, we would use a Config object passed to MazeGenerator  
+on initialization. The Config class inherits from pydantic's BaseModel and runs various  
+data sanity checks to ensure coherent data is going to end up in the maze.  
+  
+Config().model\_validate() can be given a dictionnary whose keys define which  
+parameter is set and it's values... the value.  
+It can also be modified after initialisation through it's setter, here an example of both:  
 
     from mazegen.maze_generator import MazeGenerator
 
@@ -101,8 +101,8 @@ It can also be modified after initialisation through it's setter, here an exampl
     maze = generator.get_maze()
     print(maze)
 
-Data always gets routed through checks before assignation. 
-Here are all parameters and their default value:
+Data always gets routed through checks before assignation.  
+Here are all parameters and their default values:  
 
 | Parameter | Alias   | Default |
 | --------- | ------- | ------- |
@@ -116,14 +116,19 @@ Here are all parameters and their default value:
 | algo      | ALGO    | Wilson  |
 | loop\_ratio | LOOP\_RATIO | 100 |
 
-The Config class also provides a getter (get()) which defaults to None 
-if there are no attributes of the given name. 
+The Config class also provides a getter (get()) which defaults to None  
+if there are no attributes of the given name.  
 
-## Additional
+## Additional 
 
-Calling MazeGenerator's generate(), then modifying the config, 
-then calling generate() again will result in a new, updated maze of 
-parameters specified in newly modified Config. 
-
-The seed's default value isn't set in the Config itself but MazeGenerator, 
-to allow for a different seed each run if none was set on instantiation. 
+Calling MazeGenerator's generate(), then modifying the config,  
+then calling generate() again will result in a new, updated maze of  
+parameters specified in newly modified Config.  
+  
+The seed's default value isn't set in the Config itself but MazeGenerator,  
+to allow for a different seed each run if none was set on instantiation.  
+  
+If you wish to implement your own algorithm, look at the Algorithm class.  
+All you have to do is implement a children of Algorithm and implement the "solve" method  
+which takes a Maze object and sets its values accordingly.  
+Then writing ALGO=YourAlgoClassName will end up in your algorithm being used for generation.  
