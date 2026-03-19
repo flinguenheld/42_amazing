@@ -7,8 +7,13 @@ from collections import deque
 
 
 class PathFinder:
+<<<<<<< Updated upstream
     """Class using BFS to find quickest path between maze.entry and
     maze.exit"""
+=======
+    """Class using BFS to find quickest path between maze.entry
+    or passed start and maze.exit"""
+>>>>>>> Stashed changes
 
     def __init__(self, maze: Maze, config: Config) -> None:
         self.__maze: Maze = maze
