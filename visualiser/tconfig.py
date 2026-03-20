@@ -50,9 +50,9 @@ class TConfig(ModalScreen):
         self._loop_ratio = Select(
             [(str(i), i) for i in range(0, 101)],
             value=self._config.loop_ratio,
-            classes="option_hidden"
+            disabled=True 
             if self._config.perfect
-            else "option_select_ratio",
+            else False,
         )
         self._bt_cancel = Button(
             "Cancel", variant="default", classes="option_button"
@@ -169,9 +169,9 @@ class TConfig(ModalScreen):
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
         if event.checkbox == self._perfect:
             if self._perfect.value:
-                self._loop_ratio.classes = "option_hidden"
+                self._loop_ratio.disabled = True
             else:
-                self._loop_ratio.classes = "option_select_ratio"
+                self._loop_ratio.disabled = False
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
