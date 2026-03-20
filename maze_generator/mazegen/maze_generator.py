@@ -3,7 +3,7 @@ from mazegen.config import Config
 from mazegen.path_finder import PathFinder
 from mazegen.algorithms import Algorithm
 
-from typing import Optional, Generator, Any
+from typing import Optional, Generator, Any, Dict
 import random
 
 
@@ -14,10 +14,16 @@ class MazeGenerator:
         self.config: Config object passed on instanciation or generated
     """
 
-    def __init__(self, config: Optional[Config] = None) -> None:
+    def __init__(
+        self,
+        config_dict: Optional[Dict[str, Any]] = None,
+        config: Optional[Config] = None,
+    ) -> None:
         """Sets public config to either passed as argument or default"""
         if config and isinstance(config, Config):
             self.config = config
+        elif config_dict and isinstance(config_dict, dict):
+            self.config = Config.model_validate(config_dict)
         else:
             self.config = Config()
 
