@@ -18,22 +18,25 @@ class MazeCanvas(Canvas):
             # canvas_color=colours["background"],
             # canvas_color=colours["secondary"],
         )
-        self.__previous_maze: None | Maze = None
-        self.__colours = colours
+        self._previous_maze: None | Maze = None
+        self._colours = colours
+
+        # Keep the size to easily compare with config in TMaze
+        self.config_size = (nb_row, nb_col)
 
     # ########################################################################
     # ########################################################### COLOURS ####
     def up_colours(self, colours: Dict[str, Color]) -> None:
         """Save colours and redraw the maze"""
-        self.__colours = colours
-        if self.__previous_maze:
-            last_maze = deepcopy(self.__previous_maze)
+        self._colours = colours
+        if self._previous_maze:
+            last_maze = deepcopy(self._previous_maze)
             self.clear()
             self.dig_holes(last_maze)
 
     # ########################################################################
     # ############################################################## DRAW ####
-    def __draw_line(
+    def _draw_line(
         self,
         row: int,
         col: int,
@@ -41,20 +44,16 @@ class MazeCanvas(Canvas):
         colour: str = "primary",
     ) -> None:
         if vertical:
-            self.draw_line(
-                col, row, col, row + 2, color=self.__colours[colour]
-            )
+            self.draw_line(col, row, col, row + 2, color=self._colours[colour])
         else:
-            self.draw_line(
-                col, row, col + 2, row, color=self.__colours[colour]
-            )
+            self.draw_line(col, row, col + 2, row, color=self._colours[colour])
 
-    def __draw_square(
+    def _draw_square(
         self, row: int, col: int, colour: str = "primary"
     ) -> None:
-        self.__draw_line(row - 1, col - 1, False, colour)
-        self.__draw_line(row, col - 1, False, colour)
-        self.__draw_line(row + 1, col - 1, False, colour)
+        self._draw_line(row - 1, col - 1, False, colour)
+        self._draw_line(row, col - 1, False, colour)
+        self._draw_line(row + 1, col - 1, False, colour)
 
     # ########################################################################
     # ######################################################### DRAW HEXA ####
@@ -71,24 +70,13 @@ class MazeCanvas(Canvas):
             col_from * 4 + 2,
             row_to * 4 + 2,
             col_to * 4 + 2,
-            self.__colours[colour],
+            self._colours[colour],
         )
 
     def draw_square_hexa_coordinates(
         self, row: int, col: int, colour: str
     ) -> None:
-        self.__draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
-
-    # TODO: PUT THAT IT TMAZE ????????????????????????????????????????????????
-    def draw_exit(self) -> None:
-        # Use the previous maze to easily call the method with animation
-
-        if self.__previous_maze:
-            self.draw_square_hexa_coordinates(
-                row=self.__previous_maze.exit[0],
-                col=self.__previous_maze.exit[1],
-                colour="success",
-            )
+        self._draw_square(row=row * 4 + 2, col=col * 4 + 2, colour=colour)
 
     # ########################################################################
     # ############################################################# CLEAR ####
@@ -99,7 +87,7 @@ class MazeCanvas(Canvas):
         width: int | None = None,
         height: int | None = None,
     ) -> Any:
-        self.__previous_maze = None
+        self._previous_maze = None
         return super().clear(color, width, height)
 
     # ########################################################################
@@ -138,21 +126,21 @@ class MazeCanvas(Canvas):
 
                 # Only draw the updated values --
                 if (
-                    self.__previous_maze
-                    and cell_hexa == self.__previous_maze.values[rh][ch]
+                    self._previous_maze
+                    and cell_hexa == self._previous_maze.values[rh][ch]
                 ):
                     continue
 
                 if cell_hexa & 0b1111 != 0b1111:
-                    self.__draw_square(row, col)
+                    self._draw_square(row, col)
 
                 if cell_hexa & 0b0001 != 0b0001:  # Top
-                    self.__draw_line(row - 2, col - 1)
+                    self._draw_line(row - 2, col - 1)
                 if cell_hexa & 0b0100 != 0b0100:  # Bottom
-                    self.__draw_line(row + 2, col - 1)
+                    self._draw_line(row + 2, col - 1)
                 if cell_hexa & 0b1000 != 0b1000:  # Left
-                    self.__draw_line(row - 1, col - 2, vertical=True)
+                    self._draw_line(row - 1, col - 2, vertical=True)
                 if cell_hexa & 0b0010 != 0b0010:  # Right
-                    self.__draw_line(row - 1, col + 2, vertical=True)
+                    self._draw_line(row - 1, col + 2, vertical=True)
 
-        self.__previous_maze = deepcopy(maze_hexa)
+        self._previous_maze = deepcopy(maze_hexa)
