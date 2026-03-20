@@ -1,3 +1,4 @@
+import asyncio
 from typing import ClassVar, Dict, Any
 from textual.binding import Binding, BindingType
 
@@ -26,6 +27,7 @@ class Visualiser(App[None]):
         ("s", "start_new_maze", "Start a new maze"),
         ("n", "next_step", "Next step"),
         ("a", "animate", "Animate"),
+        ("q", "stop_animations", "Stop animation"),
         ("r", "restart", "Restart player"),
         ("w", "solution", "Run solution"),
         ("u", "solution_deactivate", "Clean solution"),
@@ -77,7 +79,7 @@ class Visualiser(App[None]):
     # ########################################################################
     # ################################################ ACTION - SOLUTION #####
     async def action_solution(self) -> None:
-        await self._tmaze.run_solution()
+        asyncio.create_task(self._tmaze.run_solution())
 
     def action_solution_deactivate(self) -> None:
         self._tmaze.deactivate_solution()
@@ -109,10 +111,14 @@ class Visualiser(App[None]):
         self._tmaze.start_new_maze()
 
     async def action_animate(self) -> None:
-        await self._tmaze.animate_all_steps()
+        # await self._tmaze.animate_all_steps()
+        asyncio.create_task(self._tmaze.animate_all_steps())
 
     def action_next_step(self) -> None:
         self._tmaze.next_step_animation()
+
+    def action_stop_animations(self) -> None:
+        self._tmaze.stop_animations()
 
     # ########################################################################
     # ########################################################### THEMES #####

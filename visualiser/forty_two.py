@@ -12,7 +12,7 @@ class FortyTwo:
 
     def __init__(self, drawing_function: Callable) -> None:
         self._drawing_function = drawing_function
-        self._points: Optional[List[tuple[int, int]]] = None
+        self._points: List[tuple[int, int]] = []
         self._colours = [
             "secondary",
             "accent",
@@ -23,6 +23,11 @@ class FortyTwo:
             "surface",
             "panel",
         ]
+
+    def deactivate(self):
+        for row, col in self._points:
+            self._drawing_function(row, col, "background")
+        self._points = []
 
     def update_points(self, points: Set[Tuple[int, int]]) -> None:
         self._points = list(points)
