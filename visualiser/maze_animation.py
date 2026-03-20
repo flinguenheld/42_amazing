@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional, Callable
+from typing import Optional, Callable, Generator
 
 from mazegen.maze import Maze
 from mazegen.maze_generator import MazeGenerator
@@ -20,8 +20,8 @@ class MazeAnimation:
     ):
         self._drawing_function = drawing_function
         self._maze_generator = maze_generator
-        self._iterator = None
-        self._maze = None
+        self._iterator: Generator[Maze, None, None] | None = None
+        self._maze: Optional[Maze] = None
 
     def is_active(self) -> bool:
         return self._iterator is not None
@@ -29,10 +29,10 @@ class MazeAnimation:
     def get_last_maze(self) -> Optional[Maze]:
         return self._maze
 
-    def start_new_animation(self):
+    def start_new_animation(self) -> None:
         self._iterator = self._maze_generator.generate()
 
-    async def cycle(self):
+    async def cycle(self) -> None:
         while self.next_step():
             await asyncio.sleep(0)
 

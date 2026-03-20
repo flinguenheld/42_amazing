@@ -10,16 +10,8 @@ from textual.containers import HorizontalGroup, ScrollableContainer
 from mazegen.config import Config
 from visualiser.ttitle import TTitleConfig
 from visualiser.tmessage import TMessageError
-from config.config_parser import ConfigParser
 
 import sys
-
-# TODO: READ OPTIONS
-# TODO: SAVE OPTIONS
-# TODO: GET & UPDATE THE OBJECT
-# TODO: CHECK THE VALUES !
-# TODO: CREATE TERROR WIDGET
-# TODO: ADD DEFAULT THEME
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -59,7 +51,7 @@ class TConfig(ModalScreen):
             [(str(i), i) for i in range(0, 101)],
             value=self._config.loop_ratio,
             classes="option_hidden"
-            if self._config.perfect 
+            if self._config.perfect
             else "option_select_ratio",
         )
         self._bt_cancel = Button(
@@ -175,7 +167,7 @@ class TConfig(ModalScreen):
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
         if event.checkbox == self._perfect:
-            if self._perfect.value == True:
+            if self._perfect.value:
                 self._loop_ratio.classes = "option_hidden"
             else:
                 self._loop_ratio.classes = "option_select_ratio"

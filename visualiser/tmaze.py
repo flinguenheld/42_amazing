@@ -1,12 +1,9 @@
-import asyncio
 from typing import Dict, Optional, Any
 
 from textual.color import Color
 from textual.widget import Widget
 from textual.app import ComposeResult
-from textual.containers import Horizontal
 
-from mazegen.maze import Maze
 from mazegen.config import Config
 from mazegen.maze_generator import MazeGenerator
 
@@ -138,7 +135,7 @@ class TMaze(Widget):
         if self._player:
             await self._forty_two.cycle()
 
-    def __forty_two_draw_cell(self, row, col, colour):
+    def __forty_two_draw_cell(self, row, col, colour) -> None:
         """Method called by FortyTwo"""
         self._canvas.draw_square_hexa_coordinates(row, col, colour)
 

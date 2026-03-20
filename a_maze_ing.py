@@ -38,10 +38,9 @@ def main() -> None:
         cprint("Config file not found", file=sys.stderr, color="red")
         cprint(usage(), file=sys.stderr, color="yellow")
 
-
-#   except Exception as e:
-#       cprint(e, file=sys.stderr, color="red")
-#       cprint(usage(), file=sys.stderr, color="yellow")
+    except Exception as e:
+        cprint(e, file=sys.stderr, color="red")
+        cprint(usage(), file=sys.stderr, color="yellow")
 
 
 if __name__ == "__main__":

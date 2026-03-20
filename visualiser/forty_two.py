@@ -1,6 +1,6 @@
 import random
 import asyncio
-from typing import Tuple, Set, Callable
+from typing import Tuple, Set, Callable, Optional, List
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -12,7 +12,7 @@ class FortyTwo:
 
     def __init__(self, drawing_function: Callable) -> None:
         self._drawing_function = drawing_function
-        self._points = None
+        self._points: Optional[List[tuple[int, int]]] = None
         self._colours = [
             "secondary",
             "accent",
@@ -33,7 +33,7 @@ class FortyTwo:
                 await self._colour_them(random.choice(self._colours))
             await self._colour_them("background")
 
-    async def _colour_them(self, colour) -> None:
+    async def _colour_them(self, colour: str) -> None:
         if self._points:
             random.shuffle(self._points)
             for row, col in self._points:

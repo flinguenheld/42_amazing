@@ -22,7 +22,12 @@ class ConfigParser:
             key, value = line.split("=")
 
             if "," in value:
-                col, row = value.strip().split(",")
+                try:
+                    col, row = value.strip().split(",")
+                except ValueError:
+                    raise ValueError(
+                        "Please enter coordinates in valid tuple format"
+                    )
                 dictionary[key] = (row, col)
             else:
                 dictionary[key] = value.strip()

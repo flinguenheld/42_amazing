@@ -2,7 +2,7 @@ from copy import deepcopy
 from mazegen.maze import Maze
 from textual.color import Color
 from textual_canvas import Canvas
-from typing import Dict, override, Any, List, Tuple
+from typing import Dict, override, Any
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -65,7 +65,7 @@ class MazeCanvas(Canvas):
         row_to: int,
         col_to: int,
         colour: str,
-    ):
+    ) -> None:
         self.draw_line(
             row_from * 4 + 2,
             col_from * 4 + 2,

@@ -1,4 +1,3 @@
-from textual.layout import Layout
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Label, Button
@@ -49,8 +48,8 @@ class TMessageError(TMessage):
     def __init__(self, message: str):
         super().__init__(
             """
-██████ █████▄  █████▄  ▄████▄ █████▄  
-██▄▄   ██▄▄██▄ ██▄▄██▄ ██  ██ ██▄▄██▄ 
+██████ █████▄  █████▄  ▄████▄ █████▄
+██▄▄   ██▄▄██▄ ██▄▄██▄ ██  ██ ██▄▄██▄
 ██▄▄▄▄ ██   ██ ██   ██ ▀████▀ ██   ██ """,
             message,
             "message_layout_error",
@@ -65,8 +64,8 @@ class TMessageWarning(TMessage):
     def __init__(self, message: str):
         super().__init__(
             """
-██     ██ ▄████▄ █████▄  ███  ██ ██ ███  ██  ▄████  
-██ ▄█▄ ██ ██▄▄██ ██▄▄██▄ ██ ▀▄██ ██ ██ ▀▄██ ██  ▄▄▄ 
+██     ██ ▄████▄ █████▄  ███  ██ ██ ███  ██  ▄████
+██ ▄█▄ ██ ██▄▄██ ██▄▄██▄ ██ ▀▄██ ██ ██ ▀▄██ ██  ▄▄▄
  ▀██▀██▀  ██  ██ ██   ██ ██   ██ ██ ██   ██  ▀███▀   """,
             message,
             "message_layout_warning",
@@ -81,8 +80,8 @@ class TMessageSuccess(TMessage):
     def __init__(self, message: str):
         super().__init__(
             """
-▄█████ ██  ██ ▄█████ ▄█████ ██████ ▄█████ ▄█████ 
-▀▀▀▄▄▄ ██  ██ ██     ██     ██▄▄   ▀▀▀▄▄▄ ▀▀▀▄▄▄ 
+▄█████ ██  ██ ▄█████ ▄█████ ██████ ▄█████ ▄█████
+▀▀▀▄▄▄ ██  ██ ██     ██     ██▄▄   ▀▀▀▄▄▄ ▀▀▀▄▄▄
 █████▀ ▀████▀ ▀█████ ▀█████ ██▄▄▄▄ █████▀ █████▀ """,
             message,
             "message_layout_success",
