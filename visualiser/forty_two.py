@@ -1,6 +1,6 @@
 import random
 import asyncio
-from typing import Tuple, Set, Callable, Optional, List
+from typing import Tuple, Set, Callable, List
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -24,7 +24,7 @@ class FortyTwo:
             "panel",
         ]
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         for row, col in self._points:
             self._drawing_function(row, col, "background")
         self._points = []

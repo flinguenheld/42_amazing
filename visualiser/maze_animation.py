@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional, Callable, Generator, List
+from typing import Optional, Callable, Generator
 
 from mazegen.maze import Maze
 from mazegen.maze_generator import MazeGenerator
@@ -32,7 +32,7 @@ class MazeAnimation:
     def get_last_maze(self) -> Optional[Maze]:
         return self._maze
 
-    def stop_animation(self):
+    def stop_animation(self) -> None:
         self._animation_on = False
 
     def start_new_animation(self) -> None:

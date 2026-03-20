@@ -32,14 +32,14 @@ class Solution:
             if not self._animation_on:
                 break
 
-            group = self._points[index : index + 2]
+            group = self._points[index: index + 2]
             if len(group) == 2:
                 self._draw(group[0], group[1], "error")
                 await asyncio.sleep(0.02)
 
     # ########################################################################
     # ############################################################# CLEAN ####
-    def stop_animation(self):
+    def stop_animation(self) -> None:
         self._animation_on = False
 
     # ########################################################################
@@ -49,7 +49,7 @@ class Solution:
             for index in range(0, len(self._points), 1):
                 if self._points[index] == to:
                     break
-                group = self._points[index : index + 2]
+                group = self._points[index: index + 2]
                 if len(group) == 2:
                     self._draw(group[0], group[1])
 

@@ -50,7 +50,7 @@ class TConfig(ModalScreen):
         self._loop_ratio = Select(
             [(str(i), i) for i in range(0, 101)],
             value=self._config.loop_ratio,
-            disabled=True 
+            disabled=True
             if self._config.perfect
             else False,
         )

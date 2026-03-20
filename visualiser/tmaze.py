@@ -203,7 +203,7 @@ class TMaze(Widget):
         self._player = None
         self._maze = None
 
-    def _finish_animation(self):
+    def _finish_animation(self) -> None:
         if not self._maze_animation.is_active():
             maze = self._maze_animation.get_last_maze()
             if maze:
@@ -217,12 +217,12 @@ class TMaze(Widget):
         if await self._maze_animation.cycle():
             await self._finish_animation()
 
-    def next_step_animation(self):
+    def next_step_animation(self) -> None:
         self._maze_animation.next_step()
         self._finish_animation()
 
     # ########################################################################
     # ################################################### STOP ANIMATIONS ####
-    def stop_animations(self):
+    def stop_animations(self) -> None:
         self._maze_animation.stop_animation()
         self._solution.stop_animation()
