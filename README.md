@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by flinguen and rapoggi*
+*This project has been created as part of the 42 curriculum by flinguen, rapoggi*
 
 # A-Maze-ing
 
@@ -20,7 +20,7 @@ which will be discussed later on.
 
 This project uses uv for automatic virtual environment management.  
   
-A Makefile has been provided as required. Run:  
+A Makefile has been provided. Run:  
 
     make install
 > to install dependencies needed by the project.  
@@ -53,6 +53,10 @@ Command to fix the pytest import failure:
 + N Display the algorithm's next step    
 + G Generate a new maze skipping animatation  
 + F Animate 42 logo
++ R Reset player position
++ W Play solution animation
++ U Hide solution
++ Q Stop animation
 + C Enter config menu
 + ^P Options
 + ^Q Exit program
@@ -80,13 +84,13 @@ All keys and example values in an example config.txt:
     WIDTH=20
     HEIGHT=20
     ENTRY=0,0
-    EXIT=20,20
+    EXIT=19,19
     PERFECT=False
     LOOP_RATIO=75
     ALGO=Wilson
     SEED=42
 
-Note a default config.txt is already present in the repository.  
+Note this default config.txt is already present in the repository.  
 Configuration can also be modified either in memory or in file  
 through the visualiser. See #Bonus.  
 
@@ -119,16 +123,16 @@ strong argument.
  
 ## Code reusability
 
-> As required by the subject, this repository contains a mazegen-0.1.0-any.whl package,  
-> installable via any python module install helper, which contains the generation part  
+> As required by the subject, this repository contains a mazegen-0.1.0-any.tar.gz package,  
+> installable via any python module installer, which contains the generation part  
 > of our project. Here is the documentation findable inside the package  
  
 
 -------------------------------------------------------------------------------
 ## Instantiation
 
-The MazeGenerator class constructor can take a Config object as argument,  
-in which it will seek parameters elements needed for the maze generation.  
+The MazeGenerator class constructor can take either a Dict or a Config object as argument,  
+in which it will seek parameters and elements needed for the maze generation.  
 For more information, see [Config](#config).  
  
 For default configuration :  
@@ -136,6 +140,13 @@ For default configuration :
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
+
+
+With customization via Dict:
+
+    from mazegen import MazeGenerator
+
+    generator = MazeGenerator({"HEIGHT": 20, "WIDTH": 20})
 
  
 With customized Config object:  
@@ -189,6 +200,8 @@ The actual maze (two-dimensional array of hexadecimal values)
 
 Maze's \_\_str\_\_() returns the maze in hexadecimal values, entry and exit  
 coordinates, and instructions to 'walk' from one to the other.  
+If an OUTPUT\_FILE has been given on config, it is written to  
+said file on generate's last yield  
 
 ## Config
 
@@ -247,7 +260,7 @@ if there are no attributes of the given name.
 ## Bonuses
 
 As for additionnal functionnalities to be considered bonuses that we have implemented: 
-+ Maze generation animation
++ Real-time maze generation animation
 + Playable maze (arrow keys to find your way out) 
 + Several generation algorithms
 + Logo animation

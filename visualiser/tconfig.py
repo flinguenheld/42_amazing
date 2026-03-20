@@ -209,7 +209,9 @@ class InputSize(Widget):
 # ░░░░░░░░░░░░░░░░█░░█░█░█▀▀░█░█░░█░░░░█░░░█░█░█░█░█▀▄░█░█░░█░░█░█░█▀█░░█░░█▀▀
 # ░░░░░░░░░░░░░░░▀▀▀░▀░▀░▀░░░▀▀▀░░▀░░░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀░▀░▀░░▀░░▀▀▀
 class InputCoordinate(Widget):
-    def __init__(self, title: str, config: Config, prompt_one: str, prompt_two: str):
+    def __init__(
+        self, title: str, config: Config, prompt_one: str, prompt_two: str
+    ):
         super().__init__(classes="option_inputs")
         self._max_x = config.nb_col
         self._max_y = config.nb_row
