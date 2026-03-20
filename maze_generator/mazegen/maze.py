@@ -145,7 +145,7 @@ class Maze:
                 cur = self.solution[i]
                 nxt = self.solution[i + 1]
                 to_print: str = self.LETTER_MAP[
-                    (nxt[0] - cur[0], cur[1] - nxt[1])
+                    (nxt[0] - cur[0], nxt[1] - cur[1])
                 ]
                 res = f"{res}{to_print}"
         res = f"{res}\n"

@@ -1,9 +1,11 @@
 from config.config_parser import ConfigParser
 import sys
 from termcolor import cprint
-from visualiser.visualiser import Visualiser
-from mazegen.config import Config
 from pydantic import ValidationError
+
+from visualiser.visualiser import Visualiser
+from mazegen import Config
+# from mazegen import MazeGenerator
 
 
 def usage() -> str:
@@ -27,6 +29,9 @@ def main() -> None:
 
         application = Visualiser(config=config)
         application.run()
+
+        # generator = MazeGenerator(parsed)
+        # print(generator.get_maze())
 
     except ValidationError as e:
         cprint("Config file error", file=sys.stderr, color="red")
