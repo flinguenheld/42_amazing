@@ -37,10 +37,6 @@ To execute run:
 
     make lint
 > runs flake8 and mypy on current directory  
- 
-
-    make lint-strict
-> runs flake8 and mypy --strict on current directory  
 
 Command to fix the pytest import failure:  
 
@@ -79,8 +75,10 @@ This repository contains no AI generated code/content.
 ## Config File
 
 The config.txt file needs simple but strict encoding of values: KEY=value  
+Lines that start with '#' are considered comments and ignored.
 All keys and example values in an example config.txt:  
 
+    # THIS IS A COMMENT
     WIDTH=20
     HEIGHT=20
     ENTRY=0,0
@@ -92,7 +90,7 @@ All keys and example values in an example config.txt:
 
 Note this default config.txt is already present in the repository.  
 Configuration can also be modified either in memory or in file  
-through the visualiser. See #Bonus.  
+through the visualiser.  
 
 ## Algorithm
 
@@ -146,7 +144,7 @@ With customization via Dict:
 
     from mazegen import MazeGenerator
 
-    generator = MazeGenerator({"HEIGHT": 20, "WIDTH": 20})
+    generator = MazeGenerator(config_dict={"HEIGHT": 20, "WIDTH": 20})
 
  
 With customized Config object:  
@@ -155,7 +153,7 @@ With customized Config object:
 
     config = Config(height=20, width=20, seed="42", algo="Wilson")
 
-    generator = MazeGenerator(config)
+    generator = MazeGenerator(config=config)
 
 
 ## Usage
@@ -166,10 +164,11 @@ To get direct access to the generated maze, it's parameters and it's solution :
     
     generator = MazeGenerator()
     maze = generator.get_maze()
+    print(maze)
     print(maze.solution)
     print(maze.seed)
 
-This returns a Maze object, which holds all the relevant parameters that define it:  
+This returns a Maze object, which holds all the parameters relevant to its generation.  
 It also includes a break\_wall() method, which takes two tuples of coordinates and  
 breaks the wall between the two represented cells.  
 
@@ -205,7 +204,8 @@ said file on generate's last yield
 
 ## Config
 
-To customize the generated maze, we would use a Config object passed to MazeGenerator  
+To customize the generated maze, we could set config\_dict={"KEY\_ALIAS":value}.  
+If we wanted further control, we would use a Config object passed to MazeGenerator 
 on initialization. The Config class inherits from pydantic's BaseModel and runs various  
 data sanity checks to ensure coherent data is going to end up in the maze.  
   
@@ -213,7 +213,13 @@ Config().model\_validate() can be given a dictionnary whose keys define which
 parameter is set and it's values... the value.  
 It can also be modified after initialisation through it's setter, here an example of both:  
 
-    from mazegen.maze_generator import MazeGenerator
+    from mazegen import MazeGenerator, Config
+
+    # Instantiate generator with custom dictionnary
+    temp_generator = MazeGenerator(config_dict={"WIDTH": 20,
+                                                "HEIGHT": 20,
+                                                "SEED": 420})
+    del temp_generator
 
     # Initialises config with default values
     temp_config = Config()
@@ -233,7 +239,7 @@ It can also be modified after initialisation through it's setter, here an exampl
     config.set("perfect", False)
     config.set("loop_ratio", 75)
 
-    generator = MazeGenerator(config)
+    generator = MazeGenerator(config=config)
     maze = generator.get_maze()
     print(maze)
 
@@ -252,8 +258,11 @@ Here are all parameters and their default values:
 | algo      | ALGO    | Wilson  |
 | loop\_ratio | LOOP\_RATIO | 100 |
 
-The Config class also provides a getter (get()) which defaults to None  
-if there are no attributes of the given name.  
+These are all available through the Config object for both getting  
+and setting, except getting the seed: if none is set in file, the generator  
+creates one like f"{datetime.now()}AUTO{time.time()}" and stores it  
+directly inside the maze. Note all parameters except output\_file are also  
+available through the generated maze from instantiation on.  
 
 -------------------------------------------------------------------------------
 

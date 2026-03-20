@@ -11,7 +11,7 @@ class MazeGenerator:
     """Class handling the whole process of generating a Maze
 
     - Public attributes:
-        self.config: Config object passed on instanciation or generated
+        self.config: Config object passed on instantiation or generated
     """
 
     def __init__(
@@ -28,7 +28,7 @@ class MazeGenerator:
             self.config = Config()
 
     def init_maze(self) -> None:
-        """Resets maze with config info"""
+        """Reset maze with config info"""
         self.__maze = Maze(
             self.config.get("nb_row"),
             self.config.get("nb_col"),
@@ -81,7 +81,7 @@ class MazeGenerator:
         algo: Any = [
             i
             for i in Algorithm.__subclasses__()
-            if self.config.get("algo") in str(i)
+            if self.config.get("algo") == str(i).split('.')[-1].strip('>\'')
         ][0]
         for maze in algo(self.__maze, self.__rand).solve():
             yield maze
