@@ -41,9 +41,9 @@ class Visualiser(App[None]):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.theme = "catppuccin-latte"
-        self.__ttitle = TTitle()
-        self.__config = config
-        self.__tmaze = TMaze(config, self.__get_colours())
+        self._ttitle = TTitle()
+        self._config = config
+        self._tmaze = TMaze(config, self._get_colours())
 
     # ########################################################################
     # ########################################################## COMPOSE #####
@@ -51,9 +51,9 @@ class Visualiser(App[None]):
         yield Header(show_clock=True)
         yield Footer()
         with Vertical(id="main_layout"):
-            yield self.__ttitle
+            yield self._ttitle
             with ScrollableNoArrow(id="scroll_layout"):
-                yield self.__tmaze
+                yield self._tmaze
 
     # ########################################################################
     # ############################################################ MOUNT #####
@@ -66,26 +66,26 @@ class Visualiser(App[None]):
     # ########################################################################
     # ######################################################## MOVEMENTS #####
     def on_key(self, event: events.Key) -> None:
-        self.__tmaze.move_player(event.key)
+        self._tmaze.move_player(event.key)
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
     def action_restart(self) -> None:
-        self.__tmaze.player_clean()
-        self.__tmaze.player_reset()
+        self._tmaze.player_clean()
+        self._tmaze.player_reset()
 
     # ########################################################################
     # ################################################ ACTION - SOLUTION #####
     async def action_solution(self) -> None:
-        await self.__tmaze.run_solution()
+        await self._tmaze.run_solution()
 
     def action_solution_deactivate(self) -> None:
-        self.__tmaze.deactivate_solution()
+        self._tmaze.deactivate_solution()
 
     # ########################################################################
     # ###################################################### ACTION - 42 #####
     async def action_forty_two(self) -> None:
-        await self.__tmaze.run_forty_two()
+        await self._tmaze.run_forty_two()
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
@@ -95,28 +95,28 @@ class Visualiser(App[None]):
 
     async def action_config(self) -> None:
         self.push_screen(
-            TConfig(self.__config), callback=self.on_after_config()
+            TConfig(self._config), callback=self.on_after_config()
         )
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
     def action_generate_new_maze(self) -> None:
-        self.__tmaze.generate_new_maze()
+        self._tmaze.generate_new_maze()
 
     # ########################################################################
     # ############################################### ACTION - ANIMATION #####
     def action_start_new_maze(self) -> None:
-        self.__tmaze.start_new_maze()
+        self._tmaze.start_new_maze()
 
     async def action_animate(self) -> None:
-        await self.__tmaze.animate_all_steps()
+        await self._tmaze.animate_all_steps()
 
     def action_next_step(self) -> None:
-        self.__tmaze.next_step_animation()
+        self._tmaze.next_step_animation()
 
     # ########################################################################
     # ########################################################### THEMES #####
-    def __get_colours(self) -> Dict[Any, Any]:
+    def _get_colours(self) -> Dict[Any, Any]:
         theme = self.get_theme(self.theme)
         if theme:
             return {
@@ -148,7 +148,7 @@ class Visualiser(App[None]):
             case _:
                 self.theme = "gruvbox"
 
-        self.__tmaze.up_colours(self.__get_colours())
+        self._tmaze.up_colours(self._get_colours())
 
 
 # ############################################################################

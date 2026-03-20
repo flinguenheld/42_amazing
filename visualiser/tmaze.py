@@ -192,11 +192,11 @@ class TMaze(Widget):
         Generate a new maze and place an iterator to the first step
         """
         self._solution.deactivate(clean=False)
+        self._clear_or_reset_canvas()
 
         self._maze_animation.start_new_animation()
-        self._clear_or_reset_canvas()
         self._player = None
-        self.__maze = None
+        self._maze = None
 
     def _finish_animation(self):
         if not self._maze_animation.is_active():
