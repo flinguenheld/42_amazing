@@ -1,3 +1,4 @@
+import asyncio
 from typing import Dict, Optional, Any
 
 from textual.color import Color
@@ -24,6 +25,7 @@ class TMaze(Widget):
         super().__init__()
         self._config = config
         self._colours = colours
+        self.animation_on = [True]
 
         self._maze_generator = MazeGenerator(config=config)
         self._canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
@@ -136,8 +138,8 @@ class TMaze(Widget):
     # ########################################################################
     # ################################################################ 42 ####
     async def run_forty_two(self) -> None:
-        if self._player:
-            await self._forty_two.cycle()
+        if self._active_maze:
+            asyncio.create_task(self._forty_two.cycle())
 
     def __forty_two_draw_cell(self, row, col, colour) -> None:
         """Method called by FortyTwo"""
@@ -175,15 +177,17 @@ class TMaze(Widget):
         """
         Generate a new maze and display it directly
         """
-        self._solution.deactivate(clean=False)
+        if not self._maze_animation.is_active():
+            self._solution.deactivate(clean=False)
+            self._forty_two.deactivate()
 
-        self._active_maze = self._maze_generator.get_maze()
-        self._forty_two.update_points(self._active_maze.cells_42)
-        self._clear_or_reset_canvas()
-        self._canvas.dig_holes(self._active_maze)
-        self._player = Player(self._active_maze)
-        self._draw_player()
-        self._draw_exit()
+            self._active_maze = self._maze_generator.get_maze()
+            self._forty_two.update_points(self._active_maze.cells_42)
+            self._clear_or_reset_canvas()
+            self._canvas.dig_holes(self._active_maze)
+            self._player = Player(self._active_maze)
+            self._draw_player()
+            self._draw_exit()
 
     # ########################################################################
     # ######################################################### ANIMATION ####
@@ -195,6 +199,7 @@ class TMaze(Widget):
         self._clear_or_reset_canvas()
 
         self._maze_animation.start_new_animation()
+        self._forty_two.deactivate()
         self._player = None
         self._maze = None
 
@@ -209,9 +214,15 @@ class TMaze(Widget):
                 self._draw_exit()
 
     async def animate_all_steps(self) -> None:
-        await self._maze_animation.cycle()
-        self._finish_animation()
+        if await self._maze_animation.cycle():
+            await self._finish_animation()
 
     def next_step_animation(self):
         self._maze_animation.next_step()
         self._finish_animation()
+
+    # ########################################################################
+    # ################################################### STOP ANIMATIONS ####
+    def stop_animations(self):
+        self._maze_animation.stop_animation()
+        self._solution.stop_animation()
