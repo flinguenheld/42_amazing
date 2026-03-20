@@ -33,10 +33,10 @@ class TConfig(ModalScreen):
             "Height:", Config.MIN_SIZE, Config.MAX_SIZE, "Height"
         )
         self._entry = InputCoordinate(
-            "Entry coordinates:", Config.MAX_SIZE - 1, "X", "Y"
+            "Entry coordinates:", self._config, "X", "Y"
         )
         self._exit = InputCoordinate(
-            "Exit coordinates:", Config.MAX_SIZE - 1, "X", "Y"
+            "Exit coordinates:", self._config, "X", "Y"
         )
         self._algorithm = Select(
             ((algo, algo) for algo in self.ALGORITHMS),
@@ -78,6 +78,7 @@ class TConfig(ModalScreen):
             self._entry.set_value(self._config.entry)
             self._exit.set_value(self._config.exit)
             self._algorithm.value = self._config.algo
+            self._perfect.value = self._config.perfect
             self._algorithm.refresh(layout=True)
 
         except ValidationError as e:
@@ -208,18 +209,19 @@ class InputSize(Widget):
 # ░░░░░░░░░░░░░░░░█░░█░█░█▀▀░█░█░░█░░░░█░░░█░█░█░█░█▀▄░█░█░░█░░█░█░█▀█░░█░░█▀▀
 # ░░░░░░░░░░░░░░░▀▀▀░▀░▀░▀░░░▀▀▀░░▀░░░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀░▀░▀░░▀░░▀▀▀
 class InputCoordinate(Widget):
-    def __init__(self, title: str, max: int, prompt_one: str, prompt_two: str):
+    def __init__(self, title: str, config: Config, prompt_one: str, prompt_two: str):
         super().__init__(classes="option_inputs")
-        self._max = max
+        self._max_x = config.nb_col
+        self._max_y = config.nb_row
         self._title = title
         self._x = Select(
-            ((str(algo), algo) for algo in range(0, self._max)),
+            ((str(algo), algo) for algo in range(0, self._max_x)),
             prompt=prompt_one,
             value=0,
             classes="option_select_coordinate",
         )
         self._y = Select(
-            ((str(algo), algo) for algo in range(0, self._max)),
+            ((str(algo), algo) for algo in range(0, self._max_y)),
             prompt=prompt_two,
             value=0,
             classes="option_select_coordinate",
@@ -232,7 +234,7 @@ class InputCoordinate(Widget):
             yield self._y
 
     def set_value(self, values: Tuple[int, int]) -> None:
-        if 0 <= values[0] <= self._max and 0 <= values[1] <= self._max:
+        if 0 <= values[0] <= self._max_x and 0 <= values[1] <= self._max_y:
             self._x.value = values[1]
             self._y.value = values[0]
 

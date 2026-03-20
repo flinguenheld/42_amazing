@@ -209,3 +209,4 @@ __marimo__/
 # Keep them for tests only ??
 config_test.txt
 maze.txt
+uv.lock
