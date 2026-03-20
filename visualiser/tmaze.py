@@ -25,7 +25,7 @@ class TMaze(Widget):
         self._config = config
         self._colours = colours
 
-        self._maze_generator = MazeGenerator(config)
+        self._maze_generator = MazeGenerator(config=config)
         self._canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
         self._maze_animation = MazeAnimation(
             self._maze_generator, self._canvas.dig_holes
