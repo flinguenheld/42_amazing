@@ -13,7 +13,7 @@ This implies choosing between several algorithms and display libraries, choices
 which will be discussed later on.  
 
 <div align="center">
-    <img src="./images/amazing_diagram_01.excalidraw.png">
+    <img src="./images/AddedGenerator.png">
 </div>
 
 ## Instructions
