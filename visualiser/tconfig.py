@@ -236,7 +236,7 @@ class InputCoordinate(Widget):
             yield self._y
 
     def set_value(self, values: Tuple[int, int]) -> None:
-        if 0 <= values[0] <= self._max_x and 0 <= values[1] <= self._max_y:
+        if 0 <= values[1] <= self._max_x and 0 <= values[0] <= self._max_y:
             self._x.value = values[1]
             self._y.value = values[0]
 
