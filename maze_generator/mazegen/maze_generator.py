@@ -25,7 +25,14 @@ class MazeGenerator:
         elif config_dict and isinstance(config_dict, dict):
             self.config = Config.model_validate(config_dict)
         else:
-            self.config = Config()
+            self.config = Config(
+                nb_col=20,
+                nb_row=20,
+                entry=(0, 0),
+                exit=(19, 19),
+                perfect=False,
+                output_file="maze.txt",
+            )
 
     def init_maze(self) -> None:
         """Reset maze with config info"""
@@ -81,7 +88,7 @@ class MazeGenerator:
         algo: Any = [
             i
             for i in Algorithm.__subclasses__()
-            if self.config.get("algo") == str(i).split('.')[-1].strip('>\'')
+            if self.config.get("algo") == str(i).split(".")[-1].strip(">'")
         ][0]
         for maze in algo(self.__maze, self.__rand).solve():
             yield maze

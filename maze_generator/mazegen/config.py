@@ -35,18 +35,13 @@ class Config(BaseModel):
     MIN_SIZE: ClassVar[int] = 5
     MAX_SIZE: ClassVar[int] = 200
 
-    nb_col: Annotated[
-        int, Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH")
-    ]
-    nb_row: Annotated[
-        int, Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT")
-    ]
-    entry: Annotated[Tuple[int, int], Field(default=(0, 0), alias="ENTRY")]
-    exit: Annotated[Tuple[int, int], Field(default=(4, 4), alias="EXIT")]
+    nb_col: Annotated[int, Field(ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH")]
+    nb_row: Annotated[int, Field(ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT")]
+    entry: Annotated[Tuple[int, int], Field(alias="ENTRY")]
+    exit: Annotated[Tuple[int, int], Field(alias="EXIT")]
     output_file: Annotated[
-        Optional[str],
+        str,
         Field(
-            default=None,
             min_length=3,
             max_length=30,
             alias="OUTPUT_FILE",
@@ -55,12 +50,12 @@ class Config(BaseModel):
     perfect: Annotated[bool, Field(default=False, alias="PERFECT")]
     seed: Annotated[
         Optional[Any],
-        Field(default=None, alias="SEED"),
-    ]
-    algo: Annotated[str, Field(default="Wilson", alias="ALGO")]
+        Field(alias="SEED"),
+    ] = None
+    algo: Annotated[str, Field(alias="ALGO")] = "Wilson"
     loop_ratio: Annotated[
-        int, Field(default=100, ge=0, le=100, alias="LOOP_RATIO")
-    ]
+        int, Field(ge=0, le=100, alias="LOOP_RATIO")
+    ] = 100
 
     class Config:
         """Configure BaseModel behaviour"""
@@ -107,7 +102,7 @@ class Config(BaseModel):
     def algorithm_is_valid(self) -> Any:
         """Check algorithm is implemented as children of class Algorithm"""
         for child in Algorithm.__subclasses__():
-            if self.algo == str(child).split('.')[-1].strip('>\''):
+            if self.algo == str(child).split(".")[-1].strip(">'"):
                 return self
         raise ValueError(f"{self.algo} is not a valid algorithm")
 
