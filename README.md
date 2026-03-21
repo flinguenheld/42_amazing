@@ -273,6 +273,16 @@ available through the generated maze from instantiation on.
 
 -------------------------------------------------------------------------------
 
+## Team Project Management
+
+To approach this project, we chose simply to split the workload in half. 
+One takes care of the generation process, the other the visualisation process. 
+This division seems to have worked quite well as we remained constantly productive 
+throuhought the project.  
+Passing/receiving data from and through each-others python modules thaught us 
+adaptability, although of course we took the time to give a deep look and understand 
+each other's code. 
+
 ## Bonuses
 
 As for additionnal functionnalities to be considered bonuses that we have implemented: 
