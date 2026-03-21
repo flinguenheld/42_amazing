@@ -12,10 +12,6 @@ in which any point A and B are connected by a unique path.
 This implies choosing between several algorithms and display libraries, choices  
 which will be discussed later on.  
 
-<div align="center">
-    <img src="./images/AddedGenerator.png">
-</div>
-
 ## Instructions
 
 This project uses uv for automatic virtual environment management.  
@@ -129,6 +125,11 @@ BFS was used for pathfinding, with a principle similar to DFS.
  
 
 -------------------------------------------------------------------------------
+
+<div align="center">
+    <img src="./images/MazeGenerator_schema.excalidraw.png">
+</div>
+
 ## Instantiation
 
 The MazeGenerator class constructor can take either a Dict or a Config object as argument,  

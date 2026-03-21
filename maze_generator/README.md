@@ -2,6 +2,10 @@
 
 -------------------------------
 
+<div align="center">
+    <img src="./MazeGenerator_schema.excalidraw.png">
+</div>
+
 ## Instantiation
 
 The MazeGenerator class constructor can take either a Dict or a Config object as argument,  
