@@ -1,10 +1,10 @@
-from typing import Tuple
+from typing import Tuple, Optional
 from pydantic import ValidationError
 
 from textual.widget import Widget
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
-from textual.widgets import Label, Button, Checkbox, Select
+from textual.widgets import Label, Button, Checkbox, Select, Input
 from textual.containers import HorizontalGroup, ScrollableContainer
 
 from mazegen.config import Config
@@ -33,25 +33,24 @@ class TConfig(ModalScreen):
             "Height:", Config.MIN_SIZE, Config.MAX_SIZE, "Height"
         )
         self._entry = InputCoordinate(
-            "Entry coordinates:", self._config, "X", "Y"
+            "Entry coordinates:", Config.MAX_SIZE, "X", "Y"
         )
         self._exit = InputCoordinate(
-            "Exit coordinates:", self._config, "X", "Y"
+            "Exit coordinates:", Config.MAX_SIZE, "X", "Y"
         )
         self._algorithm = Select(
             ((algo, algo) for algo in self.ALGORITHMS),
             prompt="Algorithm",
-            value=self._config.algo,
-            classes="option_select_coordinate_algo",
         )
-        self._perfect = Checkbox(
-            classes="option_checkbox", value=self._config.perfect
-        )
+        self._perfect = Checkbox(classes="option_checkbox")
         self._loop_ratio = Select(
             [(str(i), i) for i in range(0, 101)],
             value=self._config.loop_ratio,
             disabled=True if self._config.perfect else False,
         )
+        self._output_file = InputStr("Output file:", placeholder="output file")
+        self._seed = InputStr("Seed:", placeholder="seed")
+
         self._bt_cancel = Button(
             "Cancel", variant="default", classes="option_button"
         )
@@ -77,6 +76,8 @@ class TConfig(ModalScreen):
             self._exit.set_value(self._config.exit)
             self._algorithm.value = self._config.algo
             self._perfect.value = self._config.perfect
+            self._output_file.set_value(self._config.output_file)
+            self._output_file.set_value(self._config.output_file)
             self._algorithm.refresh(layout=True)
 
         except ValidationError as e:
@@ -95,7 +96,9 @@ class TConfig(ModalScreen):
                 "EXIT": self._exit.get_value(),
                 "ALGO": self._algorithm.value,
                 "PERFECT": self._perfect.value,
-                "LOOP_RATIO": self._loop_ratio.value
+                "LOOP_RATIO": self._loop_ratio.value,
+                "OUTPUT_FILE": self._output_file.value,
+                "SEED": self._seed.value
                 if self._loop_ratio.value != Select.NULL
                 else 100,
             }
@@ -135,15 +138,17 @@ class TConfig(ModalScreen):
             yield self._height
             yield self._entry
             yield self._exit
-            with HorizontalGroup():
+            with HorizontalGroup(classes="option_field_layout"):
                 yield Label("Algorithm:", classes="option_label")
                 yield self._algorithm
-            with HorizontalGroup():
+            with HorizontalGroup(classes="option_field_layout"):
                 yield Label("Perfect:", classes="option_label")
                 yield self._perfect
-            with HorizontalGroup():
+            with HorizontalGroup(classes="option_field_layout"):
                 yield Label("Loop Ratio:", classes="option_label")
                 yield self._loop_ratio
+            yield self._output_file
+            yield self._seed
 
             with HorizontalGroup(id="option_button_layout"):
                 yield self._bt_cancel
@@ -185,11 +190,10 @@ class InputSize(Widget):
             ((str(algo), algo) for algo in range(min, self._max)),
             prompt=prompt,
             value=5,
-            classes="option_select_size",
         )
 
     def compose(self) -> ComposeResult:
-        with HorizontalGroup():
+        with HorizontalGroup(classes="option_field_layout"):
             yield Label(self._title, classes="option_label")
             yield self._input
 
@@ -198,7 +202,33 @@ class InputSize(Widget):
             self._input.value = value
 
     def get_value(self) -> int:
-        return int(self._input.value)
+        return int(str(self._input.value))
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▀█░█▀█░█░█░▀█▀░░░█▀▀░▀█▀░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀▀░█░█░░█░░░░▀▀█░░█░░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▀▀░▀░▀░▀░░░▀▀▀░░▀░░░░▀▀▀░░▀░░▀░▀
+class InputStr(Widget):
+    def __init__(self, title: str, placeholder: str):
+        super().__init__(classes="option_inputs")
+        self._title = title
+        self._input = Input(
+            placeholder=placeholder,
+            classes="option_input_str",
+        )
+
+    def compose(self) -> ComposeResult:
+        with HorizontalGroup(classes="option_field_layout"):
+            yield Label(self._title, classes="option_label")
+            yield self._input
+
+    def set_value(self, value: Optional[str]) -> None:
+        if value:
+            self._input.value = value
+
+    def get_value(self) -> str:
+        return self._input.value
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -206,28 +236,24 @@ class InputSize(Widget):
 # ░░░░░░░░░░░░░░░░█░░█░█░█▀▀░█░█░░█░░░░█░░░█░█░█░█░█▀▄░█░█░░█░░█░█░█▀█░░█░░█▀▀
 # ░░░░░░░░░░░░░░░▀▀▀░▀░▀░▀░░░▀▀▀░░▀░░░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀░░▀▀▀░▀░▀░▀░▀░░▀░░▀▀▀
 class InputCoordinate(Widget):
-    def __init__(
-        self, title: str, config: Config, prompt_one: str, prompt_two: str
-    ):
+    def __init__(self, title: str, max: int, prompt_one: str, prompt_two: str):
         super().__init__(classes="option_inputs")
-        self._max_x = config.nb_col
-        self._max_y = config.nb_row
+        self._max_x = max
+        self._max_y = max
         self._title = title
         self._x = Select(
             ((str(algo), algo) for algo in range(0, self._max_x)),
             prompt=prompt_one,
             value=0,
-            classes="option_select_coordinate",
         )
         self._y = Select(
             ((str(algo), algo) for algo in range(0, self._max_y)),
             prompt=prompt_two,
             value=0,
-            classes="option_select_coordinate",
         )
 
     def compose(self) -> ComposeResult:
-        with HorizontalGroup():
+        with HorizontalGroup(classes="option_field_layout"):
             yield Label(self._title, classes="option_label")
             yield self._x
             yield self._y
