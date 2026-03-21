@@ -2,6 +2,10 @@
 
 # A-Maze-ing
 
+<div align="center">
+    <img src="./images/a_maze_ing_demo.gif">
+</div>
+
 ## Description
 
 This repository is our version of the A-Maze-ing project from 42's curriculum.  
