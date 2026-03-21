@@ -118,6 +118,8 @@ neighbours, it backtracks to the last cell that has any unvisited neighbours and
 This one, although it is biased towards long corridors, usually creates more visually  
 pleasing mazes compared to the Wilson. It's simplicity of concept and code is also a  
 strong argument.  
+
+BFS was used for pathfinding, with a principle similar to DFS.
  
 ## Code reusability
 
