@@ -79,15 +79,15 @@ class Visualiser(App[None]):
     # ########################################################################
     # ################################################ ACTION - SOLUTION #####
     async def action_solution(self) -> None:
-        asyncio.create_task(self._tmaze.run_solution())
+        asyncio.create_task(self._tmaze.solution_run())
 
     def action_solution_deactivate(self) -> None:
-        self._tmaze.deactivate_solution()
+        self._tmaze.solution_deactivate()
 
     # ########################################################################
     # ###################################################### ACTION - 42 #####
     async def action_forty_two(self) -> None:
-        await self._tmaze.run_forty_two()
+        await self._tmaze.forty_two_run()
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####

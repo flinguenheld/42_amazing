@@ -50,9 +50,7 @@ class TConfig(ModalScreen):
         self._loop_ratio = Select(
             [(str(i), i) for i in range(0, 101)],
             value=self._config.loop_ratio,
-            disabled=True
-            if self._config.perfect
-            else False,
+            disabled=True if self._config.perfect else False,
         )
         self._bt_cancel = Button(
             "Cancel", variant="default", classes="option_button"
@@ -183,10 +181,9 @@ class InputSize(Widget):
         super().__init__(classes="option_inputs")
         self._max = max
         self._title = title
-        self._prompt = prompt
         self._input = Select(
             ((str(algo), algo) for algo in range(min, self._max)),
-            prompt=self._prompt,
+            prompt=prompt,
             value=5,
             classes="option_select_size",
         )

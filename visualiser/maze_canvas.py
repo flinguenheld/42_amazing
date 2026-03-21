@@ -57,7 +57,7 @@ class MazeCanvas(Canvas):
 
     # ########################################################################
     # ######################################################### DRAW HEXA ####
-    def draw_line_hexa(
+    def draw_line_hexa_coordinates(
         self,
         row_from: int,
         col_from: int,
