@@ -91,14 +91,8 @@ class Visualiser(App[None]):
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
-    # TODO: KEEP THAT ?????
-    def on_after_config(self) -> None:
-        pass
-
     async def action_config(self) -> None:
-        self.push_screen(
-            TConfig(self._config), callback=self.on_after_config()
-        )
+        self.push_screen(TConfig(self._config))
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####

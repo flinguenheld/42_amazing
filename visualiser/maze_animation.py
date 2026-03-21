@@ -34,7 +34,7 @@ class MazeAnimation:
 
     # ########################################################################
     # ######################################################## START/STOP ####
-    def stop_animation(self):
+    def stop_animation(self) -> None:
         self._animation_on = False
 
     def start_new_animation(self) -> None:
