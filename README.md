@@ -50,8 +50,9 @@ Command to fix the pytest import failure:
     uv pip install -e .
 ```
 
-### Visualiser controls
+## Visualiser
 
+### Controls
 + S      - Start from a blank grid (new maze)  
 + A      - Play generation animation
 + N      - Display the algorithm's next step    
@@ -64,6 +65,13 @@ Command to fix the pytest import failure:
 + C      - Enter config menu
 + CTRL+P - Options
 + CTRL+Q - Exit program
+
+
+### Schematics
+<div align="center">
+    <img src="./images/visualiser.excalidraw.png">
+</div>
+
 
 
 ## Resources
