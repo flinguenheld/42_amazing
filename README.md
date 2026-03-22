@@ -2,14 +2,19 @@
 
 # A-Maze-ing
 
+<video controls align="center">
+  <source src="./images/a_maze_ing_demo.mp4" type="video/mp4">
+</video>
+
+<!-- ![](./images/a_maze_ing_demo.mp4) -->
 ## Description
 
 This repository is our version of the A-Maze-ing project from 42's curriculum.  
-It is written in Python and aims for a better understanding of Python and OOP  
-by the generation and display of a perfect (or not) maze. A perfect maze is one  
-in which any point A and B are connected by a unique path. 
+It is written in Python and aims for a better understanding of Python and OOP 
+by the generation and display of a perfect (or not) maze.
+A perfect maze is one in which any point A and B are connected by a unique path.
   
-This implies choosing between several algorithms and display libraries, choices  
+This implies choosing between several algorithms and display libraries, choices 
 which will be discussed later on.  
 
 ## Instructions
@@ -18,40 +23,55 @@ This project uses uv for automatic virtual environment management.
   
 A Makefile has been provided. Run:  
 
+```Bash
     make install
-> to install dependencies needed by the project.  
+```
+> to install dependencies needed by the project.
   
 To execute run:  
-
+```Bash
     make run
+```
 > this will fetch the config.txt file in the repository and pass it to the script  
    
-
+```Bash
     make clean
+```
 > removes cached folders and files, as well as venv and info created by uv  
  
-
+```Bash
     make lint
+```
 > runs flake8 and mypy on current directory  
 
 Command to fix the pytest import failure:  
 
+```Bash
     uv pip install -e .
+```
 
-### Visualiser controls
+## Visualiser
 
-+ S Start from a blank grid (new maze)  
-+ A Play generation animation
-+ N Display the algorithm's next step    
-+ G Generate a new maze skipping animatation  
-+ F Animate 42 logo
-+ R Reset player position
-+ W Play solution animation
-+ U Hide solution
-+ Q Stop animation
-+ C Enter config menu
-+ ^P Options
-+ ^Q Exit program
+### Controls
++ S      - Start from a blank grid (new maze)  
++ A      - Play generation animation
++ N      - Display the algorithm's next step    
++ G      - Generate a new maze skipping animatation  
++ F      - Animate 42 logo
++ R      - Reset player position
++ W      - Play solution animation
++ U      - Hide solution
++ Q      - Stop animation
++ C      - Enter config menu
++ CTRL+P - Options
++ CTRL+Q - Exit program
+
+
+### Schematics
+<div align="center">
+    <img src="./images/visualiser.excalidraw.png">
+</div>
+
 
 
 ## Resources
@@ -61,9 +81,10 @@ For reference about the Wilson and DFS algorithms for maze generation
 <https://geeks4geeks.org>  
 To answer various Python questions  
 <https://textual.textualize.io/guide>  
+<https://textual-canvas.davep.dev/>  
 For reference about textual - graphical library  
  
-AI was used throuhought the project as a help for understanding  
+AI was used throuhought the project as a help for understanding 
 complex previously unseen python concepts.  
  
 This repository contains no AI generated code/content.  
@@ -138,31 +159,38 @@ For more information, see [Config](#config).
  
 For default configuration :  
 
+```Python
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
+```
 
 
 With customization via Dict:
 
+```Python
     from mazegen import MazeGenerator
 
     generator = MazeGenerator(config_dict={"HEIGHT": 20, "WIDTH": 20})
+```
 
  
 With customized Config object:  
 
+```Python
     from mazegen import MazeGenerator, Config
 
     config = Config(height=20, width=20, seed="42", algo="Wilson")
 
     generator = MazeGenerator(config=config)
+```
 
 
 ## Usage
 
 To get direct access to the generated maze, it's parameters and it's solution :  
 
+```Python
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
@@ -170,11 +198,13 @@ To get direct access to the generated maze, it's parameters and it's solution :
     print(maze)
     print(maze.solution)
     print(maze.seed)
+```
 
 This returns a Maze object, which holds all the parameters relevant to its generation.  
 It also includes a break\_wall() method, which takes two tuples of coordinates and  
 breaks the wall between the two represented cells.  
 
+```Python
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
@@ -182,6 +212,7 @@ breaks the wall between the two represented cells.
 
     # safe is a bool that prevents the creation of cells like 0b0000
     maze.break_wall((0, 0), (0, 1), safe=True)
+```
 
  
 > Reminder: cells are hexadecimal values from 0x0 to 0xF whose bytes,  
@@ -191,11 +222,13 @@ get\_maze() skips to the very last element yielded by a generator (generate())
 and returns it. If you wish to animate the generation or only use generated data  
 up to a certain point, you may also use generate():  
 
+```Python
     from mazegen import MazeGenerator
 
     generator = MazeGenerator()
     for maze in generator.generate():
         print(maze)
+```
 
 The actual maze (two-dimensional array of hexadecimal values)  
     is stored in maze.values  
@@ -216,6 +249,7 @@ Config().model\_validate() can be given a dictionnary whose keys define which
 parameter is set and it's values... the value.  
 It can also be modified after initialisation through it's setter, here an example of both:  
 
+```Python
     from mazegen import MazeGenerator, Config
 
     # Instantiate generator with custom dictionnary
@@ -245,6 +279,7 @@ It can also be modified after initialisation through it's setter, here an exampl
     generator = MazeGenerator(config=config)
     maze = generator.get_maze()
     print(maze)
+```
 
 Data always gets routed through checks before assignation.  
 Here are all parameters and their default values:  
@@ -268,6 +303,16 @@ directly inside the maze. Note all parameters except output\_file are also
 available through the generated maze from instantiation on.  
 
 -------------------------------------------------------------------------------
+
+## Team Project Management
+
+To approach this project, we chose simply to split the workload in half. 
+One takes care of the generation process, the other the visualisation process. 
+This division seems to have worked quite well as we remained constantly productive 
+throuhought the project.  
+Passing/receiving data from and through each-others python modules thaught us 
+adaptability, although of course we took the time to give a deep look and understand 
+each other's code. 
 
 ## Bonuses
 

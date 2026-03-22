@@ -44,7 +44,7 @@ class Player:
 
     # ########################################################################
     # ######################################################## ACCESSORS #####
-    def is_winning(self) -> bool:
+    def has_won(self) -> bool:
         return self.get_position() == self._maze.exit
 
     def get_position(self) -> Tuple[int, int]:

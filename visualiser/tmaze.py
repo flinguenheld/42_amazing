@@ -5,8 +5,7 @@ from textual.color import Color
 from textual.widget import Widget
 from textual.app import ComposeResult
 
-from mazegen.config import Config
-from mazegen.maze_generator import MazeGenerator
+from mazegen import Maze, Config, MazeGenerator
 
 from visualiser.player import Player
 from visualiser.solution import Solution
@@ -25,7 +24,6 @@ class TMaze(Widget):
         super().__init__()
         self._config = config
         self._colours = colours
-        self.animation_on = [True]
 
         self._maze_generator = MazeGenerator(config=config)
         self._canvas = MazeCanvas(config.nb_row, config.nb_col, colours)
@@ -37,7 +35,7 @@ class TMaze(Widget):
         self._forty_two = FortyTwo(self.__forty_two_draw_cell)
 
         self._player: Optional[Player] = None
-        self._active_maze: Optional[Player] = None
+        self._active_maze: Optional[Maze] = None
 
     def compose(self) -> ComposeResult:
         yield self._canvas
@@ -51,7 +49,7 @@ class TMaze(Widget):
             self._solution.clean_up_to(self._player.get_position())
 
             # Victory ? --
-            if self._player.is_winning():
+            if self._player.has_won():
                 counter, shortest = self._player.get_counter()
                 self.app.push_screen(
                     TMessageSuccess(
@@ -137,25 +135,25 @@ class TMaze(Widget):
 
     # ########################################################################
     # ################################################################ 42 ####
-    async def run_forty_two(self) -> None:
+    async def forty_two_run(self) -> None:
         if self._active_maze:
             asyncio.create_task(self._forty_two.cycle())
 
-    def __forty_two_draw_cell(self, row, col, colour) -> None:
+    def __forty_two_draw_cell(self, row: int, col: int, colour: str) -> None:
         """Method called by FortyTwo"""
         self._canvas.draw_square_hexa_coordinates(row, col, colour)
 
     # ########################################################################
     # ########################################################## SOLUTION ####
-    async def run_solution(self) -> None:
+    async def solution_run(self) -> None:
         if self._active_maze and self._player:
-            self.deactivate_solution()
+            self.solution_deactivate()
 
             await self._solution.cycle(
                 self._active_maze, self._player.get_position()
             )
 
-    def deactivate_solution(self) -> None:
+    def solution_deactivate(self) -> None:
         self._solution.deactivate(True)
         self._draw_exit()
         self._draw_player()
@@ -167,9 +165,11 @@ class TMaze(Widget):
         row_to: int,
         col_to: int,
         colour: str,
-    ):
+    ) -> None:
         """Method called by Solution"""
-        self._canvas.draw_line_hexa(row_from, col_from, row_to, col_to, colour)
+        self._canvas.draw_line_hexa_coordinates(
+            row_from, col_from, row_to, col_to, colour
+        )
 
     # ########################################################################
     # ##################################################### GENERATE MAZE ####
@@ -215,7 +215,7 @@ class TMaze(Widget):
 
     async def animate_all_steps(self) -> None:
         if await self._maze_animation.cycle():
-            await self._finish_animation()
+            self._finish_animation()
 
     def next_step_animation(self) -> None:
         self._maze_animation.next_step()

@@ -1,9 +1,8 @@
 # mazegen - MazeGenerator class
 
 -------------------------------
-
 <div align="center">
-    <img src="./MazeGenerator_schema.excalidraw.png">
+    <img src="./images/MazeGenerator_schema.excalidraw.png">
 </div>
 
 ## Instantiation
@@ -14,31 +13,38 @@ For more information, see [Config](#config).
  
 For default configuration :  
 
+```Python
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
+```
 
 
 With customization via Dict:
 
+```Python
     from mazegen import MazeGenerator
 
     generator = MazeGenerator(config_dict={"HEIGHT": 20, "WIDTH": 20})
+```
 
  
 With customized Config object:  
 
+```Python
     from mazegen import MazeGenerator, Config
 
     config = Config(height=20, width=20, seed="42", algo="Wilson")
 
     generator = MazeGenerator(config=config)
+```
 
 
 ## Usage
 
 To get direct access to the generated maze, it's parameters and it's solution :  
 
+```Python
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
@@ -46,11 +52,13 @@ To get direct access to the generated maze, it's parameters and it's solution :
     print(maze)
     print(maze.solution)
     print(maze.seed)
+```
 
 This returns a Maze object, which holds all the parameters relevant to its generation.  
 It also includes a break\_wall() method, which takes two tuples of coordinates and  
 breaks the wall between the two represented cells.  
 
+```Python
     from mazegen import MazeGenerator
     
     generator = MazeGenerator()
@@ -58,6 +66,7 @@ breaks the wall between the two represented cells.
 
     # safe is a bool that prevents the creation of cells like 0b0000
     maze.break_wall((0, 0), (0, 1), safe=True)
+```
 
  
 > Reminder: cells are hexadecimal values from 0x0 to 0xF whose bytes,  
@@ -67,11 +76,13 @@ get\_maze() skips to the very last element yielded by a generator (generate())
 and returns it. If you wish to animate the generation or only use generated data  
 up to a certain point, you may also use generate():  
 
+```Python
     from mazegen import MazeGenerator
 
     generator = MazeGenerator()
     for maze in generator.generate():
         print(maze)
+```
 
 The actual maze (two-dimensional array of hexadecimal values)  
     is stored in maze.values  
@@ -92,6 +103,7 @@ Config().model\_validate() can be given a dictionnary whose keys define which
 parameter is set and it's values... the value.  
 It can also be modified after initialisation through it's setter, here an example of both:  
 
+```Python
     from mazegen import MazeGenerator, Config
 
     # Instantiate generator with custom dictionnary
@@ -121,6 +133,7 @@ It can also be modified after initialisation through it's setter, here an exampl
     generator = MazeGenerator(config=config)
     maze = generator.get_maze()
     print(maze)
+```
 
 Data always gets routed through checks before assignation.  
 Here are all parameters and their default values:  

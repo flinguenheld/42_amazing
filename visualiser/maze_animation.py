@@ -32,6 +32,8 @@ class MazeAnimation:
     def get_last_maze(self) -> Optional[Maze]:
         return self._maze
 
+    # ########################################################################
+    # ######################################################## START/STOP ####
     def stop_animation(self) -> None:
         self._animation_on = False
 
