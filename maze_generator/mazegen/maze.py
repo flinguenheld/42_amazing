@@ -66,12 +66,7 @@ class Maze:
         self.entry = entry
         self.exit = exit
         self.perfect = perfect
-        if seed is None:
-            self.seed: Any = (
-                f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
-            )
-        else:
-            self.seed = seed
+        self.seed = seed
         self.solution: List[tuple[int, int]] = []
         self.loop_ratio = loop_ratio
         self.values = [

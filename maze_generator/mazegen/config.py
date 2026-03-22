@@ -1,7 +1,10 @@
 from mazegen.algorithms import Algorithm
 
-from typing import Annotated, Any, Optional, Tuple, ClassVar
+from typing import Annotated, Any, Optional, Tuple, ClassVar, List
 from pydantic import BaseModel, Field, field_validator, model_validator
+from random import Random
+import datetime
+import time
 
 
 class Config(BaseModel):
@@ -55,12 +58,12 @@ class Config(BaseModel):
     perfect: Annotated[bool, Field(default=False, alias="PERFECT")]
     seed: Annotated[
         Optional[Any],
-        Field(default=None, alias="SEED"),
-    ]
-    algo: Annotated[str, Field(default="Wilson", alias="ALGO")]
-    loop_ratio: Annotated[
-        int, Field(default=100, ge=0, le=100, alias="LOOP_RATIO")
-    ]
+        Field(alias="SEED"),
+    ] = None
+    algo: Annotated[str, Field(alias="ALGO")] = "Wilson"
+    loop_ratio: Annotated[int, Field(ge=0, le=100, alias="LOOP_RATIO")] = 100
+
+    past_seeds: List[Any] = list()
 
     class Config:
         """Configure BaseModel behaviour"""
@@ -110,6 +113,25 @@ class Config(BaseModel):
             if self.algo == str(child).split('.')[-1].strip('>\''):
                 return self
         raise ValueError(f"{self.algo} is not a valid algorithm")
+
+    def update_seed(self, seed: Optional[Any] = None) -> None:
+        """ Sets seed to argument or generated """
+        if seed:
+            try:
+                Random(seed)
+            except Exception:
+                pass
+            else:
+                self.seed = seed
+        elif (
+            self.past_seeds
+            and "AUTO" in self.seed
+            and self.seed == self.past_seeds[-1]
+        ):
+            self.past_seeds.append(self.seed)
+            self.seed = (
+                f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
+            )
 
     def set(self, param_name: str, new_value: Any) -> None:
         """Set attribute passed as a string to new value (after runs checks)"""
