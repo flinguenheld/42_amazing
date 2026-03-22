@@ -47,9 +47,8 @@ class Config(BaseModel):
     entry: Annotated[Tuple[int, int], Field(default=(0, 0), alias="ENTRY")]
     exit: Annotated[Tuple[int, int], Field(default=(4, 4), alias="EXIT")]
     output_file: Annotated[
-        Optional[str],
+        str,
         Field(
-            default=None,
             min_length=3,
             max_length=30,
             alias="OUTPUT_FILE",
@@ -62,6 +61,7 @@ class Config(BaseModel):
     ] = None
     algo: Annotated[str, Field(alias="ALGO")] = "Wilson"
     loop_ratio: Annotated[int, Field(ge=0, le=100, alias="LOOP_RATIO")] = 100
+    print_to_file: Annotated[bool, Field(alias="PRINT_TO_FILE")] = True
 
     past_seeds: List[Any] = list()
 

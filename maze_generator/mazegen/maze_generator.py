@@ -60,15 +60,6 @@ class MazeGenerator:
         self.__rand = random.Random(self.config.get("seed"))
         self.init_maze()
 
-    def __solve_maze(self) -> Maze:
-        """Write PathFinder's result into maze.solution
-
-        - Return:
-            maze
-        """
-        self.__maze.set_solution(PathFinder(self.__maze).search())
-        return self.__maze
-
     def generate(self) -> Generator[Maze, None, None]:
         """Clear maze, choose and execute algorithm, solve maze
 
@@ -86,8 +77,9 @@ class MazeGenerator:
         for maze in algo(self.__maze, self.__rand).solve():
             yield maze
 
-        self.__solve_maze()
-        if self.config.get("output_file"):
+        self.__maze.set_solution(PathFinder(self.__maze).search())
+
+        if self.config.get("print_to_file"):
             with open(self.config.get("output_file"), "w") as fd:
                 fd.write(str(maze))
         yield self.__maze
