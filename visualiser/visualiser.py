@@ -7,6 +7,7 @@ from mazegen.config import Config
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.tconfig import TConfig
+from visualiser.tbar import TBar
 
 from textual import events
 from textual.color import Color
@@ -21,7 +22,12 @@ from textual.containers import ScrollableContainer, Vertical
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▄▀░░█░░▀▀█░█░█░█▀█░█░░░░█░░▀▀█░█▀▀░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀
 class Visualiser(App[None]):
-    CSS_PATH = ["style/main.tcss", "style/config.tcss", "style/message.tcss"]
+    CSS_PATH = [
+        "style/main.tcss",
+        "style/config.tcss",
+        "style/message.tcss",
+        "style/bar.tcss",
+    ]
     BINDINGS = [
         ("g", "generate_new_maze", "Generate a new maze"),
         ("s", "start_new_maze", "Start a new maze"),
@@ -45,6 +51,7 @@ class Visualiser(App[None]):
         self.theme = "catppuccin-latte"
         self._ttitle = TTitle()
         self._config = config
+        self._tbar = TBar(config)
         self._tmaze = TMaze(config, self._get_colours())
 
     # ########################################################################
@@ -54,6 +61,7 @@ class Visualiser(App[None]):
         yield Footer()
         with Vertical(id="main_layout"):
             yield self._ttitle
+            yield self._tbar
             with ScrollableNoArrow(id="scroll_layout"):
                 yield self._tmaze
 
@@ -97,11 +105,13 @@ class Visualiser(App[None]):
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####
     def action_generate_new_maze(self) -> None:
+        self._tbar.refresh_values()
         self._tmaze.generate_new_maze()
 
     # ########################################################################
     # ############################################### ACTION - ANIMATION #####
     def action_start_new_maze(self) -> None:
+        self._tbar.refresh_values()
         self._tmaze.start_new_maze()
 
     async def action_animate(self) -> None:

@@ -21,14 +21,13 @@ Screen {
     align: center middle;
     content-align: center middle;
     # border: heavy grey;
-    content-align: center middle;
 }
 
 .ttitles {
     width: 100%;
     color: $primary;
     # border: heavy grey;
-    margin-bottom: 2;
+    margin-bottom: 0;
     content-align: center middle;
 }
 
