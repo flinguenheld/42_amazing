@@ -3,7 +3,7 @@ from mazegen.algorithms import Algorithm
 from typing import Annotated, Any, Optional, Tuple, ClassVar, List
 from pydantic import BaseModel, Field, field_validator, model_validator
 from random import Random
-import datetime
+from datetime import datetime
 import time
 
 
@@ -118,11 +118,12 @@ class Config(BaseModel):
             except Exception:
                 pass
             else:
+                self.past_seeds.append(self.seed)
                 self.seed = seed
         elif (
             self.past_seeds
-            and "AUTO" in self.seed
             and self.seed == self.past_seeds[-1]
+            and (self.seed is None or "AUTO" in self.seed)
         ):
             self.past_seeds.append(self.seed)
             self.seed = (
