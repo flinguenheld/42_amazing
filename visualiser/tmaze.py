@@ -58,6 +58,7 @@ class TMaze(Widget):
                     )
                 )
                 self.player_reset()
+                self._draw_exit()
 
             # draw new position --
             else:

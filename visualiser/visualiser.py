@@ -1,7 +1,7 @@
 import asyncio
+from mazegen.config import Config
 from typing import ClassVar, Dict, Any
 
-from mazegen.config import Config
 
 from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle

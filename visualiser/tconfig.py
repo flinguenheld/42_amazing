@@ -48,9 +48,6 @@ class TConfig(ModalScreen):
         self._output_file = TInputStr(
             "Output file:", placeholder="output file"
         )
-        self._seed = TInputStr(
-            "Seed:", placeholder=f"{self._config.seed}"
-        )  # ADDED AS EXAMPLE
 
         # --
         self._bt_cancel = Button(
@@ -80,7 +77,6 @@ class TConfig(ModalScreen):
             yield self._algorithm
             yield self._perfect_ratio
             yield self._output_file
-            yield self._seed  # ADDED AS EXAMPLE
 
             with HorizontalGroup(id="option_button_layout"):
                 yield self._bt_cancel
@@ -100,7 +96,6 @@ class TConfig(ModalScreen):
                 self._config.perfect, self._config.loop_ratio
             )
             self._output_file.set_value(self._config.output_file)
-            self._seed.set_value(self._config.seed)  # ADDED AS EXAMPLE
 
         except ValidationError as e:
             # Can't append normally...
@@ -122,7 +117,6 @@ class TConfig(ModalScreen):
                 "OUTPUT_FILE": self._output_file.get_value(),
             }
             new_config = Config.model_validate(new_config_values)
-            new_config.update_seed(self._seed.get_value())  # ADDED AS EXAMPLE
 
         except ValidationError as e:
             self.app.push_screen(TMessageError(f"{e.errors()[0]['msg']}"))

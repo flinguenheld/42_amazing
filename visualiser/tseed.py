@@ -1,18 +1,16 @@
 from textual.widgets import Input, Label, Button
-from textual.containers import (
-    ScrollableContainer,
-    Center,
-    Vertical,
-    VerticalGroup,
-    HorizontalGroup,
-)
+from textual.containers import ScrollableContainer, HorizontalGroup
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 
+from visualiser.ttitle import TTitleSeed
 from mazegen.config import Config
-from visualiser.ttitle import TTitleConfig
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀█▀░█▀▀░█▀▀░█▀▀░█▀▄
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░▀▀█░█▀▀░█▀▀░█░█
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀▀░▀▀▀░▀▀▀░▀▀░
 class TSeed(ModalScreen):
     BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
 
@@ -30,13 +28,13 @@ class TSeed(ModalScreen):
         self._past_seeds.border_title = "History"
         self.init_label()
         self._bt_clear = Button(
-            "Clear", variant="primary", classes="option_button"
+            "Clear", variant="error", classes="option_button"
         )
         self._bt_ok = Button("Ok", variant="primary", classes="option_button")
 
     def compose(self) -> ComposeResult:
         with ScrollableContainer(classes="layout_options"):
-            yield TTitleConfig()
+            yield TTitleSeed()
             yield self._seed
             yield self._past_seeds
             with HorizontalGroup(id="option_button_layout"):
