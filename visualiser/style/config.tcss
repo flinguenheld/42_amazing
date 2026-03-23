@@ -14,7 +14,7 @@ TConfig {
     align: center middle;
 }
 
-#layout_options {
+.layout_options {
     width: 100;
     height: 42;
     border: thick $primary;
@@ -60,8 +60,8 @@ TConfig {
     width: 15;
 }
 
-# # ############################################################
-# # ############################################### BUTTONS ####
+# ############################################################
+# ############################################### BUTTONS ####
 #option_button_layout {
     margin: 4 0 0 0;
     align: center middle;
@@ -70,4 +70,36 @@ TConfig {
 .option_button {
     width: 20;
     margin: 0 5;
+}
+
+# ############################################################
+# ################################################## SEED ####
+#layout_seed {
+    align: center middle;
+}
+
+#seed_input {
+    width: 85;
+    margin: 3;
+    align: center middle;
+}
+
+#seed_history {
+    border: round $primary;
+    color: $primary;
+
+    margin: 3;
+
+    width: 85;
+    height: auto;
+    align: center middle;
+    content-align: center middle;
+    text-style: bold;
+
+    text-align: center;
+}
+
+#seed_button {
+    align: center middle;
+    margin: 2;
 }

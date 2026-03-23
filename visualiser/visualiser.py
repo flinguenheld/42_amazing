@@ -1,6 +1,5 @@
 import asyncio
 from typing import ClassVar, Dict, Any
-from textual.binding import Binding, BindingType
 
 from mazegen.config import Config
 
@@ -9,11 +8,11 @@ from visualiser.ttitle import TTitle
 from visualiser.tconfig import TConfig
 from visualiser.tbar import TBar
 
-from textual import events
 from textual.color import Color
-from textual.widgets import Footer, Header
+from textual import events, work
 from textual.app import App, ComposeResult
-from textual.screen import ScreenResultType
+from textual.widgets import Footer, Header
+from textual.binding import Binding, BindingType
 from textual.containers import ScrollableContainer, Vertical
 
 
@@ -67,7 +66,7 @@ class Visualiser(App[None]):
 
     # ########################################################################
     # ############################################################ MOUNT #####
-    async def on_mount(self, blah: ScreenResultType) -> None:
+    async def on_mount(self) -> None:
         self.title = "a_maze_ing"
         self.action_next_theme()
         self.action_generate_new_maze()
@@ -99,8 +98,10 @@ class Visualiser(App[None]):
 
     # ########################################################################
     # ################################################# ACTION - OPTIONS #####
+    @work
     async def action_config(self) -> None:
-        self.push_screen(TConfig(self._config))
+        await self.app.push_screen_wait(TConfig(self._config))
+        self._tbar.refresh_values()
 
     # ########################################################################
     # ################################################ ACTION - NEW MAZE #####

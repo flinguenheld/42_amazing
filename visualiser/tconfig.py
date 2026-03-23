@@ -71,7 +71,7 @@ class TConfig(ModalScreen):
     # ########################################################################
     # ########################################################## COMPOSE #####
     def compose(self) -> ComposeResult:
-        with ScrollableContainer(id="layout_options"):
+        with ScrollableContainer(classes="layout_options"):
             yield TTitleConfig()
             yield self._width
             yield self._height
@@ -153,12 +153,12 @@ class TConfig(ModalScreen):
     # ################################################### BUTTON PRESSED #####
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button == self._bt_cancel:
-            self.app.pop_screen()
+            self.dismiss(False)
 
         elif event.button == self._bt_update:
             if self._update_config():
-                self.app.pop_screen()
+                self.dismiss(True)
 
         elif event.button == self._bt_save:
             if self._save_config():
-                self.app.pop_screen()
+                self.dismiss(True)

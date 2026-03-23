@@ -111,24 +111,25 @@ class Config(BaseModel):
         raise ValueError(f"{self.algo} is not a valid algorithm")
 
     def update_seed(self, seed: Optional[Any] = None) -> None:
-        """ Sets seed to argument or generated """
+        """Sets seed to argument or generated"""
         if seed:
             try:
                 Random(seed)
             except Exception:
                 pass
             else:
-                self.past_seeds.append(self.seed)
+                if seed not in self.past_seeds:
+                    self.past_seeds.append(self.seed)
                 self.seed = seed
         elif (
             self.past_seeds
             and self.seed == self.past_seeds[-1]
             and (self.seed is None or "AUTO" in self.seed)
         ):
-            self.past_seeds.append(self.seed)
             self.seed = (
                 f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
             )
+            self.past_seeds.append(self.seed)
 
     def set(self, param_name: str, new_value: Any) -> None:
         """Set attribute passed as a string to new value (after runs checks)"""
