@@ -115,7 +115,6 @@ class Visualiser(App[None]):
         self._tmaze.start_new_maze()
 
     async def action_animate(self) -> None:
-        # await self._tmaze.animate_all_steps()
         asyncio.create_task(self._tmaze.animate_all_steps())
 
     def action_next_step(self) -> None:

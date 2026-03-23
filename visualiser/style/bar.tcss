@@ -16,8 +16,6 @@ TBar {
 
 #bar_layout {
     align: center middle;
-    border: round red;
-    padding: -1;
 }
 
 .bar_hide_label {

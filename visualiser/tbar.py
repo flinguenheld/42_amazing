@@ -1,10 +1,9 @@
-from textual.reactive import reactive
-from textual.containers import HorizontalGroup
 from textual.app import ComposeResult
-from textual.widget import Widget
 from textual.widgets import Static, Label
+from textual.containers import HorizontalGroup
 
 from mazegen.config import Config
+from visualiser.tconfig import TConfig
 
 
 class TBar(Static):
@@ -16,9 +15,18 @@ class TBar(Static):
         self._talgo = Label("Algo:", classes="bar_label")
         self._tperfect = Label("Perfect", classes="bar_label")
         self._toutput_file = Label("Output file:", classes="bar_label")
-        self._tseed = Label("Seed:", classes="bar_label bar_golden_colour")
+        self._tseed = Label("Seed:", classes="bar_label")
 
         self.refresh_values()
+
+    # ########################################################################
+    # ############################################################ CLICK #####
+    def on_click(self, event):
+        if event.widget == self._tseed:
+            self._tseed.remove_class("bar_golden_colour")
+            self.app.push_screen(TConfig(self._config))
+        else:
+            self.app.push_screen(TConfig(self._config))
 
     # ########################################################################
     # ########################################################## COMPOSE #####
@@ -59,7 +67,8 @@ class TBar(Static):
             )
 
         if not self._config.seed:
-            self._tseed.add_class("bar_hide_label")
+            self._tseed.remove_class("bar_golden_colour")
+            self._tseed.content = "No seed"
         else:
-            self._tseed.remove_class("bar_hide_label")
+            self._tseed.add_class("bar_golden_colour")
             self._tseed.content = f'Seed: "{self._config.seed}"'
