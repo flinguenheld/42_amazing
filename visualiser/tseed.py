@@ -14,7 +14,7 @@ from mazegen.config import Config
 class TSeed(ModalScreen):
     BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         super().__init__()
         self._config: Config = config
         self._seed = Input(
@@ -43,7 +43,7 @@ class TSeed(ModalScreen):
 
     # ########################################################################
     # ########################################################### HISTORY ####
-    def init_label(self):
+    def init_label(self) -> None:
         if not self._config.past_seeds:
             self._past_seeds.content = "Empty"
         else:

@@ -39,7 +39,7 @@ class TInputSize(Widget):
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█░█░█▀▀░█░█░░█░░░░█▀▀░█▀▀░█▀▄░█▀▀░█▀▀░█░░░░█░
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░▀▀▀░▀░▀░▀░░░▀▀▀░░▀░░░░▀░░░▀▀▀░▀░▀░▀░░░▀▀▀░▀▀▀░░▀░
 class TInputPerfect(Widget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(classes="option_inputs")
         self._perfect = Switch(classes="option_switch")
         self._loop_ratio = Select(
@@ -65,10 +65,10 @@ class TInputPerfect(Widget):
         self._loop_ratio.value = ratio
 
     def get_ratio(self) -> str:
-        return self._loop_ratio.value
+        return str(self._loop_ratio.value)
 
     def get_perfect(self) -> bool:
-        return self._perfect.value
+        return bool(self._perfect.value)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -94,7 +94,7 @@ class TInputStr(Widget):
             self._input.value = value
 
     def get_value(self) -> str:
-        return self._input.value
+        return str(self._input.value)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -119,7 +119,7 @@ class TAlgoSelection(Widget):
             self._algorithm.value = value
 
     def get_value(self) -> str:
-        return self._algorithm.value
+        return str(self._algorithm.value)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

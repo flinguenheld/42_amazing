@@ -1,3 +1,4 @@
+from textual.events import Click
 from textual import work
 from textual.app import ComposeResult
 from textual.widgets import Static, Label
@@ -13,7 +14,7 @@ from visualiser.tseed import TSeed
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░█░░█▀▄░█▀█░█▀▄
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▀░░▀▀░░▀░▀░▀░▀
 class TBar(Static):
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
 
         super().__init__()
         self._config = config
@@ -26,7 +27,7 @@ class TBar(Static):
     # ########################################################################
     # ############################################################ CLICK #####
     @work
-    async def on_click(self, event) -> None:
+    async def on_click(self, event: Click) -> None:
         if event.widget == self._tseed:
             await self.app.push_screen_wait(TSeed(self._config))
         else:
@@ -53,10 +54,12 @@ class TBar(Static):
         self._talgo.update(f"Algorithm: {self._config.algo}")
 
         if not self._config.perfect:
-            self._tperfect.add_class("bar_golden_colour")
+            self._tperfect.remove_class("bar_green_colour")
+            self._tperfect.add_class("bar_accent_colour")
             self._tperfect.update(f"Loop ratio: {self._config.loop_ratio}")
         else:
-            self._tperfect.remove_class("bar_golden_colour")
+            self._tperfect.add_class("bar_green_colour")
+            self._tperfect.remove_class("bar_accent_colour")
             self._tperfect.update("Perfect")
 
         if not self._config.output_file:

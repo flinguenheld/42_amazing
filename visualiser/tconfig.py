@@ -27,7 +27,7 @@ class TConfig(ModalScreen):
     BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
     ALGORITHMS = ["Wilson", "DFS"]
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         super().__init__()
         self._config: Config = config
 

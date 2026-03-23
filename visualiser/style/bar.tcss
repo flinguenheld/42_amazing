@@ -33,3 +33,13 @@ TBar {
     border: round $warning;
     color: $warning;
 }
+
+.bar_green_colour {
+    border: round $success;
+    color: $success;
+}
+
+.bar_accent_colour {
+    border: round $accent;
+    color: $accent;
+}

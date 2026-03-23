@@ -36,9 +36,9 @@ class TTitleSeed(Static):
     def __init__(self) -> None:
         super().__init__(classes="ttitles")
         self.__to_print = """
-▄█████ ██████ ██████ ████▄  
-▀▀▀▄▄▄ ██▄▄   ██▄▄   ██  ██ 
-█████▀ ██▄▄▄▄ ██▄▄▄▄ ████▀  
+▄█████ ██████ ██████ ████▄
+▀▀▀▄▄▄ ██▄▄   ██▄▄   ██  ██
+█████▀ ██▄▄▄▄ ██▄▄▄▄ ████▀
             """
 
     def render(self) -> RenderResult:
