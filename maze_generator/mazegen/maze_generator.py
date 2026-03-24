@@ -25,13 +25,14 @@ class MazeGenerator:
         elif config_dict and isinstance(config_dict, dict):
             self.config = Config.model_validate(config_dict)
         else:
-            self.config = Config(
-                nb_col=20,
-                nb_row=20,
-                entry=(0, 0),
-                exit=(19, 19),
-                perfect=False,
-                output_file="maze.txt",
+            self.config = Config.model_validate(
+                    {"WIDTH": 20,
+                "HEIGHT": 20,
+                "ENTRY": (0, 0),
+                "EXIT": (19, 19),
+                "PERFECT": False,
+                "OUTPUT_FILE": "maze.txt",
+                     }
             )
 
     def init_maze(self) -> None:
