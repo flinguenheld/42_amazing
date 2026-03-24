@@ -60,6 +60,7 @@ class Config(BaseModel):
     print_to_file: Annotated[bool, Field(alias="PRINT_TO_FILE")] = True
 
     past_seeds: List[Any] = list()
+    __user_seed: bool = False
 
     class Config:
         """Configure BaseModel behaviour"""
@@ -110,27 +111,43 @@ class Config(BaseModel):
                 return self
         raise ValueError(f"{self.algo} is not a valid algorithm")
 
-    def update_seed(self, seed: Optional[Any] = None) -> None:
-        """Sets seed to argument or generated"""
-        if seed:
+    @model_validator(mode="after")
+    def check_seed(self) -> Any:
+        if self.seed:
             try:
-                Random(seed)
-            except Exception:
-                pass
+                Random(self.seed)
+            except Exception as e:
+                raise ValueError(f"Invalid seed {self.seed}")
             else:
-                self.seed = seed
-                if self.seed not in self.past_seeds:
-                    self.past_seeds.append(self.seed)
-        elif (
-            self.seed is None or "AUTO" in self.seed
-        ):
+                self.__user_seed = True
+        return self
+
+
+    def update_seed(self, seed: Any) -> None:
+        """Sets seed to argument"""
+        try:
+            Random(seed)
+        except Exception:
+            pass
+        else:
+            self.__user_seed = True
+            self.seed = seed
+            if self.seed not in self.past_seeds:
+                self.past_seeds.append(self.seed)
+
+    def reset_seed(self) -> None:
+        """Sets seed to auto-generated string"""
+        if self.__user_seed is False:
             self.seed = (
                 f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
             )
             self.past_seeds.append(self.seed)
+            self.__user_seed = False
 
     def clear_seed(self) -> None:
+        """ Sets seed to None """
         self.seed = None
+        self.__user_seed = False
 
     def set(self, param_name: str, new_value: Any) -> None:
         """Set attribute passed as a string to new value (after runs checks)"""

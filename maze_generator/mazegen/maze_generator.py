@@ -38,7 +38,7 @@ class MazeGenerator:
 
     def init_maze(self) -> None:
         """Reset maze with config info"""
-        self.config.update_seed()
+        self.config.reset_seed()
         self.__maze = Maze(
             self.config.get("nb_row"),
             self.config.get("nb_col"),
