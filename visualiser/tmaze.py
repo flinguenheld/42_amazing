@@ -178,17 +178,19 @@ class TMaze(Widget):
         """
         Generate a new maze and display it directly
         """
-        if not self._maze_animation.is_active():
-            self._solution.deactivate(clean=False)
-            self._forty_two.deactivate()
+        if self._maze_animation.is_active():
+            self._maze_animation.kill_animation()
 
-            self._active_maze = self._maze_generator.get_maze()
-            self._forty_two.update_points(self._active_maze.cells_42)
-            self._clear_or_reset_canvas()
-            self._canvas.dig_holes(self._active_maze)
-            self._player = Player(self._active_maze)
-            self._draw_player()
-            self._draw_exit()
+        self._solution.deactivate(clean=False)
+        self._forty_two.deactivate()
+
+        self._active_maze = self._maze_generator.get_maze()
+        self._forty_two.update_points(self._active_maze.cells_42)
+        self._clear_or_reset_canvas()
+        self._canvas.dig_holes(self._active_maze)
+        self._player = Player(self._active_maze)
+        self._draw_player()
+        self._draw_exit()
 
     # ########################################################################
     # ######################################################### ANIMATION ####

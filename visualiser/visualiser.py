@@ -7,11 +7,12 @@ from visualiser.tmaze import TMaze
 from visualiser.ttitle import TTitle
 from visualiser.tconfig import TConfig
 from visualiser.tbar import TBar
+from visualiser.tactions import TActions
 
 from textual.color import Color
 from textual import events, work
+from textual.widgets import Header
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header
 from textual.binding import Binding, BindingType
 from textual.containers import ScrollableContainer, Vertical
 
@@ -26,14 +27,15 @@ class Visualiser(App[None]):
         "style/config.tcss",
         "style/message.tcss",
         "style/bar.tcss",
+        "style/actions.tcss",
     ]
     BINDINGS = [
         ("g", "generate_new_maze", "Generate a new maze"),
         ("s", "start_new_maze", "Start a new maze"),
         ("n", "next_step", "Next step"),
-        ("a", "animate", "Animate"),
+        ("b", "animate", "Animate"),
         ("q", "stop_animations", "Stop animation"),
-        ("r", "restart", "Restart player"),
+        ("r", "restart_player", "Restart player"),
         ("w", "solution", "Run solution"),
         ("u", "solution_deactivate", "Clean solution"),
         ("t", "next_theme", "Next theme"),
@@ -52,17 +54,18 @@ class Visualiser(App[None]):
         self._config = config
         self._tbar = TBar(config)
         self._tmaze = TMaze(config, self._get_colours())
+        self._tactions = TActions()
 
     # ########################################################################
     # ########################################################## COMPOSE #####
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
-        yield Footer()
         with Vertical(id="main_layout"):
             yield self._ttitle
             yield self._tbar
             with ScrollableNoArrow(id="scroll_layout"):
                 yield self._tmaze
+            yield self._tactions
 
     # ########################################################################
     # ############################################################ MOUNT #####
@@ -78,8 +81,8 @@ class Visualiser(App[None]):
         self._tmaze.move_player(event.key)
 
     # ########################################################################
-    # ################################################# ACTION - OPTIONS #####
-    def action_restart(self) -> None:
+    # ########################################## ACTION - RESTART PLAYER #####
+    def action_restart_player(self) -> None:
         self._tmaze.player_clean()
         self._tmaze.player_reset()
 

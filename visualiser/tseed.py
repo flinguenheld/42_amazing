@@ -26,7 +26,7 @@ class TSeed(ModalScreen):
 
         self._past_seeds = Label(id="seed_history")
         self._past_seeds.border_title = "History"
-        self.init_label()
+        self._init_label()
         self._bt_clear = Button(
             "Clear", variant="error", classes="option_button"
         )
@@ -43,7 +43,7 @@ class TSeed(ModalScreen):
 
     # ########################################################################
     # ########################################################### HISTORY ####
-    def init_label(self) -> None:
+    def _init_label(self) -> None:
         if not self._config.past_seeds:
             self._past_seeds.content = "Empty"
         else:

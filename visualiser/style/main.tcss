@@ -11,6 +11,7 @@
 #   - panel
 
 
+
 Screen {
     align: center middle;
     content-align: center middle;
@@ -32,7 +33,7 @@ Screen {
 }
 
 #scroll_layout {
-    border: round $primary;
+    border: round $panel;
     align: center middle;
     content-align: center middle;
 }
@@ -59,17 +60,5 @@ Header {
     # text-style: blink;
 }
 HeaderClockSpace {
-    color: $background;
-}
-
-Footer {
-    background: $primary;
-    color: $background;
-}
-.footer-key--key {
-    color: red;
-}
-
-.footer-key--description {
     color: $background;
 }
