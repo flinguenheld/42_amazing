@@ -7,6 +7,7 @@
 </video>
 
 <!-- ![](./images/a_maze_ing_demo.mp4) -->
+[![Watch the video](https://raw.githubusercontent.com/cali-pso/amazing/a_maze_ing_demo.mp4)](https://raw.githubusercontent.com/cali-pso/amazing/a_maze_ing_demo.mp4)
 ## Description
 
 This repository is our version of the A-Maze-ing project from 42's curriculum.  
