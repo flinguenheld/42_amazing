@@ -1,4 +1,3 @@
-import asyncio
 from textual.app import ComposeResult
 from textual.widgets import Static, Button
 from textual.containers import HorizontalGroup, Horizontal, HorizontalScroll
@@ -107,28 +106,28 @@ class TActions(Static):
     async def on_button_pressed(self, event: Button.Pressed) -> None:
 
         if event.button == self._generate:
-            self.app.action_generate_new_maze()  # type: ignore
+            await self.app.run_action("generate_new_maze")
 
         if event.button == self._start:
-            self.app.action_start_new_maze()  # type: ignore
+            await self.app.run_action("start_new_maze")
 
         if event.button == self._next_step:
-            self.app.action_next_step()  # type: ignore
+            await self.app.run_action("next_step")
 
         if event.button == self._build_maze:
-            asyncio.create_task(self.app.action_animate())  # type: ignore
+            await self.app.run_action("animate")
 
         if event.button == self._stop_animation:
-            self.app.action_stop_animations()  # type: ignore
+            await self.app.run_action("stop_animations")
 
         if event.button == self._restart_player:
-            self.app.action_restart_player()  # type: ignore
+            await self.app.run_action("restart_player")
 
         if event.button == self._solution:
-            asyncio.create_task(self.app.action_solution())  # type: ignore
+            await self.app.run_action("solution")
 
         if event.button == self._solution_deactivate:
-            self.app.action_solution_deactivate()  # type: ignore
+            await self.app.run_action("solution_deactivate")
 
         if event.button == self._forty_two:
-            asyncio.create_task(self.app.action_forty_two())  # type: ignore
+            await self.app.run_action("forty_two")
