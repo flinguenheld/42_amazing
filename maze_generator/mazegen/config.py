@@ -116,12 +116,11 @@ class Config(BaseModel):
         if self.seed:
             try:
                 Random(self.seed)
-            except Exception as e:
+            except Exception:
                 raise ValueError(f"Invalid seed {self.seed}")
             else:
                 self.__user_seed = True
         return self
-
 
     def update_seed(self, seed: Any) -> None:
         """Sets seed to argument"""
@@ -145,7 +144,7 @@ class Config(BaseModel):
             self.__user_seed = False
 
     def clear_seed(self) -> None:
-        """ Sets seed to None """
+        """Sets seed to None"""
         self.seed = None
         self.__user_seed = False
 

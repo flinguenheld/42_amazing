@@ -1,4 +1,3 @@
-from typing import Optional
 from textual.widgets import Input, Label, Button
 from textual.containers import ScrollableContainer, HorizontalGroup
 from textual.app import ComposeResult
@@ -57,7 +56,7 @@ class TSeed(ModalScreen):
 
     # ########################################################################
     # ################################################### BUTTON PRESSED #####
-    def on_button_pressed(self, event: Button.Pressed) -> Optional[str]:
+    def on_button_pressed(self, event: Button.Pressed) -> None:
         """Dismiss the seed if there's one or None"""
 
         if event.button == self._bt_set:

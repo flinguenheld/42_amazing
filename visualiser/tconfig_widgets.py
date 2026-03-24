@@ -1,9 +1,10 @@
+from textual.types import NoSelection
 from typing import Tuple, Optional, List
 
 from textual.widget import Widget
 from textual.app import ComposeResult
-from textual.widgets import Label, Select, Input, Switch
 from textual.containers import HorizontalGroup
+from textual.widgets import Label, Select, Input, Switch
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -154,6 +155,6 @@ class TInputCoordinate(Widget):
             self._x.value = values[1]
             self._y.value = values[0]
 
-    def get_value(self) -> Tuple[int, int]:
+    def get_value(self) -> Tuple[int | NoSelection, int | NoSelection]:
         """!! Values are reversed to fit (row,col) instead of (x,y) !!"""
         return (self._y.value, self._x.value)

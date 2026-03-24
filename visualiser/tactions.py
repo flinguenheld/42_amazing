@@ -107,28 +107,28 @@ class TActions(Static):
     async def on_button_pressed(self, event: Button.Pressed) -> None:
 
         if event.button == self._generate:
-            self.app.action_generate_new_maze()
+            self.app.action_generate_new_maze()  # type: ignore
 
         if event.button == self._start:
-            self.app.action_start_new_maze()
+            self.app.action_start_new_maze()  # type: ignore
 
         if event.button == self._next_step:
-            self.app.action_next_step()
+            self.app.action_next_step()  # type: ignore
 
         if event.button == self._build_maze:
-            asyncio.create_task(self.app.action_animate())
+            asyncio.create_task(self.app.action_animate())  # type: ignore
 
         if event.button == self._stop_animation:
-            self.app.action_stop_animations()
+            self.app.action_stop_animations()  # type: ignore
 
         if event.button == self._restart_player:
-            self.app.action_restart_player()
+            self.app.action_restart_player()  # type: ignore
 
         if event.button == self._solution:
-            asyncio.create_task(self.app.action_solution())
+            asyncio.create_task(self.app.action_solution())  # type: ignore
 
         if event.button == self._solution_deactivate:
-            self.app.action_solution_deactivate()
+            self.app.action_solution_deactivate()  # type: ignore
 
         if event.button == self._forty_two:
-            asyncio.create_task(self.app.action_forty_two())
+            asyncio.create_task(self.app.action_forty_two())  # type: ignore

@@ -27,7 +27,7 @@ class TBar(Static):
 
     # ########################################################################
     # ######################################################### SET SEED #####
-    def _set_seed(self, seed: str | None):
+    def _set_seed(self, seed: str | None) -> None:
         if seed:
             self._tseed.add_class("bar_golden_colour")
             self._tseed.update(f"Seed: {seed}")
