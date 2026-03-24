@@ -2,8 +2,12 @@
 
 # A-Maze-ing
 
+
+
+
 <video controls align="center">
-  <source src="./images/a_maze_ing_demo.mp4" type="video/mp4">
+  <source src="https://github.com/user-attachments/assets/cb77c8f4-f1c4-4ecf-b514-84c20d8fc1d6
+" type="video/mp4">
 </video>
 
 <!-- ![](./images/a_maze_ing_demo.mp4) -->
