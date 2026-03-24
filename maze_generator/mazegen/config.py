@@ -118,18 +118,19 @@ class Config(BaseModel):
             except Exception:
                 pass
             else:
-                if seed not in self.past_seeds:
-                    self.past_seeds.append(self.seed)
                 self.seed = seed
+                if self.seed not in self.past_seeds:
+                    self.past_seeds.append(self.seed)
         elif (
-            self.past_seeds
-            and self.seed == self.past_seeds[-1]
-            and (self.seed is None or "AUTO" in self.seed)
+            self.seed is None or "AUTO" in self.seed
         ):
             self.seed = (
                 f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
             )
             self.past_seeds.append(self.seed)
+
+    def clear_seed(self) -> None:
+        self.seed = None
 
     def set(self, param_name: str, new_value: Any) -> None:
         """Set attribute passed as a string to new value (after runs checks)"""

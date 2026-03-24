@@ -48,7 +48,7 @@ class TSeed(ModalScreen):
             self._past_seeds.content = "Empty"
         else:
             text = ""
-            for seed in self._config.past_seeds:
+            for seed in reversed(self._config.past_seeds[-10:]):
                 # self._past_seeds.content += f"{seed}\n"
                 text += f"{seed}\n"
             self._past_seeds.content = text
@@ -60,6 +60,6 @@ class TSeed(ModalScreen):
             if self._seed.value:
                 self._config.update_seed(self._seed.value)
         elif event.button == self._bt_clear:
-            self._config.update_seed(None)
+            self._config.clear_seed()
 
         self.dismiss(True)
