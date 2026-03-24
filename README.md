@@ -2,8 +2,17 @@
 
 # A-Maze-ing
 
-<video controls align="center">
-  <source src="./images/a_maze_ing_demo.mp4" type="video/mp4">
+
+
+
+
+
+
+
+
+
+
+<video controls align="center" src="https://github.com/user-attachments/assets/f0201420-64f7-41f5-adb2-205986b6fc1f">
 </video>
 
 <!-- ![](./images/a_maze_ing_demo.mp4) -->
@@ -104,10 +113,11 @@ All keys and example values in an example config.txt:
     LOOP_RATIO=75
     ALGO=Wilson
     SEED=42
+    PRINT_TO_FILE=True
 
 Note this default config.txt is already present in the repository.  
 Configuration can also be modified either in memory or in file  
-through the visualiser.  
+through the visualiser's config menu.  
 
 ## Algorithm
 
@@ -148,7 +158,7 @@ BFS was used for pathfinding, with a principle similar to DFS.
 -------------------------------------------------------------------------------
 
 <div align="center">
-    <img src="./images/MazeGenerator_schema.excalidraw.png">
+    <img src="./maze_generator/MazeGenerator_schema.excalidraw.png">
 </div>
 
 ## Instantiation
@@ -166,12 +176,19 @@ For default configuration :
 ```
 
 
-With customization via Dict:
+With customization via Dict (shown parameters are mandatory):
 
 ```Python
     from mazegen import MazeGenerator
 
-    generator = MazeGenerator(config_dict={"HEIGHT": 20, "WIDTH": 20})
+    generator = MazeGenerator(config_dict={"HEIGHT": 20,
+                                           "WIDTH": 20,
+                                           "ENTRY": (0, 0),
+                                           "EXIT": (19, 19),
+                                           "OUTPUT_FILE": "maze.txt",
+                                           "PERFECT": True,
+                                           }
+                             )
 ```
 
  
@@ -180,7 +197,12 @@ With customized Config object:
 ```Python
     from mazegen import MazeGenerator, Config
 
-    config = Config(height=20, width=20, seed="42", algo="Wilson")
+    config = Config.model_validate({"WIDTH": 40,
+                                    "HEIGHT": 20,
+                                    "ENTRY": (0, 0),
+                                    "EXIT": (19, 19),
+                                    "OUTPUT_FILE": "maze.txt",
+                                    "PERFECT": True})
 
     generator = MazeGenerator(config=config)
 ```
@@ -245,6 +267,17 @@ If we wanted further control, we would use a Config object passed to MazeGenerat
 on initialization. The Config class inherits from pydantic's BaseModel and runs various  
 data sanity checks to ensure coherent data is going to end up in the maze.  
   
+Amongst all possible parameters, the following are mandatory:
+
+| Attribute name | Alias |
+|----------------|-------|
+| nb\_col | HEIGHT |
+| nb\_row | WIDTH |
+| entry | ENTRY |
+| exit | EXIT |
+| output\_file | OUTPUT\_FILE |
+| perfect | PERFECT |
+
 Config().model\_validate() can be given a dictionnary whose keys define which  
 parameter is set and it's values... the value.  
 It can also be modified after initialisation through it's setter, here an example of both:  
@@ -255,22 +288,19 @@ It can also be modified after initialisation through it's setter, here an exampl
     # Instantiate generator with custom dictionnary
     temp_generator = MazeGenerator(config_dict={"WIDTH": 20,
                                                 "HEIGHT": 20,
-                                                "SEED": 420})
+                                                "ENTRY": (0, 0),
+                                                "EXIT": (19, 19),
+                                                "OUTPUT_FILE": "maze.txt",
+                                                "PERFECT": True})
     del temp_generator
-
-    # Initialises config with default values
-    temp_config = Config()
-    del temp_config
-
-    # Initialises config with custom parameters (by attribute name)
-    temp_config1 = Config(width=40, height=40, entry=(0, 0), exit=(39, 39))
-    del temp_config1
 
     # Initalises config with custom dict (by alias)
     config = Config.model_validate({"WIDTH": 40,
                                     "HEIGHT": 20,
-                                    "SEED": 42,
-                                    "ALGO": DFS})
+                                    "ENTRY": (0, 0),
+                                    "EXIT": (19, 19),
+                                    "OUTPUT_FILE": "maze.txt",
+                                    "PERFECT": True})
 
     # Sets new values after initialisation (by attr name)
     config.set("perfect", False)
@@ -286,20 +316,19 @@ Here are all parameters and their default values:
 
 | Parameter | Alias   | Default |
 | --------- | ------- | ------- |
-| nb\_col   | WIDTH   | 15      |
-| nb\_row   | HEIGHT  | 15      |
-| entry     | ENTRY   | (0, 0)  |
-| exit      | EXIT    | (14, 14)|
-| output\_file | OUTPUT\_FILE | maze.txt |
-| perfect   | PERFECT | False   |
+| nb\_col   | WIDTH   | None    |
+| nb\_row   | HEIGHT  | None    |
+| entry     | ENTRY   | None  |
+| exit      | EXIT    | None |
+| output\_file | OUTPUT\_FILE | None|
+| perfect   | PERFECT | None |
 | seed      | SEED    | date+"AUTO"+time |
 | algo      | ALGO    | Wilson  |
 | loop\_ratio | LOOP\_RATIO | 100 |
+| print\_to\_file | PRINT\_TO\_FILE | True |
 
 These are all available through the Config object for both getting  
-and setting, except getting the seed: if none is set in file, the generator  
-creates one like f"{datetime.now()}AUTO{time.time()}" and stores it  
-directly inside the maze. Note all parameters except output\_file are also  
+and setting. Note all parameters except file and algo related are also  
 available through the generated maze from instantiation on.  
 
 -------------------------------------------------------------------------------

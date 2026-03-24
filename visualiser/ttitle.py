@@ -30,3 +30,16 @@ class TTitleConfig(Static):
 
     def render(self) -> RenderResult:
         return self.__to_print
+
+
+class TTitleSeed(Static):
+    def __init__(self) -> None:
+        super().__init__(classes="ttitles")
+        self.__to_print = """
+▄█████ ██████ ██████ ████▄
+▀▀▀▄▄▄ ██▄▄   ██▄▄   ██  ██
+█████▀ ██▄▄▄▄ ██▄▄▄▄ ████▀
+            """
+
+    def render(self) -> RenderResult:
+        return self.__to_print

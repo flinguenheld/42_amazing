@@ -1,0 +1,45 @@
+# Theme colours:
+#   - primary
+#   - secondary
+#   - accent
+#   - foreground
+#   - background
+#   - success
+#   - warning
+#   - error
+#   - surface
+#   - panel
+
+TBar {
+    align: center middle;
+}
+
+#bar_layout {
+    align: center middle;
+}
+
+.bar_hide_label {
+    display: none;
+}
+
+.bar_label {
+    border: round $primary;
+    color: $primary;
+    padding: 0 3;
+    margin: 0 5;
+}
+
+.bar_golden_colour {
+    border: round $warning;
+    color: $warning;
+}
+
+.bar_green_colour {
+    border: round $success;
+    color: $success;
+}
+
+.bar_accent_colour {
+    border: round $accent;
+    color: $accent;
+}

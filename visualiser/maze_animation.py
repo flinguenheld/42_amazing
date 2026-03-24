@@ -26,6 +26,9 @@ class MazeAnimation:
         self._maze: Optional[Maze] = None
         self._animation_on = True
 
+    def kill_animation(self) -> None:
+        self._iterator = None
+
     def is_active(self) -> bool:
         return self._iterator is not None
 

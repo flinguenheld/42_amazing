@@ -10,56 +10,94 @@
 #   - surface
 #   - panel
 
-TOptions {
+TConfig {
     align: center middle;
 }
 
-#layout_options {
-    width: 80%;
-    height: auto;
+.layout_options {
+    width: 100;
+    height: 42;
     border: thick $primary;
     background: $surface;
-    padding: 2 5 2 5;
+    padding: 2 3 2 3;
 }
+
+.option_field_layout {
+    content-align: center middle;
+}
+
 .option_label {
+    height: 4;
     width: 30;
     align: left middle;
     border: round transparent;
 }
 
-.option_hidden {
-	display: none;
-}
-
 .option_inputs {
-    height: auto;
-    width: auto;
+    width: 90;
+    height: 3;
+
+    padding: 0;
+    margin: 0;
     content-align: center middle;
 }
 
-.option_select_coordinate .option_select_size .option_select_ratio {
+.option_algo_select {
+    height: 4;
+    width: 60;
+} 
+
+.option_input_str {
+    height: 3;
+    width: 60;
+}
+
+.option_switch_hidden {
+    visibility: hidden;
+}
+
+.option_switch {
     width: 15;
-    content-align: center middle;
-}
-.option_select_coordinate_algo {
-    # width: auto;
-    content-align: center middle;
-}
-
-.option_checkbox {
-    width: 30;
-    content-align: center middle;
-    # border: round transparent;
 }
 
 # ############################################################
 # ############################################### BUTTONS ####
 #option_button_layout {
-    margin: 5 0 0 0;
+    margin: 4 0 0 0;
     align: center middle;
 }
 
 .option_button {
-    width: 30;
+    width: 20;
     margin: 0 5;
+}
+
+# ############################################################
+# ################################################## SEED ####
+#layout_seed {
+    align: center middle;
+}
+
+#seed_input {
+    width: 85;
+    margin: 3;
+    align: center middle;
+}
+
+#seed_history {
+    border: round $primary;
+    color: $primary;
+
+    margin: 3;
+
+    width: 85;
+    height: auto;
+    align: center middle;
+    text-style: bold;
+    text-align: center;
+}
+
+#seed_button {
+    align: center middle;
+    margin: 2;
 }

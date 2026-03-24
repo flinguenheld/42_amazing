@@ -25,10 +25,20 @@ class MazeGenerator:
         elif config_dict and isinstance(config_dict, dict):
             self.config = Config.model_validate(config_dict)
         else:
-            self.config = Config()
+            self.config = Config.model_validate(
+                {
+                    "WIDTH": 20,
+                    "HEIGHT": 20,
+                    "ENTRY": (0, 0),
+                    "EXIT": (19, 19),
+                    "PERFECT": False,
+                    "OUTPUT_FILE": "maze.txt",
+                }
+            )
 
     def init_maze(self) -> None:
         """Reset maze with config info"""
+        self.config.reset_seed()
         self.__maze = Maze(
             self.config.get("nb_row"),
             self.config.get("nb_col"),
@@ -60,15 +70,6 @@ class MazeGenerator:
         self.__rand = random.Random(self.config.get("seed"))
         self.init_maze()
 
-    def __solve_maze(self) -> Maze:
-        """Write PathFinder's result into maze.solution
-
-        - Return:
-            maze
-        """
-        self.__maze.set_solution(PathFinder(self.__maze).search())
-        return self.__maze
-
     def generate(self) -> Generator[Maze, None, None]:
         """Clear maze, choose and execute algorithm, solve maze
 
@@ -81,13 +82,14 @@ class MazeGenerator:
         algo: Any = [
             i
             for i in Algorithm.__subclasses__()
-            if self.config.get("algo") == str(i).split('.')[-1].strip('>\'')
+            if self.config.get("algo") == str(i).split(".")[-1].strip(">'")
         ][0]
         for maze in algo(self.__maze, self.__rand).solve():
             yield maze
 
-        self.__solve_maze()
-        if self.config.get("output_file"):
+        self.__maze.set_solution(PathFinder(self.__maze).search())
+
+        if self.config.get("print_to_file"):
             with open(self.config.get("output_file"), "w") as fd:
                 fd.write(str(maze))
         yield self.__maze

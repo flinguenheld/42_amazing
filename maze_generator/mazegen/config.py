@@ -1,7 +1,10 @@
 from mazegen.algorithms import Algorithm
 
-from typing import Annotated, Any, Optional, Tuple, ClassVar
+from typing import Annotated, Any, Optional, Tuple, ClassVar, List
 from pydantic import BaseModel, Field, field_validator, model_validator
+from random import Random
+from datetime import datetime
+import time
 
 
 class Config(BaseModel):
@@ -35,18 +38,13 @@ class Config(BaseModel):
     MIN_SIZE: ClassVar[int] = 5
     MAX_SIZE: ClassVar[int] = 200
 
-    nb_col: Annotated[
-        int, Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH")
-    ]
-    nb_row: Annotated[
-        int, Field(default=15, ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT")
-    ]
-    entry: Annotated[Tuple[int, int], Field(default=(0, 0), alias="ENTRY")]
-    exit: Annotated[Tuple[int, int], Field(default=(4, 4), alias="EXIT")]
+    nb_col: Annotated[int, Field(ge=MIN_SIZE, le=MAX_SIZE, alias="WIDTH")]
+    nb_row: Annotated[int, Field(ge=MIN_SIZE, le=MAX_SIZE, alias="HEIGHT")]
+    entry: Annotated[Tuple[int, int], Field(alias="ENTRY")]
+    exit: Annotated[Tuple[int, int], Field(alias="EXIT")]
     output_file: Annotated[
-        Optional[str],
+        str,
         Field(
-            default=None,
             min_length=3,
             max_length=30,
             alias="OUTPUT_FILE",
@@ -55,12 +53,14 @@ class Config(BaseModel):
     perfect: Annotated[bool, Field(default=False, alias="PERFECT")]
     seed: Annotated[
         Optional[Any],
-        Field(default=None, alias="SEED"),
-    ]
-    algo: Annotated[str, Field(default="Wilson", alias="ALGO")]
-    loop_ratio: Annotated[
-        int, Field(default=100, ge=0, le=100, alias="LOOP_RATIO")
-    ]
+        Field(alias="SEED"),
+    ] = None
+    algo: Annotated[str, Field(alias="ALGO")] = "Wilson"
+    loop_ratio: Annotated[int, Field(ge=0, le=100, alias="LOOP_RATIO")] = 100
+    print_to_file: Annotated[bool, Field(alias="PRINT_TO_FILE")] = True
+
+    past_seeds: List[Any] = list()
+    __user_seed: bool = False
 
     class Config:
         """Configure BaseModel behaviour"""
@@ -107,9 +107,46 @@ class Config(BaseModel):
     def algorithm_is_valid(self) -> Any:
         """Check algorithm is implemented as children of class Algorithm"""
         for child in Algorithm.__subclasses__():
-            if self.algo == str(child).split('.')[-1].strip('>\''):
+            if self.algo == str(child).split(".")[-1].strip(">'"):
                 return self
         raise ValueError(f"{self.algo} is not a valid algorithm")
+
+    @model_validator(mode="after")
+    def check_seed(self) -> Any:
+        if self.seed:
+            try:
+                Random(self.seed)
+            except Exception:
+                raise ValueError(f"Invalid seed {self.seed}")
+            else:
+                self.__user_seed = True
+        return self
+
+    def update_seed(self, seed: Any) -> None:
+        """Sets seed to argument"""
+        try:
+            Random(seed)
+        except Exception:
+            pass
+        else:
+            self.__user_seed = True
+            self.seed = seed
+            if self.seed not in self.past_seeds:
+                self.past_seeds.append(self.seed)
+
+    def reset_seed(self) -> None:
+        """Sets seed to auto-generated string"""
+        if self.__user_seed is False:
+            self.seed = (
+                f"{datetime.now().strftime('%Y%m%d%H%M%S')}AUTO{time.time()}"
+            )
+            self.past_seeds.append(self.seed)
+            self.__user_seed = False
+
+    def clear_seed(self) -> None:
+        """Sets seed to None"""
+        self.seed = None
+        self.__user_seed = False
 
     def set(self, param_name: str, new_value: Any) -> None:
         """Set attribute passed as a string to new value (after runs checks)"""

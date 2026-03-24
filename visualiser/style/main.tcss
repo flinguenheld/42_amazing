@@ -11,6 +11,7 @@
 #   - panel
 
 
+
 Screen {
     align: center middle;
     content-align: center middle;
@@ -21,19 +22,18 @@ Screen {
     align: center middle;
     content-align: center middle;
     # border: heavy grey;
-    content-align: center middle;
 }
 
 .ttitles {
     width: 100%;
     color: $primary;
     # border: heavy grey;
-    margin-bottom: 2;
+    margin-bottom: 0;
     content-align: center middle;
 }
 
 #scroll_layout {
-    border: round $primary;
+    border: round $panel;
     align: center middle;
     content-align: center middle;
 }
@@ -60,17 +60,5 @@ Header {
     # text-style: blink;
 }
 HeaderClockSpace {
-    color: $background;
-}
-
-Footer {
-    background: $primary;
-    color: $background;
-}
-.footer-key--key {
-    color: red;
-}
-
-.footer-key--description {
     color: $background;
 }
