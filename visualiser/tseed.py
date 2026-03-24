@@ -49,9 +49,8 @@ class TSeed(ModalScreen):
         else:
             text = ""
             for seed in reversed(self._config.past_seeds[-10:]):
-                # self._past_seeds.content += f"{seed}\n"
                 text += f"{seed}\n"
-            self._past_seeds.content = text
+            self._past_seeds.update(text)
 
     # ########################################################################
     # ################################################### BUTTON PRESSED #####

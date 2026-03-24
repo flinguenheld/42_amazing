@@ -23,6 +23,17 @@ class TBar(Static):
         self._tperfect = Label("Perfect", classes="bar_label")
         self._toutput_file = Label("Output file:", classes="bar_label")
         self._tseed = Label("No seed", classes="bar_label")
+        self._set_seed(self._config.seed)
+
+    # ########################################################################
+    # ######################################################### SET SEED #####
+    def _set_seed(self, seed: str | None):
+        if seed:
+            self._tseed.add_class("bar_golden_colour")
+            self._tseed.update(f"Seed: {seed}")
+        else:
+            self._tseed.remove_class("bar_golden_colour")
+            self._tseed.update("No seed")
 
     # ########################################################################
     # ############################################################ CLICK #####
@@ -31,12 +42,7 @@ class TBar(Static):
         # New seed ?
         if event.widget == self._tseed:
             seed: str = await self.app.push_screen_wait(TSeed(self._config))
-            if seed:
-                self._tseed.add_class("bar_golden_colour")
-                self._tseed.update(f"Seed: {seed}")
-            else:
-                self._tseed.remove_class("bar_golden_colour")
-                self._tseed.update("No seed")
+            self._set_seed(seed)
 
         # New config ?
         else:

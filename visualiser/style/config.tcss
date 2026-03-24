@@ -93,9 +93,7 @@ TConfig {
     width: 85;
     height: auto;
     align: center middle;
-    content-align: center middle;
     text-style: bold;
-
     text-align: center;
 }
 
