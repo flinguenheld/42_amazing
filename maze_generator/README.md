@@ -1,9 +1,8 @@
 # mazegen - MazeGenerator class
 
 -------------------------------
-
 <div align="center">
-    <img src="./MazeGenerator_schema.excalidraw.png">
+    <img src="./maze_generator/MazeGenerator_schema.excalidraw.png">
 </div>
 
 ## Instantiation
@@ -42,9 +41,12 @@ With customized Config object:
 ```Python
     from mazegen import MazeGenerator, Config
 
-    config = Config(height=20, width=20,
-                    entry=(0, 0), exit=(19, 19),
-                    output_file="maze.txt", perfect=True)
+    config = Config.model_validate({"WIDTH": 40,
+                                    "HEIGHT": 20,
+                                    "ENTRY": (0, 0),
+                                    "EXIT": (19, 19),
+                                    "OUTPUT_FILE": "maze.txt",
+                                    "PERFECT": True})
 
     generator = MazeGenerator(config=config)
 ```
@@ -130,22 +132,19 @@ It can also be modified after initialisation through it's setter, here an exampl
     # Instantiate generator with custom dictionnary
     temp_generator = MazeGenerator(config_dict={"WIDTH": 20,
                                                 "HEIGHT": 20,
-                                                "SEED": 420})
+                                                "ENTRY": (0, 0),
+                                                "EXIT": (19, 19),
+                                                "OUTPUT_FILE": "maze.txt",
+                                                "PERFECT": True})
     del temp_generator
-
-    # Initialises config with default values
-    temp_config = Config()
-    del temp_config
-
-    # Initialises config with custom parameters (by attribute name)
-    temp_config1 = Config(width=40, height=40, entry=(0, 0), exit=(39, 39))
-    del temp_config1
 
     # Initalises config with custom dict (by alias)
     config = Config.model_validate({"WIDTH": 40,
                                     "HEIGHT": 20,
-                                    "SEED": 42,
-                                    "ALGO": DFS})
+                                    "ENTRY": (0, 0),
+                                    "EXIT": (19, 19),
+                                    "OUTPUT_FILE": "maze.txt",
+                                    "PERFECT": True})
 
     # Sets new values after initialisation (by attr name)
     config.set("perfect", False)

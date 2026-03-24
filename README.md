@@ -158,7 +158,7 @@ BFS was used for pathfinding, with a principle similar to DFS.
 -------------------------------------------------------------------------------
 
 <div align="center">
-    <img src="./MazeGenerator_schema.excalidraw.png">
+    <img src="./maze_generator/MazeGenerator_schema.excalidraw.png">
 </div>
 
 ## Instantiation
