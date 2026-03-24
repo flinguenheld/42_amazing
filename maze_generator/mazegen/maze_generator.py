@@ -26,13 +26,14 @@ class MazeGenerator:
             self.config = Config.model_validate(config_dict)
         else:
             self.config = Config.model_validate(
-                    {"WIDTH": 20,
-                "HEIGHT": 20,
-                "ENTRY": (0, 0),
-                "EXIT": (19, 19),
-                "PERFECT": False,
-                "OUTPUT_FILE": "maze.txt",
-                     }
+                {
+                    "WIDTH": 20,
+                    "HEIGHT": 20,
+                    "ENTRY": (0, 0),
+                    "EXIT": (19, 19),
+                    "PERFECT": False,
+                    "OUTPUT_FILE": "maze.txt",
+                }
             )
 
     def init_maze(self) -> None:
