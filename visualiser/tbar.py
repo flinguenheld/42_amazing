@@ -22,18 +22,26 @@ class TBar(Static):
         self._talgo = Label("Algo:", classes="bar_label")
         self._tperfect = Label("Perfect", classes="bar_label")
         self._toutput_file = Label("Output file:", classes="bar_label")
-        self._tseed = Label("Seed:", classes="bar_label")
+        self._tseed = Label("No seed", classes="bar_label")
 
     # ########################################################################
     # ############################################################ CLICK #####
     @work
     async def on_click(self, event: Click) -> None:
+        # New seed ?
         if event.widget == self._tseed:
-            await self.app.push_screen_wait(TSeed(self._config))
+            seed: str = await self.app.push_screen_wait(TSeed(self._config))
+            if seed:
+                self._tseed.add_class("bar_golden_colour")
+                self._tseed.update(f"Seed: {seed}")
+            else:
+                self._tseed.remove_class("bar_golden_colour")
+                self._tseed.update("No seed")
+
+        # New config ?
         else:
             await self.app.push_screen_wait(TConfig(self._config))
-
-        self.refresh_values()
+            self.refresh_values()
 
     # ########################################################################
     # ########################################################## COMPOSE #####
@@ -74,10 +82,3 @@ class TBar(Static):
             self._toutput_file.update(
                 f"Output file: {self._config.output_file}"
             )
-
-        if not self._config.seed:
-            self._tseed.remove_class("bar_golden_colour")
-            self._tseed.update("No seed")
-        else:
-            self._tseed.add_class("bar_golden_colour")
-            self._tseed.update(f'Seed: "{self._config.seed}"')

@@ -25,12 +25,14 @@ class TSeed(ModalScreen):
             self._seed.value = self._config.seed
 
         self._past_seeds = Label(id="seed_history")
-        self._past_seeds.border_title = "History"
+        self._past_seeds.border_title = "History (last ten)"
         self._init_label()
         self._bt_clear = Button(
-            "Clear", variant="error", classes="option_button"
+            "No seed", variant="error", classes="option_button"
         )
-        self._bt_ok = Button("Ok", variant="primary", classes="option_button")
+        self._bt_ok = Button(
+            "Set seed", variant="primary", classes="option_button"
+        )
 
     def compose(self) -> ComposeResult:
         with ScrollableContainer(classes="layout_options"):
@@ -56,10 +58,15 @@ class TSeed(ModalScreen):
     # ########################################################################
     # ################################################### BUTTON PRESSED #####
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Dismiss the written seed or None"""
+
         if event.button == self._bt_ok:
             if self._seed.value:
                 self._config.update_seed(self._seed.value)
+                self.dismiss(self._seed.value)
+            else:
+                self.dismiss(None)
+
         elif event.button == self._bt_clear:
             self._config.clear_seed()
-
-        self.dismiss(True)
+            self.dismiss(None)
