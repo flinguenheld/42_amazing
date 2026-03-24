@@ -1,3 +1,4 @@
+from typing import Optional
 from textual.widgets import Input, Label, Button
 from textual.containers import ScrollableContainer, HorizontalGroup
 from textual.app import ComposeResult
@@ -27,10 +28,12 @@ class TSeed(ModalScreen):
         self._past_seeds = Label(id="seed_history")
         self._past_seeds.border_title = "History"
         self.init_label()
-        self._bt_clear = Button(
-            "Clear", variant="error", classes="option_button"
+        self._bt_no = Button(
+            "No seed", variant="error", classes="option_button"
         )
-        self._bt_ok = Button("Ok", variant="primary", classes="option_button")
+        self._bt_set = Button(
+            "Set seed", variant="primary", classes="option_button"
+        )
 
     def compose(self) -> ComposeResult:
         with ScrollableContainer(classes="layout_options"):
@@ -38,8 +41,8 @@ class TSeed(ModalScreen):
             yield self._seed
             yield self._past_seeds
             with HorizontalGroup(id="option_button_layout"):
-                yield self._bt_ok
-                yield self._bt_clear
+                yield self._bt_set
+                yield self._bt_no
 
     # ########################################################################
     # ########################################################### HISTORY ####
@@ -54,10 +57,16 @@ class TSeed(ModalScreen):
 
     # ########################################################################
     # ################################################### BUTTON PRESSED #####
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button == self._bt_ok:
-            self._config.update_seed(self._seed.value)
-        elif event.button == self._bt_clear:
-            self._config.clear_seed()
+    def on_button_pressed(self, event: Button.Pressed) -> Optional[str]:
+        """Dismiss the seed if there's one or None"""
 
-        self.dismiss(True)
+        if event.button == self._bt_set:
+            if self._seed.value:
+                self._config.update_seed(self._seed.value)
+                self.dismiss(self._seed.value)
+            else:
+                self.dismiss(None)
+
+        elif event.button == self._bt_no:
+            self._config.clear_seed()
+            self.dismiss(None)
